@@ -21,6 +21,8 @@ class ProductController extends Controller
     {
         $name = $request['name'];
         $categoryId = $request['categoryId'];
+        $price = $request['price'];
+        $description = $request['description'];
         if ($request->hasFile('picture')) {
             $file = $request->file('picture')->store('img', 'public');
             $filename = time() . $file;
@@ -31,7 +33,9 @@ class ProductController extends Controller
         Product::create([
             'title' => $name,
             'category_id' => $categoryId,
-            'picture' => $filename
+            'picture' => $filename,
+            'price' => $price,
+            'description' => $description
         ]);
     }
     public function delete(Request $request)

@@ -2,6 +2,7 @@
     <div class="container mt-5">
         <div class="container-xl mb-4">
             <h1>{{ title }}</h1>
+            <p class="mb-4"><a href="/products">на страницу добавления товаров</a></p>
 
             <div class="form-group">
                 <input
@@ -124,11 +125,13 @@ export default {
     props: ["title"],
     data() {
         return {
-            categories: [],
-            loading: true,
-            processing: false,
             categoryName: "",
             categoryDesc: "",
+            
+            categories: [],
+            
+            loading: true,
+            processing: false,
             validationErrors: {
                 name: null,
                 desc: null

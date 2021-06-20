@@ -19,6 +19,37 @@
             </div>
 
             <div class="form-group">
+                <textarea
+                    v-model='productDescription'
+                    rows="5"
+                    class="form-control"
+                    :class="{ 'is-invalid': validationErrors.description }"
+                    placeholder="Описание товара">
+                </textarea>
+                <p
+                    v-if="validationErrors.description.length > 0"
+                    class="invalid-feedback"
+                >
+                    {{ validationErrors.description }}
+                </p>
+            </div>
+
+            <div class="form-group">
+                <input
+                    v-model='productPrice'
+                    class="form-control"
+                    :class="{ 'is-invalid': validationErrors.price }"
+                    placeholder="Цена"
+                >
+                <p
+                    v-if="validationErrors.price.length > 0"
+                    class="invalid-feedback"
+                >
+                    {{ validationErrors.price }}
+                </p>
+            </div>
+
+            <div class="form-group">
                 <input @change="getPicture" class="form-control" type="file" />
             </div>
 
@@ -148,14 +179,20 @@ export default {
     data() {
         return {
             productName: "",
+            productDescription: "",
+            productPrice: "",
+            picture: [],
+            categoryId: "",
+            
             products: [],
             categories: [],
-            categoryId: "",
-            picture: [],
+            
             loading: true,
             processing: false,
             validationErrors: {
                 name: "",
+                description: "",
+                price: "",
                 categoryId: ""
             }
         };
@@ -172,11 +209,13 @@ export default {
         getPicture(e) {
             this.picture = e.target.files[0];
         },
+
         getCategories() {
             axios.get("/categories/get").then(({ data }) => {
                 this.categories = data;
             });
         },
+
         getProducts() {
             axios
                 .get("/products/get")
@@ -187,22 +226,27 @@ export default {
                     this.loading = false;
                 });
         },
+
         createNewProduct() {
             this.processing = true;
             let fData = new FormData();
-            if (this.productName.length === 0) {
-                this.validationErrors.name = "Не должно быть пустым";
+            const params = {
+                name: this.productName,
+                description: this.productDescription,
+                price: this.productPrice,
+                categoryId: this.categoryId,
+                picture: this.picture,
+            };
+
+            if (this.validate(params)) {
                 this.processing = false;
-                return;
-            } else if (this.categoryId.length === 0) {
-                this.validationErrors.categoryId = "Выберите категорию";
-                this.processing = false;
-                console.log(this.validationErrors.categoryId);
                 return;
             }
-            fData.append("name", this.productName);
-            fData.append("picture", this.picture);
-            fData.append("categoryId", this.categoryId);
+
+            for (const param in params) {
+                fData.append(param, params[param]);
+            }
+            
             axios
                 .post("/products/create", fData)
                 .then(() => {
@@ -212,6 +256,21 @@ export default {
                     this.processing = false;
                 });
         },
+
+        validate(params) {
+            let errors = 0;
+            for (const key in params) {
+                if (key === 'categoryId' && params[key].length === 0) {
+                    this.validationErrors[key] = 'Выберите категорию';
+                    errors += 1;
+                } else if (params[key].length === 0 && key !== 'picture') {
+                    this.validationErrors[key] = 'Поле не должно быть пустым';
+                    errors += 1;
+                }
+            }
+            return errors;
+        },
+
         removeProduct(productId) {
             axios
                 .post("/products/delete", {
@@ -221,16 +280,24 @@ export default {
                 .then(() => document.location.reload());
         }
     },
+
     mounted() {
         this.getCategories();
         this.getProducts();
     },
+
     watch: {
         productName() {
             this.validationErrors.name = "";
         },
         categoryId() {
             this.validationErrors.categoryId = "";
+        },
+        productDescription() {
+            this.validationErrors.description = "";
+        },
+        productPrice() {
+            this.validationErrors.price = "";
         }
     }
 };

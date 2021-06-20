@@ -21,11 +21,19 @@ window.Vue = require("vue").default;
 
 Vue.component(
     "categories-component",
-    require("./components/CategoriesComponent.vue").default
+    require("./components/admin/CategoriesComponent.vue").default
 );
 Vue.component(
     "products-component",
-    require("./components/ProductsComponent.vue").default
+    require("./components/admin/ProductsComponent.vue").default
+);
+Vue.component(
+    'category-list-component',
+    require('./components/CategoryListComponent.vue').default
+);
+Vue.component(
+    'product-list-component',
+    require('./components/ProductListComponent.vue').default
 );
 
 /**

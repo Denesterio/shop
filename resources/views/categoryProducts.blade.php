@@ -19,14 +19,15 @@
                 font-family: 'Nunito', sans-serif;
             }
         </style>
-        <link rel="stylesheet" href='css/app.css'>
+        <link rel="stylesheet" href='/css/app.css'>
 
     </head>
     <body class="antialiased">
-
         <div id="app" class="container mt-5">
-            <category-list-component :categories='{{$categories}}' ></category-list-component>
+            <product-list-component
+                :products='{{$products}}'>
+            </product-list-component>
         </div>
-        <script src='js/app.js'></script>
+        <script src='/js/app.js'></script>
     </body>
 </html>

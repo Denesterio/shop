@@ -19,9 +19,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/categories/get', [CategoryController::class, 'get']);
+Route::get('/', [CategoryController::class, 'welcome'])->name('welcome');
+Route::get('/categories/{categoryId}', [CategoryController::class, 'show']);
 Route::get('/categories', [CategoryController::class, 'list'])->name('categories');
 Route::post('/categories/create', [CategoryController::class, 'create']);
-Route::get('/categories/get', [CategoryController::class, 'get']);
 Route::delete('/categories/delete', [CategoryController::class, 'delete']);
 
 Route::get('/products', [ProductController::class, 'list'])->name('products');
