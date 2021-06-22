@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Models\Product;
 
 class ProductController extends Controller
 {
@@ -20,22 +20,22 @@ class ProductController extends Controller
     public function create (Request $request)
     {
         $name = $request['name'];
-        $categoryId = $request['categoryId'];
+        $subcategorySlug = $request['subcategorySlug'];
         $price = $request['price'];
         $description = $request['description'];
+        $authorId = $request['authorId'];
+        $filename = '';
         if ($request->hasFile('picture')) {
-            $file = $request->file('picture')->store('img', 'public');
-            $filename = time() . $file;
-        } else {
-            $filename = '';
+            $filename = $request->file('picture')->store('img', 'public');
         }
         
         Product::create([
             'title' => $name,
-            'category_id' => $categoryId,
+            'subcategory_slug' => $subcategorySlug,
             'picture' => $filename,
             'price' => $price,
-            'description' => $description
+            'description' => $description,
+            'author_id' => $authorId,
         ]);
     }
     public function delete(Request $request)

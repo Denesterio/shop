@@ -5,8 +5,9 @@
  */
 
 require("./bootstrap");
-
+import BootstrapVue from "bootstrap-vue"
 window.Vue = require("vue").default;
+Vue.use(BootstrapVue);
 
 /**
  * The following block of code may be used to automatically register your
@@ -24,6 +25,10 @@ Vue.component(
     require("./components/admin/CategoriesComponent.vue").default
 );
 Vue.component(
+    "subcategories-component",
+    require("./components/admin/SubcategoriesComponent.vue").default
+);
+Vue.component(
     "products-component",
     require("./components/admin/ProductsComponent.vue").default
 );
@@ -35,6 +40,10 @@ Vue.component(
     'product-list-component',
     require('./components/ProductListComponent.vue').default
 );
+Vue.component(
+    'left-menu-component',
+    require('./components/LeftMenuComponent.vue').default
+)
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

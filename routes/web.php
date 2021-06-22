@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SubcategoryController;
+use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\PublisherController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,6 +34,16 @@ Route::post('/products/create', [ProductController::class, 'create']);
 Route::get('/products/get', [ProductController::class, 'get']);
 Route::delete('/products/delete', [ProductController::class, 'delete'])->name('product.delete');
 
+
+Route::get('/subcategories/get', [SubcategoryController::class, 'get']);
+Route::post('/subcategories/create', [SubcategoryController::class, 'create']);
+Route::delete('/subcategories/delete', [SubcategoryController::class, 'delete']);
+Route::get('/subcategories/{subcategorySlug}', [SubcategoryController::class, 'show']);
+Route::get('/subcategories', [SubcategoryController::class, 'list'])->name('subcategories');
+
+Route::get('/authors/get', [AuthorController::class, 'get']);
+Route::post('/authors/create', [AuthorController::class, 'create']);
+Route::delete('/authors/delete', [AuthorController::class, 'delete']);
 
 Auth::routes();
 

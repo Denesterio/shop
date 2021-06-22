@@ -2,7 +2,8 @@
     <div class="container mt-5">
         <div class="container-xl mb-4">
             <h1>{{ title }}</h1>
-            <p class="mb-4"><a href="/products">на страницу добавления товаров</a></p>
+            <p><a href="/subcategories">на страницу добавления подкатегорий</a></p>
+            <p><a href="/products">на страницу добавления товаров</a></p>
 
             <div class="form-group">
                 <input
@@ -100,8 +101,8 @@
                     :key="category.id"
                     class="list-group-item d-flex justify-content-between align-items-start"
                 >
-                    <div class="ms-2 me-auto fw-normal">
-                        <div class="fw-bold">
+                    <div class="ms-2 me-auto font-weight-light">
+                        <div class="font-weight-bold">
                             {{ category.title }}
                         </div>
                         {{ category.description }}
@@ -121,6 +122,8 @@
 </template>
 
 <script>
+import { getCategories } from '../../get.js';
+import { isValid, fillErrors } from '../../validate.js';
 export default {
     props: ["title"],
     data() {
@@ -139,32 +142,24 @@ export default {
         };
     },
     mounted() {
-        this.getCategories();
+        getCategories()
+            .then((data) => this.categories = data)
+            .finally(() => this.loading = false);
     },
     methods: {
-        getCategories() {
-            axios
-                .get("/categories/get")
-                .then(({ data }) => {
-                    this.categories = data;
-                })
-                .finally(() => {
-                    this.loading = false;
-                });
-        },
-        createNewCategory() {
+         createNewCategory() {
             this.processing = true;
             const params = {
                 name: this.categoryName,
                 desc: this.categoryDesc
             };
-            for (const key in params) {
-                if (params[key].length === 0) {
-                    this.validationErrors[key] = "Поле не должно быть пустым";
-                    this.processing = false;
-                    return;
-                }
+
+            if (!isValid(params)) {
+                fillErrors(this.validationErrors, params)
+                this.processing = false;
+                return;
             }
+            
             axios
                 .post("/categories/create", params)
                 .then(() => {

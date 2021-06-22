@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Subcategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -11,19 +12,28 @@ class CategoryController extends Controller
     public function welcome ()
     {
         $categories = Category::get();
+        $subcategories = Subcategory::get();
         return view('welcome', [
             'categories' => $categories,
+            'subcategories' => $subcategories,
         ]);
     }
 
     public function show ($categoryId)
     {        
-        $products = DB::table('products')
+        $products = DB::table('subcategories')
+            ->select('category_id', 'products.*')
+            ->join('products', 'subcategories.slug', '=', 'products.subcategory_slug')
             ->where('category_id', '=', $categoryId)
             ->get();
 
+        $categories = Category::get();
+        $subcategories = Subcategory::get();
+
         return view('categoryProducts', [
-            'products' => $products
+            'products' => $products,
+            'categories' => $categories,
+            'subcategories' => $subcategories
         ]);
     }
     

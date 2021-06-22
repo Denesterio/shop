@@ -15,8 +15,18 @@
 export default {
     props: ['products'],
     components: {ProductComponent},
-    mounted () {
-
+    data() {
+        return {
+            pruducts: this.products,
+        }
+    },
+    mounted() {
+        this.log();
+    },
+    methods: {
+        log() {
+            console.log(this.products);
+        }
     }
 }
 </script>

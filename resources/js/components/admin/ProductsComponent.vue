@@ -1,7 +1,7 @@
 <template>
     <div class="container mt-5">
         <div class="container-xl mb-5">
-            <h1>Список товаров</h1>
+            <h1>Добавить товар</h1>
 
             <div class="form-group">
                 <input
@@ -36,6 +36,36 @@
 
             <div class="form-group">
                 <input
+                    list="author"
+                    v-model='productAuthor'
+                    class="form-control"
+                    :class="{ 'is-invalid': validationErrors.authorId }"
+                    placeholder="Автор"
+                >
+                <datalist v-if="filteredAuthors.length > 0"
+                          id="author"
+                >
+                    <option 
+                        v-for="author in filteredAuthors"
+                        :key="author.id"
+                        :value="author.title"></option>
+                </datalist>
+                <p
+                    v-if="validationErrors.productAuthor.length > 0"
+                    class="text-danger"
+                >
+                    {{ validationErrors.productAuthor }}
+                </p>
+                <p
+                    v-else-if="validationErrors.authorId.length > 0"
+                    class="text-danger"
+                >
+                    Такого автора нет в базе <a @click.prevent="createAuthor" href="" noreferrer>добавить</a>
+                </p>
+            </div>
+
+            <div class="form-group">
+                <input
                     v-model='productPrice'
                     class="form-control"
                     :class="{ 'is-invalid': validationErrors.price }"
@@ -50,14 +80,17 @@
             </div>
 
             <div class="form-group">
-                <input @change="getPicture" class="form-control" type="file" />
+                <label style="font-weight: bold; font-size: 1rem" for="picture">Загрузить изображение товара:</label>
+                <input @change="getPicture" class="form-control-file" name="picture" type="file" />
             </div>
 
             <div class="form-group">
+                <label style="font-weight: bold; font-size: 1rem" for="category">Категория:</label>
+                <p><a href="/categories">на страницу добавления категорий</a></p>
                 <select
                     v-model="categoryId"
                     class="form-control"
-                    :class="{ 'is-invalid': validationErrors.categoryId }"
+                    name="category"
                 >
                     <option value="" selected>Все</option>
                     <option
@@ -68,8 +101,28 @@
                         {{ category.title }}
                     </option>
                 </select>
-                <p v-if="validationErrors.categoryId" class="invalid-feedback">
-                    {{ validationErrors.categoryId }}
+            </div>
+
+            <div class="form-group">
+                <label style="font-weight: bold; font-size: 1rem" for="subcategory">Подкатегория:</label>
+                <p><a href="/subcategories">на страницу добавления подкатегорий</a></p>
+                <select
+                    v-model="subcategorySlug"
+                    class="form-control"
+                    :class="{ 'is-invalid': validationErrors.subcategorySlug }"
+                    name="subcategory"
+                >
+                    <option value="" selected>Все</option>
+                    <option
+                        v-for="subcategory in filteredSubcategories"
+                        :key="subcategory.id"
+                        :value="subcategory.slug"
+                    >
+                        {{ subcategory.title }}
+                    </option>
+                </select>
+                <p v-if="validationErrors.subcategorySlug" class="invalid-feedback">
+                    {{ validationErrors.subcategorySlug }}
                 </p>
             </div>
 
@@ -134,47 +187,29 @@
                     </g>
                 </svg>
             </div>
-            <div v-else-if="filteredProducts.length > 0" class="row">
-                <div class="card mb-3" style="max-width: 540px;">
-                    <div
-                        v-for="product in filteredProducts"
-                        :key="product.id"
-                        class="row g-0 m-2"
+            <ul v-else-if="filteredProducts.length > 0">
+                <li v-for="product in filteredProducts"
+                    :key="product.id"
+                    class="row justify-content-between mb-2 p-2"
+                >
+                    <div class="col-11 p-2 border-bottom">{{ product.title }} / {{ product.subcategory_slug }}</div>
+                    <button
+                        @click="removeProduct(product.id)"
+                        type="button"
+                        class="btn btn-outline-danger btn-sm col-1"
+                        aria-label="Close"
                     >
-                        <div class="col-md-5">
-                            <img
-                                :src="
-                                    product.picture
-                                        ? './storage/img/' +
-                                          product.picture.split('/')[1]
-                                        : './img/cap.png'
-                                "
-                                :alt="product.title"
-                                style="width: 194px; height: 300px"
-                            />
-                        </div>
-                        <div class="col-md-7">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ product.title }}</h5>
-                                <br />
-                                <button
-                                    @click="removeProduct(product.id)"
-                                    type="button"
-                                    class="btn btn-danger"
-                                    aria-label="Close"
-                                >
-                                    Удалить
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                        Удалить
+                    </button>
+                </li>
+            </ul>
         </div>
     </div>
 </template>
 
 <script>
+import { getCategories, getSubcategories, getAuthors, getProducts } from '../../get.js';
+import { isValid, fillErrors } from '../../validate.js';
 export default {
     data() {
         return {
@@ -182,10 +217,14 @@ export default {
             productDescription: "",
             productPrice: "",
             picture: [],
-            categoryId: "",
+            subcategorySlug: "",
+            productAuthor: "",
             
             products: [],
             categories: [],
+            subcategories: [],
+            authors: [],
+            categoryId: "",
             
             loading: true,
             processing: false,
@@ -193,38 +232,55 @@ export default {
                 name: "",
                 description: "",
                 price: "",
-                categoryId: ""
+                subcategorySlug: "",
+                authorId: "",
+                productAuthor: "",
             }
         };
     },
     computed: {
+        filteredSubcategories() {
+            return this.subcategories.filter(subcat =>
+                this.categoryId ? subcat["category_id"] === this.categoryId : true
+            );   
+        },
+        
         filteredProducts() {
             return this.products.filter(prod =>
-                this.categoryId ? prod["category_id"] === this.categoryId : true
+                this.subcategorySlug ? prod["subcategory_slug"] === this.subcategorySlug : true
             );
+        },
+
+        author() {
+            return this.authors.find((a) => a.title === this.productAuthor) ?? { title: "", id: ""};
+        },
+
+        filteredAuthors() {
+            if (this.productAuthor.length > 1) {
+                return this.authors
+                    .filter((a) => a.title.split(' ')
+                        .some((name) => name.toLowerCase().startsWith(this.productAuthor.toLowerCase())))
+                    .slice(0, 10);
+            }
+            return [];
         }
+    },
+    
+    created() {
+        getProducts()
+            .then((data) => this.products = data)
+            .finally(() => this.loading = false);
+        getCategories().then((data) => this.categories = data);
+        getSubcategories().then((data) => this.subcategories = data);
+    },
+    
+    mounted() {
+        getAuthors().then((data) => this.authors = data);
     },
 
     methods: {
         getPicture(e) {
             this.picture = e.target.files[0];
-        },
-
-        getCategories() {
-            axios.get("/categories/get").then(({ data }) => {
-                this.categories = data;
-            });
-        },
-
-        getProducts() {
-            axios
-                .get("/products/get")
-                .then(({ data }) => {
-                    this.products = data;
-                })
-                .finally(() => {
-                    this.loading = false;
-                });
         },
 
         createNewProduct() {
@@ -234,11 +290,13 @@ export default {
                 name: this.productName,
                 description: this.productDescription,
                 price: this.productPrice,
-                categoryId: this.categoryId,
+                subcategorySlug: this.subcategorySlug,
                 picture: this.picture,
+                authorId: this.author.id,
             };
 
-            if (this.validate(params)) {
+            if (!isValid(params, ['picture'])) {
+                fillErrors(this.validationErrors, params, ['picture'])
                 this.processing = false;
                 return;
             }
@@ -257,18 +315,17 @@ export default {
                 });
         },
 
-        validate(params) {
-            let errors = 0;
-            for (const key in params) {
-                if (key === 'categoryId' && params[key].length === 0) {
-                    this.validationErrors[key] = 'Выберите категорию';
-                    errors += 1;
-                } else if (params[key].length === 0 && key !== 'picture') {
-                    this.validationErrors[key] = 'Поле не должно быть пустым';
-                    errors += 1;
-                }
+        createAuthor() {
+            if (this.productAuthor.length === 0) {
+                this.validationErrors.productAuthor = 'Поле не должно быть пустым';
+                return;
             }
-            return errors;
+
+            this.processing = true;
+            axios
+                .post("authors/create", { name: this.productAuthor })
+                .then(() => document.location.reload())
+                .finally(() => this.processing = false);
         },
 
         removeProduct(productId) {
@@ -281,24 +338,23 @@ export default {
         }
     },
 
-    mounted() {
-        this.getCategories();
-        this.getProducts();
-    },
-
     watch: {
         productName() {
             this.validationErrors.name = "";
         },
-        categoryId() {
-            this.validationErrors.categoryId = "";
+        subcategorySlug() {
+            this.validationErrors.subcategorySlug = "";
         },
         productDescription() {
             this.validationErrors.description = "";
         },
         productPrice() {
             this.validationErrors.price = "";
-        }
+        },
+        productAuthor() {
+            this.validationErrors.authorId = "";
+            this.validationErrors.productAuthor = "";
+        },
     }
 };
 </script>
