@@ -4,8 +4,9 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\AuthorController;
-use App\Http\Controllers\PublisherController;
+use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,25 +26,36 @@ Route::get('/', function () {
 Route::get('/categories/get', [CategoryController::class, 'get']);
 Route::get('/', [CategoryController::class, 'welcome'])->name('welcome');
 Route::get('/categories/{categoryId}', [CategoryController::class, 'show']);
-Route::get('/categories', [CategoryController::class, 'list'])->name('categories');
-Route::post('/categories/create', [CategoryController::class, 'create']);
-Route::delete('/categories/delete', [CategoryController::class, 'delete']);
 
-Route::get('/products', [ProductController::class, 'list'])->name('products');
-Route::post('/products/create', [ProductController::class, 'create']);
 Route::get('/products/get', [ProductController::class, 'get']);
-Route::delete('/products/delete', [ProductController::class, 'delete'])->name('product.delete');
-
 
 Route::get('/subcategories/get', [SubcategoryController::class, 'get']);
-Route::post('/subcategories/create', [SubcategoryController::class, 'create']);
-Route::delete('/subcategories/delete', [SubcategoryController::class, 'delete']);
 Route::get('/subcategories/{subcategorySlug}', [SubcategoryController::class, 'show']);
-Route::get('/subcategories', [SubcategoryController::class, 'list'])->name('subcategories');
 
 Route::get('/authors/get', [AuthorController::class, 'get']);
-Route::post('/authors/create', [AuthorController::class, 'create']);
-Route::delete('/authors/delete', [AuthorController::class, 'delete']);
+
+Route::prefix('admin')->middleware('admin')->group(function() {
+    Route::get('/categories', [CategoryController::class, 'list'])->name('categories');
+    Route::post('/categories/create', [CategoryController::class, 'create']);
+    Route::delete('/categories/delete', [CategoryController::class, 'delete']);
+
+    Route::get('/products', [ProductController::class, 'list'])->name('products');
+    Route::post('/products/create', [ProductController::class, 'create']);
+    Route::delete('/products/delete', [ProductController::class, 'delete'])->name('product.delete');
+
+    Route::post('/subcategories/create', [SubcategoryController::class, 'create']);
+    Route::delete('/subcategories/delete', [SubcategoryController::class, 'delete']);
+    Route::get('/subcategories', [SubcategoryController::class, 'list'])->name('subcategories');
+
+    Route::post('/authors/create', [AuthorController::class, 'create']);
+    Route::delete('/authors/delete', [AuthorController::class, 'delete']);
+});
+
+Route::prefix('order')->middleware('auth')->group(function() {
+    Route::get('get', [OrderController::class, 'get']);
+    Route::post('addProduct', [OrderController::class, 'addProduct']);
+    Route::post('deleteProduct', [OrderController::class, 'deleteProduct']);
+});
 
 Auth::routes();
 

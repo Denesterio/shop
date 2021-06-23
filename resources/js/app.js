@@ -5,9 +5,12 @@
  */
 
 require("./bootstrap");
-import BootstrapVue from "bootstrap-vue"
+import BootstrapVue from "bootstrap-vue";
+import VueSweetalert2 from 'vue-sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 window.Vue = require("vue").default;
 Vue.use(BootstrapVue);
+Vue.use(VueSweetalert2);
 
 /**
  * The following block of code may be used to automatically register your

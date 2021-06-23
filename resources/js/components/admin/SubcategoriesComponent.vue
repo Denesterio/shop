@@ -2,8 +2,8 @@
     <div class="container mt-5">
         <div class="container-xl mb-4">
             <h1>{{ title }}</h1>
-            <p><a href="/categories">На страницу добавления категорий</a></p>
-            <p><a href="/products">На страницу добавления товаров</a></p>
+            <p><a href="/admin/categories">На страницу добавления категорий</a></p>
+            <p><a href="/admin/products">На страницу добавления товаров</a></p>
 
             <div class="form-group">
                 <input
@@ -27,6 +27,7 @@
                     class="form-control"
                     :class="{ 'is-invalid': validationErrors.slug }"
                     placeholder="Заполнитель в строке адреса"
+                    disabled
                 />
 
                 <p
@@ -143,6 +144,7 @@
 
 <script>
 import { getCategories, getSubcategories } from '../../get.js';
+import transliterate from '../../transliterate.js';
 import { isValid, fillErrors } from '../../validate.js';
 export default {
     props: ["title"],
@@ -150,11 +152,10 @@ export default {
         return {
             subcategoryName: "",
             categoryId: "",
-            subcategorySlug: "",
-            
+
             subcategories: [],
             categories: [],
-            
+
             loading: true,
             processing: false,
             validationErrors: {
@@ -172,10 +173,14 @@ export default {
     },
 
     computed: {
+        subcategorySlug() {
+            return transliterate.fromCyrillic(this.subcategoryName);
+        },
+
         filteredSubcategories() {
             return this.subcategories.filter(subcat =>
                 this.categoryId ? subcat["category_id"] === this.categoryId : true
-            ); 
+            );
         }
     },
 
@@ -195,7 +200,7 @@ export default {
             }
 
             axios
-                .post("/subcategories/create", params)
+                .post("/admin/subcategories/create", params)
                 .then(() => {
                     document.location.reload();
                 })
@@ -205,7 +210,7 @@ export default {
         },
         removeSubcategory(subcategoryId) {
             axios
-                .post("/subcategories/delete", {
+                .post("/admin/subcategories/delete", {
                     id: subcategoryId,
                     _method: "DELETE"
                 })

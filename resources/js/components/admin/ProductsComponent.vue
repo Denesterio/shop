@@ -45,7 +45,7 @@
                 <datalist v-if="filteredAuthors.length > 0"
                           id="author"
                 >
-                    <option 
+                    <option
                         v-for="author in filteredAuthors"
                         :key="author.id"
                         :value="author.title"></option>
@@ -86,7 +86,7 @@
 
             <div class="form-group">
                 <label style="font-weight: bold; font-size: 1rem" for="category">Категория:</label>
-                <p><a href="/categories">на страницу добавления категорий</a></p>
+                <p><a href="/admin/categories">на страницу добавления категорий</a></p>
                 <select
                     v-model="categoryId"
                     class="form-control"
@@ -105,7 +105,7 @@
 
             <div class="form-group">
                 <label style="font-weight: bold; font-size: 1rem" for="subcategory">Подкатегория:</label>
-                <p><a href="/subcategories">на страницу добавления подкатегорий</a></p>
+                <p><a href="/admin/subcategories">на страницу добавления подкатегорий</a></p>
                 <select
                     v-model="subcategorySlug"
                     class="form-control"
@@ -219,13 +219,13 @@ export default {
             picture: [],
             subcategorySlug: "",
             productAuthor: "",
-            
+
             products: [],
             categories: [],
             subcategories: [],
             authors: [],
             categoryId: "",
-            
+
             loading: true,
             processing: false,
             validationErrors: {
@@ -242,9 +242,9 @@ export default {
         filteredSubcategories() {
             return this.subcategories.filter(subcat =>
                 this.categoryId ? subcat["category_id"] === this.categoryId : true
-            );   
+            );
         },
-        
+
         filteredProducts() {
             return this.products.filter(prod =>
                 this.subcategorySlug ? prod["subcategory_slug"] === this.subcategorySlug : true
@@ -265,7 +265,7 @@ export default {
             return [];
         }
     },
-    
+
     created() {
         getProducts()
             .then((data) => this.products = data)
@@ -273,7 +273,7 @@ export default {
         getCategories().then((data) => this.categories = data);
         getSubcategories().then((data) => this.subcategories = data);
     },
-    
+
     mounted() {
         getAuthors().then((data) => this.authors = data);
     },
@@ -304,9 +304,9 @@ export default {
             for (const param in params) {
                 fData.append(param, params[param]);
             }
-            
+
             axios
-                .post("/products/create", fData)
+                .post("/admin/products/create", fData)
                 .then(() => {
                     document.location.reload();
                 })
@@ -323,14 +323,14 @@ export default {
 
             this.processing = true;
             axios
-                .post("authors/create", { name: this.productAuthor })
+                .post("/admin/authors/create", { name: this.productAuthor })
                 .then(() => document.location.reload())
                 .finally(() => this.processing = false);
         },
 
         removeProduct(productId) {
             axios
-                .post("/products/delete", {
+                .post("/admin/products/delete", {
                     id: productId,
                     _method: "DELETE"
                 })

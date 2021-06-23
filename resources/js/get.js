@@ -11,7 +11,11 @@ const getAuthors = () => {
 };
 
 const getProducts = () => {
-    return axios.get("/products/get").then(({ data }) => data)
+    return axios.get("/products/get").then(({ data }) => data);
 };
 
-export { getCategories, getSubcategories, getAuthors, getProducts };
+const getOrders = () => {
+    return axios.get("/order/get").then(({ data }) => data);
+}
+
+export { getCategories, getSubcategories, getAuthors, getProducts, getOrders };

@@ -2,8 +2,8 @@
     <div class="container mt-5">
         <div class="container-xl mb-4">
             <h1>{{ title }}</h1>
-            <p><a href="/subcategories">на страницу добавления подкатегорий</a></p>
-            <p><a href="/products">на страницу добавления товаров</a></p>
+            <p><a href="/admin/subcategories">на страницу добавления подкатегорий</a></p>
+            <p><a href="/admin/products">на страницу добавления товаров</a></p>
 
             <div class="form-group">
                 <input
@@ -130,9 +130,9 @@ export default {
         return {
             categoryName: "",
             categoryDesc: "",
-            
+
             categories: [],
-            
+
             loading: true,
             processing: false,
             validationErrors: {
@@ -159,9 +159,9 @@ export default {
                 this.processing = false;
                 return;
             }
-            
+
             axios
-                .post("/categories/create", params)
+                .post("/admin/categories/create", params)
                 .then(() => {
                     document.location.reload();
                 })
@@ -171,7 +171,7 @@ export default {
         },
         removeCategory(categoryId) {
             axios
-                .post("/categories/delete", {
+                .post("/admin/categories/delete", {
                     id: categoryId,
                     _method: "DELETE"
                 })
