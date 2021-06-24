@@ -67,6 +67,10 @@ class OrderController extends Controller
             ->first();
 
         $ordersProduct->quantity -= 1;
-        $ordersProduct->save();
+        if ($ordersProduct->quantity === 0) {
+            $ordersProduct->delete();
+        } else {
+            $ordersProduct->save();
+        }
     }
 }

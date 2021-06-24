@@ -27,23 +27,24 @@ const transliterateText = {
     ч: 'ch',
     ш: 'sh',
     щ: 'sch',
-    ъ: "",
+    ъ: '',
     ы: 'i',
-    ь: "",
+    ь: '',
     э: 'e',
     ю: 'yu',
     я: 'ya',
   },
 
-  fromCyrillic: function (text) {
+  fromCyrillic: function(text) {
     const splitted = text.split(' ');
     const result = splitted.map((word) => {
-      return word.toLowerCase()
+      return word
+        .toLowerCase()
         .split('')
         .map((char) => this.objectForTranslite[char] || char)
         .join('');
     });
-    return result.join('_');
+    return result.join('-');
   },
 };
 
