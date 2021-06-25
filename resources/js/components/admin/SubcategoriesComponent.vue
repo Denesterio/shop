@@ -18,24 +18,24 @@
         </p>
       </div>
 
-      <div class="form-group">
-        <input
-          v-if="slugStatus"
-          v-focus
-          v-model="editedSlug"
-          class="form-control"
-          :class="{ 'is-invalid': validationErrors.slug }"
-          placeholder="Заполнитель в строке адреса"
-        />
-        <div v-else @click.once="prepareForEditSlug" class="form-control text-muted">
-          {{
-            subcategorySlug || 'Заполнитель в строке адреса (кликните по полю для редактирования)'
-          }}
-        </div>
+      <div class="form-group container">
+        <div class="row">
+          <input
+            v-model.trim="subcategorySlug"
+            class="form-control col-md-9"
+            :class="{ 'is-invalid': validationErrors.slug }"
+            placeholder="Заполнитель в строке адреса"
+            :disabled="!slugStatus"
+          />
 
-        <p v-if="validationErrors.slug" class="invalid-feedback">
-          {{ validationErrors.slug }}
-        </p>
+          <button @click="prepareForEditSlug" class="btn btn-dark col-md-2 ml-3">
+            Редактировать
+          </button>
+
+          <p v-if="validationErrors.slug" class="invalid-feedback">
+            {{ validationErrors.slug }}
+          </p>
+        </div>
       </div>
 
       <div class="form-group">
@@ -117,18 +117,13 @@
   import { deleteSubcategory } from '../../api/delete.js';
   import transliterate from '../../transliterate.js';
   import { isValid, fillErrors } from '../../validate.js';
-  Vue.directive('focus', {
-    inserted: function(el) {
-      el.focus();
-    },
-  });
   export default {
     props: ['title'],
     data() {
       return {
         subcategoryName: '',
         categoryId: '',
-        editedSlug: '',
+        slug: '',
         slugStatus: null,
 
         subcategories: [],
@@ -152,7 +147,10 @@
 
     computed: {
       subcategorySlug() {
-        return transliterate.fromCyrillic(this.subcategoryName);
+        if (!this.slugStatus) {
+          return transliterate.fromCyrillic(this.subcategoryName);
+        }
+        return this.slug;
       },
 
       filteredSubcategories() {
@@ -164,8 +162,9 @@
 
     methods: {
       prepareForEditSlug() {
-        this.editedSlug = this.subcategorySlug;
         this.slugStatus = 'edited';
+        console.log(this.slug);
+        console.log(this.subcategorySlug);
       },
 
       createNewSubcategory() {
@@ -173,7 +172,7 @@
         const params = {
           name: this.subcategoryName,
           categoryId: this.categoryId,
-          slug: this.slugStatus === 'edited' ? this.editedSlug : this.subcategorySlug,
+          slug: this.subcategorySlug,
         };
 
         if (!isValid(params)) {

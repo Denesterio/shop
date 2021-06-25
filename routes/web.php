@@ -30,7 +30,7 @@ Route::get('/categories/{categoryId}', [CategoryController::class, 'show']);
 Route::get('/products/get', [ProductController::class, 'get']);
 
 Route::get('/subcategories/get', [SubcategoryController::class, 'get']);
-Route::get('/{subcategorySlug}', [SubcategoryController::class, 'show']);
+Route::get('/subcategories/{subcategorySlug}', [SubcategoryController::class, 'show']);
 
 Route::get('/authors/get', [AuthorController::class, 'get']);
 
@@ -52,10 +52,9 @@ Route::prefix('admin')->middleware('admin')->group(function() {
 });
 
 Route::prefix('order')->middleware('auth')->group(function() {
-    Route::get('/get', [OrderController::class, 'get']);
-    Route::post('/addProduct', [OrderController::class, 'addProduct']);
-    Route::post('/deleteProduct', [OrderController::class, 'deleteProduct']);
-    Route::get('/cart', [OrderController::class, 'showCart'])->name('cart');
+    Route::get('get', [OrderController::class, 'get']);
+    Route::post('addProduct', [OrderController::class, 'addProduct']);
+    Route::post('deleteProduct', [OrderController::class, 'deleteProduct']);
 });
 
 Auth::routes();

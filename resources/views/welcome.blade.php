@@ -1,17 +1,31 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-@section('content')
+        <title>Главная</title>
+        <link rel="stylesheet" href='/css/app.css'>
+    </head>
+    <body>
+    @include('layouts.header');
+        <div id="app">
+            <div class="container-xl mt-3">
                 <div class="row">
-                    <aside class="col-md-4">
-                        <left-menu-component
-                            :categories='{{$categories}}'
-                            :subcategories='{{$subcategories}}'
-                        ></left-menu-component>
-                    </aside>
-                    <div class="col-md-8">
-                        <welcome-category-list-component
-                            :categories='{{$categories}}'
-                        ></welcome-category-list-component>
-                    </div>
+                        <b-col cols="4">
+                            <left-menu-component
+                                :categories='{{$categories}}'
+                                :subcategories='{{$subcategories}}'
+                            ></left-menu-component>
+                            </b-col>
+                        <b-col cols="8">
+                            <category-list-component
+                                :categories='{{$categories}}'
+                            ></category-list-component>
+                        </b-col>
                 </div>
-@endsection
+            </div>
+        </div>
+        <script src='/js/app.js'></script>
+    </body>
+</html>

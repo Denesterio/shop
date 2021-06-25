@@ -9,7 +9,7 @@ class ProductController extends Controller
 {
     public function list ()
     {
-        return view('productsForAdmin');
+        return view('products');
     }
 
     public function get ()
@@ -28,7 +28,7 @@ class ProductController extends Controller
         if ($request->hasFile('picture')) {
             $filename = $request->file('picture')->store('img', 'public');
         }
-
+        
         Product::create([
             'title' => $name,
             'subcategory_slug' => $subcategorySlug,

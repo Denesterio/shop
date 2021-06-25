@@ -15,6 +15,7 @@ class Admin
      * @param  \Closure  $next
      * @return mixed
      */
+
     public function handle(Request $request, Closure $next)
     {
         $user = Auth::user();

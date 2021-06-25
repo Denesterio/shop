@@ -5,10 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
-use App\Models\Order;
-use App\Models\OrdersProduct;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
@@ -23,7 +20,7 @@ class CategoryController extends Controller
     }
 
     public function show ($categoryId)
-    {
+    {        
         $products = DB::table('subcategories')
             ->select('category_id', 'products.*')
             ->join('products', 'subcategories.slug', '=', 'products.subcategory_slug')
@@ -33,30 +30,17 @@ class CategoryController extends Controller
         $categories = Category::get();
         $subcategories = Subcategory::get();
 
-        // $user = Auth::user();
-        // if ($user) {
-        //     $order = Order::where('user_id', $user->id)
-        //     ->where('status', 0)
-        //     ->first();
-        // }
-
-        // $orderProducts = collect();
-        // if (isset($order)) {
-        //     $orderProducts = OrdersProduct::where('order_id', $order->id)->get();
-        // }
-
         return view('categoryProducts', [
             'products' => $products,
             'categories' => $categories,
-            'subcategories' => $subcategories,
-            // 'orderProducts' => $orderProducts,
+            'subcategories' => $subcategories
         ]);
     }
-
+    
     public function list ()
     {
         $categories = Category::get();
-        return view('categoriesForAdmin', [
+        return view('categories', [
             'categories' => $categories,
             'title' => 'Категории'
             ]);
@@ -64,6 +48,7 @@ class CategoryController extends Controller
 
     public function create(Request $request)
     {
+        sleep(1);
         Category::create([
             'title' => $request['name'],
             'description' => $request['desc']
@@ -72,6 +57,7 @@ class CategoryController extends Controller
 
     public function get()
     {
+        sleep(1);
         return Category::get();
     }
 

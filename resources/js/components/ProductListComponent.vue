@@ -1,26 +1,30 @@
 <template>
   <div>
-    <product-card-component
+    <product-component
       v-for="product in products"
       :product="product"
       :key="product.id"
       :orderProducts="orderProducts"
     >
-    </product-card-component>
+    </product-component>
   </div>
 </template>
 
 <script>
-  import ProductCardComponent from './ProductCardComponent.vue';
-  // import { getOrders } from '../api/get.js';
+  import ProductComponent from './ProductComponent.vue';
+  import { getOrders } from '../api/get.js';
   export default {
-    props: ['products', 'orderProducts'],
-    components: { ProductCardComponent },
-
+    props: ['products'],
+    components: { ProductComponent },
+    data() {
+      return {
+        orderProducts: [],
+      };
+    },
     mounted() {
-      // getOrders().then((data) => {
-      //   this.orderProducts = data.orders;
-      // });
+      getOrders().then((data) => {
+        this.orderProducts = data.orders;
+      });
     },
   };
 </script>
