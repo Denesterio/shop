@@ -40,22 +40,22 @@ class OrderController extends Controller
         return $ordersProduct;
     }
 
-    public function get (Request $request)
-    {
-        $user = Auth::user();
-        $order = Order::where('user_id', $user->id)->where('status', 0)->first();
+    // public function get (Request $request)
+    // {
+    //     $user = Auth::user();
+    //     $order = Order::where('user_id', $user->id)->where('status', 0)->first();
 
-        if (!$order) {
-            $orders = [];
-        } else {
-            $ordersProducts = OrdersProduct::where('order_id', $order->id)->get();
-            $orders = [
-                'orders' => $ordersProducts,
-            ];
-        }
+    //     if (!$order) {
+    //         $orders = [];
+    //     } else {
+    //         $ordersProducts = OrdersProduct::where('order_id', $order->id)->get();
+    //         $orders = [
+    //             'orders' => $ordersProducts,
+    //         ];
+    //     }
 
-        return $orders;
-    }
+    //     return $orders;
+    // }
 
     public function deleteProduct (Request $request)
     {

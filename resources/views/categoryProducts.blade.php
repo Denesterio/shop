@@ -21,7 +21,8 @@
                         </b-col>
                     <b-col cols="9">
                         <product-list-component
-                            :products='{{$products}}'>
+                            :products='{{$products}}'
+                            :order-products='{{$orderProducts}}'>
                         </product-list-component>
                     </b-col>
                 </div>

@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Subcategory;
+use App\Models\Order;
+use App\Models\OrdersProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
@@ -20,7 +23,7 @@ class CategoryController extends Controller
     }
 
     public function show ($categoryId)
-    {        
+    {
         $products = DB::table('subcategories')
             ->select('category_id', 'products.*')
             ->join('products', 'subcategories.slug', '=', 'products.subcategory_slug')
@@ -30,13 +33,26 @@ class CategoryController extends Controller
         $categories = Category::get();
         $subcategories = Subcategory::get();
 
+        $user = Auth::user();
+        if ($user) {
+            $order = Order::where('user_id', $user->id)
+            ->where('status', 0)
+            ->first();
+        }
+
+        $orderProducts = collect();
+        if (isset($order)) {
+            $orderProducts = OrdersProduct::where('order_id', $order->id)->get();
+        }
+
         return view('categoryProducts', [
             'products' => $products,
             'categories' => $categories,
-            'subcategories' => $subcategories
+            'subcategories' => $subcategories,
+            'orderProducts' => $orderProducts,
         ]);
     }
-    
+
     public function list ()
     {
         $categories = Category::get();

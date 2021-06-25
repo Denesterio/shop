@@ -12,19 +12,8 @@
 
 <script>
   import ProductComponent from './ProductComponent.vue';
-  import { getOrders } from '../api/get.js';
   export default {
-    props: ['products'],
+    props: ['products', 'orderProducts'],
     components: { ProductComponent },
-    data() {
-      return {
-        orderProducts: [],
-      };
-    },
-    mounted() {
-      getOrders().then((data) => {
-        this.orderProducts = data.orders;
-      });
-    },
   };
 </script>
