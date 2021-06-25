@@ -7,6 +7,7 @@ use App\Models\OrdersProduct;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -72,5 +73,24 @@ class OrderController extends Controller
         } else {
             $ordersProduct->save();
         }
+    }
+
+    public function showCart ()
+    {
+        $user = Auth::user();
+        $order = Order::where('user_id', $user->id)->where('status', 0)->first();
+        $ordersProduct = collect();
+        if (isset($order)) {
+            $ordersProduct = DB::table('orders_products as op')
+                ->select(
+                    'p.*',
+                    'op.quantity'
+                )
+                ->join('products as p', 'p.id', 'op.product_id')
+                ->where('op.order_id', $order->id)
+                ->get();
+        }
+
+        return view('/cart', ['ordersProduct' => $ordersProduct]);
     }
 }

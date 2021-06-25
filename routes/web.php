@@ -57,6 +57,10 @@ Route::prefix('order')->middleware('auth')->group(function() {
     Route::post('deleteProduct', [OrderController::class, 'deleteProduct']);
 });
 
+Route::middleware('auth')->group(function() {
+    Route::get('/cart', [OrderController::class, 'showCart'])->name('cart');
+});
+
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

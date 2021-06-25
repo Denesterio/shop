@@ -38,6 +38,10 @@
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('cart') }}">Корзина</a>
+                        </li>
+
                         <!-- Authentication Links -->
                         @guest
                             @if (Route::has('login'))
@@ -75,7 +79,7 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <main class="container-xl mt-4">
             @yield('content')
         </main>
     </div>
