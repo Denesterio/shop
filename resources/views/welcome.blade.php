@@ -9,9 +9,9 @@
             ></left-menu-component>
         </aside>
         <main class="col-md-8">
-            <category-list-component
+            <welcome-category-list-component
                 :categories='{{$categories}}'
-            ></category-list-component>
+            ></welcome-category-list-component>
         </main>
     </div>
 @endsection

@@ -36,8 +36,8 @@ Vue.component(
     require("./components/admin/ProductsComponent.vue").default
 );
 Vue.component(
-    'category-list-component',
-    require('./components/CategoryListComponent.vue').default
+    'welcome-category-list-component',
+    require('./components/WelcomeCategoryListComponent.vue').default
 );
 Vue.component(
     'product-list-component',

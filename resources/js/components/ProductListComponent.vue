@@ -1,19 +1,19 @@
 <template>
   <div>
-    <product-component
+    <product-card-component
       v-for="product in products"
       :product="product"
       :key="product.id"
       :orderProducts="orderProducts"
     >
-    </product-component>
+    </product-card-component>
   </div>
 </template>
 
 <script>
-  import ProductComponent from './ProductComponent.vue';
+  import ProductCardComponent from './ProductCardComponent.vue';
   export default {
     props: ['products', 'orderProducts'],
-    components: { ProductComponent },
+    components: { ProductCardComponent },
   };
 </script>

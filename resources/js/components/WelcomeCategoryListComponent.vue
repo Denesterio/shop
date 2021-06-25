@@ -1,20 +1,20 @@
 <template>
     <div>
-        <category-component
+        <welcome-category-card-component
             v-for='category in categories'
             :category="category"
             :key='category.id'
         >
-        </category-component>
+        </welcome-category-card-component>
     </div>
 </template>
 
 <script>
-    import CategoryComponent from './CategoryComponent.vue';
+    import WelcomeCategoryCardComponent from './WelcomeCategoryCardComponent.vue';
 
 export default {
     props: ['categories'],
-    components: {CategoryComponent},
+    components: {WelcomeCategoryCardComponent},
     mounted () {
 
     }
