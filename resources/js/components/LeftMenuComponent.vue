@@ -20,7 +20,7 @@
                 (subcat) => subcat['category_id'] === category.id
               )"
               :key="subcategory.id"
-              :href="`/subcategories/${subcategory.slug}`"
+              :href="`/${subcategory.slug}`"
             >
               {{ subcategory.title }}
             </a>

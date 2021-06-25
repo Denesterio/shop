@@ -4,11 +4,11 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require("./bootstrap");
-import BootstrapVue from "bootstrap-vue";
+require('./bootstrap');
+import BootstrapVue from 'bootstrap-vue';
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
-window.Vue = require("vue").default;
+window.Vue = require('vue').default;
 Vue.use(BootstrapVue);
 Vue.use(VueSweetalert2);
 
@@ -24,29 +24,20 @@ Vue.use(VueSweetalert2);
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component(
-    "categories-component",
-    require("./components/admin/CategoriesComponent.vue").default
+  'categories-component',
+  require('./components/admin/CategoriesComponent.vue').default
 );
 Vue.component(
-    "subcategories-component",
-    require("./components/admin/SubcategoriesComponent.vue").default
+  'subcategories-component',
+  require('./components/admin/SubcategoriesComponent.vue').default
 );
+Vue.component('products-component', require('./components/admin/ProductsComponent.vue').default);
 Vue.component(
-    "products-component",
-    require("./components/admin/ProductsComponent.vue").default
+  'welcome-category-list-component',
+  require('./components/WelcomeCategoryListComponent.vue').default
 );
-Vue.component(
-    'category-list-component',
-    require('./components/CategoryListComponent.vue').default
-);
-Vue.component(
-    'product-list-component',
-    require('./components/ProductListComponent.vue').default
-);
-Vue.component(
-    'left-menu-component',
-    require('./components/LeftMenuComponent.vue').default
-)
+Vue.component('product-list-component', require('./components/ProductListComponent.vue').default);
+Vue.component('left-menu-component', require('./components/LeftMenuComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -55,5 +46,5 @@ Vue.component(
  */
 
 const app = new Vue({
-    el: "#app"
+  el: '#app',
 });

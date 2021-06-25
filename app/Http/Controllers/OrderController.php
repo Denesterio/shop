@@ -7,6 +7,7 @@ use App\Models\OrdersProduct;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -40,21 +41,40 @@ class OrderController extends Controller
         return $ordersProduct;
     }
 
-    public function get (Request $request)
+    // public function get (Request $request)
+    // {
+    //     $user = Auth::user();
+    //     $order = Order::where('user_id', $user->id)->where('status', 0)->first();
+
+    //     if (!$order) {
+    //         $orders = [];
+    //     } else {
+    //         $ordersProducts = OrdersProduct::where('order_id', $order->id)->get();
+    //         $orders = [
+    //             'orders' => $ordersProducts,
+    //         ];
+    //     }
+
+    //     return $orders;
+    // }
+
+    public function showCart ()
     {
         $user = Auth::user();
         $order = Order::where('user_id', $user->id)->where('status', 0)->first();
-
-        if (!$order) {
-            $orders = [];
-        } else {
-            $ordersProducts = OrdersProduct::where('order_id', $order->id)->get();
-            $orders = [
-                'orders' => $ordersProducts,
-            ];
+        $ordersProduct = collect();
+        if (isset($order)) {
+            $ordersProduct = DB::table('orders_products as op')
+                ->select(
+                    'p.*',
+                    'op.quantity'
+                )
+                ->join('products as p', 'p.id', 'op.product_id')
+                ->where('op.order_id', $order->id)
+                ->get();
         }
 
-        return $orders;
+        return view('cart', ['ordersProduct' => $ordersProduct]);
     }
 
     public function deleteProduct (Request $request)
