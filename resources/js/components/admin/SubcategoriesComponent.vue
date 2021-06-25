@@ -18,24 +18,27 @@
         </p>
       </div>
 
-      <div class="form-group container">
-        <div class="row">
+      <div class="form-group">
           <input
-            v-model.trim="subcategorySlug"
-            class="form-control col-md-9"
+            v-if="slugStatus"
+            v-model="slug"
+            v-focus
+            class="form-control"
             :class="{ 'is-invalid': validationErrors.slug }"
             placeholder="Заполнитель в строке адреса"
-            :disabled="!slugStatus"
           />
 
-          <button @click="prepareForEditSlug" class="btn btn-dark col-md-2 ml-3">
-            Редактировать
-          </button>
+          <div
+            v-else
+            @click="prepareForEditSlug"
+            class="form-control text-muted"
+          >
+            {{ subcategorySlug || 'Заполнитель в строке адреса (кликните по полю для редактирования)' }}
+          </div>
 
           <p v-if="validationErrors.slug" class="invalid-feedback">
             {{ validationErrors.slug }}
           </p>
-        </div>
       </div>
 
       <div class="form-group">
@@ -117,6 +120,13 @@
   import { deleteSubcategory } from '../../api/delete.js';
   import transliterate from '../../transliterate.js';
   import { isValid, fillErrors } from '../../validate.js';
+
+  Vue.directive('focus', {
+    inserted: function (el) {
+        el.focus()
+    }
+  });
+
   export default {
     props: ['title'],
     data() {
@@ -150,7 +160,6 @@
         if (!this.slugStatus) {
           return transliterate.fromCyrillic(this.subcategoryName);
         }
-        return this.slug;
       },
 
       filteredSubcategories() {
@@ -162,9 +171,8 @@
 
     methods: {
       prepareForEditSlug() {
+        this.slug = this.subcategorySlug;
         this.slugStatus = 'edited';
-        console.log(this.slug);
-        console.log(this.subcategorySlug);
       },
 
       createNewSubcategory() {
@@ -172,7 +180,7 @@
         const params = {
           name: this.subcategoryName,
           categoryId: this.categoryId,
-          slug: this.subcategorySlug,
+          slug: this.slugStatus ? this.slug : subcategorySlug,
         };
 
         if (!isValid(params)) {
@@ -202,8 +210,8 @@
       categoryId() {
         this.validationErrors.categoryId = '';
       },
-      subcategorySlug() {
-        this.validationErrors.subcategorySlug = '';
+      slug() {
+        this.validationErrors.slug = '';
       },
     },
   };
