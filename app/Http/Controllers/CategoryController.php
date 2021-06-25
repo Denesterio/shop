@@ -56,7 +56,7 @@ class CategoryController extends Controller
     public function list ()
     {
         $categories = Category::get();
-        return view('categories', [
+        return view('admin/categories', [
             'categories' => $categories,
             'title' => 'Категории'
             ]);
