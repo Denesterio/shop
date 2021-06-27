@@ -52,6 +52,13 @@ Vue.component(
     require("./components/admin/TagsComponent.vue").default
 );
 
+
+Vue.directive('focus', {
+  inserted: function (el) {
+      el.focus()
+  }
+});
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

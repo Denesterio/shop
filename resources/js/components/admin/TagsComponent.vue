@@ -9,6 +9,7 @@
       <div class="form-group">
         <input
           v-model.trim="tagName"
+          v-focus
           class="form-control"
           :class="{ 'is-invalid': validationErrors.name }"
           placeholder="Название тэга"

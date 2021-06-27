@@ -16,8 +16,11 @@ class SubcategoryController extends Controller
     public function list ()
     {
         $subcategories = Subcategory::get();
+        $categories = Category::get();
+
         return view('admin/subcategories', [
             'subcategories' => $subcategories,
+            'categories' => $categories,
             'title' => 'Подкатегории'
             ]);
     }

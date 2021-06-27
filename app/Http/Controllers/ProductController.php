@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Category;
+use App\Models\Subcategory;
+use App\Models\Author;
+use App\Models\Tag;
 use App\Models\AuthorsProduct;
 use App\Models\TagsProduct;
 
@@ -11,7 +15,17 @@ class ProductController extends Controller
 {
     public function list ()
     {
-        return view('admin/products');
+        $authors = Author::get();
+        $categories = Category::get();
+        $subcategories = Subcategory::get();
+        $tags = Tag::get();
+
+        return view('admin/products', [
+            'authors' => $authors,
+            'categories' => $categories,
+            'tags' => $tags,
+            'subcategories' => $subcategories,
+        ]);
     }
 
     public function get ()

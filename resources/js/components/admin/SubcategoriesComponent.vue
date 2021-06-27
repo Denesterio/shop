@@ -116,19 +116,12 @@
 </template>
 
 <script>
-  import { getCategories, getSubcategories } from '../../api/get.js';
   import { deleteSubcategory } from '../../api/delete.js';
   import transliterate from '../../transliterate.js';
   import { isValid, fillErrors } from '../../validate.js';
 
-  Vue.directive('focus', {
-    inserted: function (el) {
-        el.focus()
-    }
-  });
-
   export default {
-    props: ['title'],
+    props: ['title', 'subcategories', 'categories'],
     data() {
       return {
         subcategoryName: '',
@@ -136,10 +129,7 @@
         slug: '',
         slugStatus: null,
 
-        subcategories: [],
-        categories: [],
-
-        loading: true,
+        loading: false,
         processing: false,
         validationErrors: {
           name: '',
@@ -148,12 +138,12 @@
         },
       };
     },
-    mounted() {
-      getCategories().then((data) => (this.categories = data));
-      getSubcategories()
-        .then((data) => (this.subcategories = data))
-        .finally(() => (this.loading = false));
-    },
+    // mounted() {
+    //   getCategories().then((data) => (this.categories = data));
+    //   getSubcategories()
+    //     .then((data) => (this.subcategories = data))
+    //     .finally(() => (this.loading = false));
+    // },
 
     computed: {
       subcategorySlug() {

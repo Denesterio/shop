@@ -191,16 +191,11 @@
 </template>
 
 <script>
-  import {
-    getCategories,
-    getSubcategories,
-    getAuthors,
-    getProducts,
-    getTags
-  } from '../../api/get.js';
+  import { getProducts } from '../../api/get.js';
   import { deleteProduct } from '../../api/delete.js';
   import { isValid, fillErrors } from '../../validate.js';
   export default {
+    props: ['categories', 'subcategories', 'tags', 'authors'],
     data() {
       return {
         productName: '',
@@ -212,11 +207,8 @@
         currentAuthor: '', // текущий автор связан с инпутом
         selected: [],
 
-        tags: [],
+
         products: [],
-        categories: [],
-        subcategories: [],
-        authors: '', // список авторов, получаемый с сервера
         categoryId: '',
 
         loading: true,
@@ -261,13 +253,6 @@
       getProducts()
         .then((data) => (this.products = data))
         .finally(() => (this.loading = false));
-      getCategories().then((data) => (this.categories = data));
-      getSubcategories().then((data) => (this.subcategories = data));
-    },
-
-    mounted() {
-      getAuthors().then((data) => (this.authors = data));
-      getTags().then((data) => (this.tags = data));
     },
 
     methods: {
