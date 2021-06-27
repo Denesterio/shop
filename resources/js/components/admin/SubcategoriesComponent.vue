@@ -180,7 +180,7 @@
         const params = {
           name: this.subcategoryName,
           categoryId: this.categoryId,
-          slug: this.slugStatus ? this.slug : subcategorySlug,
+          slug: this.slugStatus ? this.slug : this.subcategorySlug,
         };
 
         if (!isValid(params)) {

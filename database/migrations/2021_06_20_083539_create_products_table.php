@@ -18,7 +18,6 @@ class CreateProductsTable extends Migration
             $table->string('title');
             $table->double('price', 8, 2);
             $table->text('description');
-            $table->foreignId('author_id')->constrained('authors')->onDelete('restrict')->onUpdate('cascade');
             $table->string('subcategory_slug');
             $table->string('picture');
             $table->timestamps();

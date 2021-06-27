@@ -11,7 +11,8 @@
         <main class="col-md-9">
             <product-list-component
                 :products='{{$products}}'
-                :order-products='{{$orderProducts}}'>
+                :order-products='{{$orderProducts}}'
+                :tags='{{$tags}}'>
             </product-list-component>
         </main>
     </div>

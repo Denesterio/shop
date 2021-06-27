@@ -19,6 +19,13 @@ const deleteProduct = (productId) => {
   });
 };
 
+const deleteTag = (tagId) => {
+  return axios.post('/admin/tags/delete', {
+    id: tagId,
+    _method: 'DELETE',
+  });
+};
+
 const deleteProductFromOrder = (productId, orderId) => {
   return axios.post('/order/deleteProduct', {
     productId,
@@ -26,4 +33,4 @@ const deleteProductFromOrder = (productId, orderId) => {
   });
 };
 
-export { deleteSubcategory, deleteCategory, deleteProduct, deleteProductFromOrder };
+export { deleteSubcategory, deleteCategory, deleteProduct, deleteProductFromOrder, deleteTag };

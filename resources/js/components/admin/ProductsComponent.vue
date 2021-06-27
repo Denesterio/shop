@@ -31,21 +31,52 @@
 
       <div class="form-group">
         <input
-          list="author"
-          v-model="productAuthor"
+          list="authorDatalist"
+          v-model="currentAuthor"
+          @keyup.enter="addAuthorToAuthors"
           class="form-control"
-          :class="{ 'is-invalid': validationErrors.authorId }"
+          :class="{ 'is-invalid': validationErrors.currentAuthor || validationErrors.productAuthors || validationErrors.currentAuthor }"
           placeholder="Автор"
         />
-        <datalist v-if="filteredAuthors.length > 0" id="author">
-          <option v-for="author in filteredAuthors" :key="author.id" :value="author.title"></option>
+        <datalist v-if="filteredAuthors.length > 0" id="authorDatalist">
+          <option
+            @change="addAuthorToAuthors"
+            v-for="author in filteredAuthors"
+            :key="author.id"
+            :value="author.title"
+          ></option>
         </datalist>
-        <p v-if="validationErrors.productAuthor.length > 0" class="text-danger">
-          {{ validationErrors.productAuthor }}
+        <p
+          class="font-weight-bolder m-1 p-1 font-italic"
+        > {{ productAuthors.map((a) => a.title) }}
         </p>
-        <p v-else-if="validationErrors.authorId.length > 0" class="text-danger">
+        <p v-if="validationErrors.productAuthors.startsWith('Поле ')" class="text-danger">
+          {{ validationErrors.productAuthors }}
+        </p>
+        <p v-else-if="validationErrors.productAuthors === 'нет в базе'" class="text-danger">
           Такого автора нет в базе <a @click.prevent="createAuthor" href="" noreferrer>добавить</a>
         </p>
+      </div>
+
+      <div class="form-group">
+
+        <b-button v-b-toggle="'collapse-tags'" class="m-1 btn-primary">Выбрать тэги</b-button>
+        <a href="/admin/tags">На страницу добавления тэгов</a>
+        <b-collapse id="collapse-tags">
+          <b-form-group v-slot="{ ariaDescribedby }">
+            <b-form-checkbox-group
+              id="checkbox-group-tags"
+              v-model="selected"
+              :aria-describedby="ariaDescribedby"
+              name="productTags"
+            >
+              <b-form-checkbox
+                v-for="tag in tags"
+                :key="tag.id"
+                :value="tag.id">{{ tag.title }}</b-form-checkbox>
+            </b-form-checkbox-group>
+          </b-form-group>
+        </b-collapse>
       </div>
 
       <div class="form-group">
@@ -160,7 +191,13 @@
 </template>
 
 <script>
-  import { getCategories, getSubcategories, getAuthors, getProducts } from '../../api/get.js';
+  import {
+    getCategories,
+    getSubcategories,
+    getAuthors,
+    getProducts,
+    getTags
+  } from '../../api/get.js';
   import { deleteProduct } from '../../api/delete.js';
   import { isValid, fillErrors } from '../../validate.js';
   export default {
@@ -171,12 +208,15 @@
         productPrice: '',
         picture: [],
         subcategorySlug: '',
-        productAuthor: '',
+        productAuthors: [], // массив авторов - объектов, связан с параграфом
+        currentAuthor: '', // текущий автор связан с инпутом
+        selected: [],
 
+        tags: [],
         products: [],
         categories: [],
         subcategories: [],
-        authors: [],
+        authors: '', // список авторов, получаемый с сервера
         categoryId: '',
 
         loading: true,
@@ -186,8 +226,7 @@
           description: '',
           price: '',
           subcategorySlug: '',
-          authorId: '',
-          productAuthor: '',
+          productAuthors: '', // если массив авторов пустой
         },
       };
     },
@@ -204,17 +243,13 @@
         );
       },
 
-      author() {
-        return this.authors.find((a) => a.title === this.productAuthor) ?? { title: '', id: '' };
-      },
-
       filteredAuthors() {
-        if (this.productAuthor.length > 1) {
+        if (this.currentAuthor.length > 1) {
           return this.authors
             .filter((a) =>
               a.title
                 .split(' ')
-                .some((name) => name.toLowerCase().startsWith(this.productAuthor.toLowerCase()))
+                .some((name) => name.toLowerCase().startsWith(this.currentAuthor.toLowerCase()))
             )
             .slice(0, 10);
         }
@@ -232,9 +267,19 @@
 
     mounted() {
       getAuthors().then((data) => (this.authors = data));
+      getTags().then((data) => (this.tags = data));
     },
 
     methods: {
+      addAuthorToAuthors() {
+        if (this.currentAuthor === this.filteredAuthors[0]?.title) {
+          this.productAuthors.push(this.filteredAuthors[0]);
+          this.currentAuthor = '';
+        } else {
+          this.validationErrors.productAuthors = 'нет в базе';
+        }
+      },
+
       getPicture(e) {
         this.picture = e.target.files[0];
       },
@@ -248,12 +293,14 @@
           price: this.productPrice,
           subcategorySlug: this.subcategorySlug,
           picture: this.picture,
-          authorId: this.author.id,
+          productAuthors: this.productAuthors.length > 0 ? JSON.stringify(this.productAuthors.map((a) => a.id)) : [],
+          tags: JSON.stringify(this.selected),
         };
 
-        if (!isValid(params, ['picture'])) {
-          fillErrors(this.validationErrors, params, ['picture']);
+        if (!isValid(params, ['picture', 'tags'])) {
+          fillErrors(this.validationErrors, params, ['picture', 'tags']);
           this.processing = false;
+          console.dir(this.validationErrors.productAuthors);
           return;
         }
 
@@ -261,10 +308,11 @@
           fData.append(param, params[param]);
         }
 
+
         axios
           .post('/admin/products/create', fData)
           .then(() => {
-            document.location.reload();
+            // document.location.reload();
           })
           .finally(() => {
             this.processing = false;
@@ -272,14 +320,14 @@
       },
 
       createAuthor() {
-        if (this.productAuthor.length === 0) {
-          this.validationErrors.productAuthor = 'Поле не должно быть пустым';
+        if (this.currentAuthor.length === 0) {
+          this.validationErrors.productAuthors = 'Поле не должно быть пустым';
           return;
         }
 
         this.processing = true;
         axios
-          .post('/admin/authors/create', { name: this.productAuthor })
+          .post('/admin/authors/create', { name: this.currentAuthor })
           .then(() => document.location.reload())
           .finally(() => (this.processing = false));
       },
@@ -302,9 +350,9 @@
       productPrice() {
         this.validationErrors.price = '';
       },
-      productAuthor() {
+      currentAuthor() {
         this.validationErrors.authorId = '';
-        this.validationErrors.productAuthor = '';
+        this.validationErrors.currentAuthor = '';
       },
     },
   };

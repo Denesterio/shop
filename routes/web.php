@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,6 +35,8 @@ Route::get('/subcategories/{subcategorySlug}', [SubcategoryController::class, 's
 
 Route::get('/authors/get', [AuthorController::class, 'get']);
 
+Route::get('/tags/get', [TagController::class, 'get']);
+
 Route::prefix('admin')->middleware('admin')->group(function() {
     Route::get('/categories', [CategoryController::class, 'list'])->name('categories');
     Route::post('/categories/create', [CategoryController::class, 'create']);
@@ -49,6 +52,10 @@ Route::prefix('admin')->middleware('admin')->group(function() {
 
     Route::post('/authors/create', [AuthorController::class, 'create']);
     Route::delete('/authors/delete', [AuthorController::class, 'delete']);
+
+    Route::post('/tags/create', [TagController::class, 'create']);
+    Route::delete('/tags/delete', [TagController::class, 'delete']);
+    Route::get('/tags', [TagController::class, 'list'])->name('tags');
 });
 
 Route::prefix('order')->middleware('auth')->group(function() {

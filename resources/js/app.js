@@ -46,7 +46,11 @@ Vue.component(
 Vue.component(
     'left-menu-component',
     require('./components/LeftMenuComponent.vue').default
-)
+);
+Vue.component(
+    "tags-component",
+    require("./components/admin/TagsComponent.vue").default
+);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

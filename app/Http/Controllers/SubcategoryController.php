@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Subcategory;
 use App\Models\Category;
 use App\Models\Order;
+use App\Models\Tag;
 use App\Models\OrdersProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -41,11 +42,14 @@ class SubcategoryController extends Controller
             $orderProducts = OrdersProduct::where('order_id', $order->id)->get();
         }
 
+        $tags = Tag::get();
+
         return view('categoryProducts', [
             'products' => $products,
             'categories' => $categories,
             'subcategories' => $subcategories,
             'orderProducts' => $orderProducts,
+            'tags' => $tags,
         ]);
     }
 
