@@ -95,7 +95,7 @@
     data() {
       return {
         tagName: '',
-
+        tags: [],
         loading: true,
         processing: false,
         validationErrors: {
@@ -125,15 +125,19 @@
 
         axios
           .post('/admin/tags/create', params)
-          .then(() => {
-            document.location.reload();
+          .then(({ data }) => {
+            this.tags.push(data.tag);
+            this.tagName = '';
           })
           .finally(() => {
             this.processing = false;
           });
       },
       removeTag(tagId) {
-        deleteTag(tagId).then(() => document.location.reload());
+        deleteTag(tagId).then(() => {
+          const removedIndex = this.tags.indexOf(this.tags.find((tag) => tag.id === tagId));
+          this.tags.splice(removedIndex, 1);
+        });
       },
     },
     watch: {

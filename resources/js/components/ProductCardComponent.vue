@@ -23,21 +23,21 @@
             <p class="card-text text-right">
               <span class="text-secondary"> {{ product.price }} руб. </span>
 
-              <span class="" v-if="productInOrder">
-                <button
-                  @click="addToOrder"
-                  class="btn btn-outline-dark btn-sm ml-3 font-weight-bold"
-                >
-                  +
-                </button>
-                <button class="btn btn-outline-dark btn-sm font-weight-bold" disabled>
-                  В корзине: {{ productInOrder.quantity }}
-                </button>
+              <span class="" v-if="quantity">
                 <button
                   @click="deleteFromOrder(product.id)"
-                  class="btn btn-outline-dark btn-sm font-weight-bold"
+                  class="btn btn-outline-dark btn-sm ml-3 font-weight-bold"
                 >
                   -
+                </button>
+                <button class="btn btn-outline-dark btn-sm font-weight-bold" disabled>
+                  В корзине: {{ quantity }}
+                </button>
+                <button
+                  @click="addToOrder"
+                  class="btn btn-outline-dark btn-sm font-weight-bold"
+                >
+                  +
                 </button>
               </span>
               <button v-else @click="addToOrder" class="btn btn-info btn-sm ml-3">
@@ -56,12 +56,24 @@
   export default {
     props: ['product', 'orderProducts'],
 
+    data() {
+      return {
+        quantity: null,
+      }
+    },
+
+    mounted() {
+      this.quantity = this.orderProducts.find(
+        (prodInOrder) => prodInOrder['product_id'] === this.product.id
+      )?.quantity ?? 0;
+    },
+
     computed: {
-      productInOrder() {
+      orderId() {
         return this.orderProducts.find(
-          (prodInOrder) => prodInOrder['product_id'] === this.product.id
-        );
-      },
+          (prod) => prod['product_id'] === this.product.id
+        )['order_id'];
+      }
     },
 
     methods: {
@@ -73,12 +85,13 @@
         axios
           .post('/order/addProduct', params)
           .then((response) => {
+            this.quantity += 1;
             Vue.swal.fire({
-              position: 'center',
+              position: 'top-end',
               icon: 'success',
               title: 'Товар успешно добавлен',
               showConfirmButton: false,
-              timer: 1500,
+              timer: 1100,
             });
           })
           .catch((error) => {
@@ -94,8 +107,17 @@
       },
 
       deleteFromOrder(productId) {
-        deleteProductFromOrder(productId, this.productInOrder['order_id'])
-          .then(() => window.location.reload())
+        deleteProductFromOrder(productId, this.orderId)
+          .then(() => {
+            this.quantity -= 1;
+            Vue.swal.fire({
+              position: 'top-end',
+              icon: 'success',
+              title: 'Товар удален',
+              showConfirmButton: false,
+              timer: 1100,
+            });
+          })
           .catch(() => {
             Vue.swal.fire({
               icon: 'error',

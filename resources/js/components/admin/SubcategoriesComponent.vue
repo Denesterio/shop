@@ -129,7 +129,6 @@
         slug: '',
         slugStatus: null,
 
-        loading: false,
         processing: false,
         validationErrors: {
           name: '',
@@ -138,12 +137,6 @@
         },
       };
     },
-    // mounted() {
-    //   getCategories().then((data) => (this.categories = data));
-    //   getSubcategories()
-    //     .then((data) => (this.subcategories = data))
-    //     .finally(() => (this.loading = false));
-    // },
 
     computed: {
       subcategorySlug() {
@@ -199,9 +192,6 @@
       },
       categoryId() {
         this.validationErrors.categoryId = '';
-      },
-      slug() {
-        this.validationErrors.slug = '';
       },
     },
   };

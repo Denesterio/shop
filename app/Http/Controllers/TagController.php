@@ -17,9 +17,11 @@ class TagController extends Controller
 
     public function create(Request $request)
     {
-        Tag::create([
+        $tag = Tag::create([
             'title' => $request['name'],
         ]);
+
+        return ['tag' => $tag];
     }
 
     public function get()
