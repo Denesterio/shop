@@ -9,9 +9,11 @@ class AuthorController extends Controller
 {
     public function create(Request $request)
     {
-        Author::create([
+        $id = Author::create([
             'title' => $request['name'],
-        ]);
+        ])->id;
+
+        return ['id' => $id];
     }
 
     public function get()

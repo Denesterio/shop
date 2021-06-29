@@ -40,7 +40,6 @@
         />
         <datalist v-if="filteredAuthors.length > 0" id="authorDatalist">
           <option
-            @change="addAuthorToAuthors"
             v-for="author in filteredAuthors"
             :key="author.id"
             :value="author.title"
@@ -60,7 +59,11 @@
 
       <div class="form-group">
 
-        <b-button v-b-toggle="'collapse-tags'" class="m-1 btn-primary">Выбрать тэги</b-button>
+        <b-button
+          v-b-toggle="'collapse-tags'"
+          class="m-1 btn-primary"
+          :class="{ 'is-invalid': validationErrors.tags }"
+        >Выбрать тэги</b-button>
         <a href="/admin/tags">На страницу добавления тэгов</a>
         <b-collapse id="collapse-tags">
           <b-form-group v-slot="{ ariaDescribedby }">
@@ -77,6 +80,9 @@
             </b-form-checkbox-group>
           </b-form-group>
         </b-collapse>
+        <p v-if="validationErrors.tags" class="invalid-feedback">
+          {{ validationErrors.tags }}
+        </p>
       </div>
 
       <div class="form-group">
@@ -191,11 +197,11 @@
 </template>
 
 <script>
-  import { getProducts } from '../../api/get.js';
+  import { getProducts, getAuthors } from '../../api/get.js';
   import { deleteProduct } from '../../api/delete.js';
   import { isValid, fillErrors } from '../../validate.js';
   export default {
-    props: ['categories', 'subcategories', 'tags', 'authors'],
+    props: ['categories', 'subcategories', 'tags'],
     data() {
       return {
         productName: '',
@@ -205,9 +211,9 @@
         subcategorySlug: '',
         productAuthors: [], // массив авторов - объектов, связан с параграфом
         currentAuthor: '', // текущий автор связан с инпутом
-        selected: [],
+        selected: [], // массив тэгов
 
-
+        authors: [],
         products: [],
         categoryId: '',
 
@@ -219,6 +225,7 @@
           price: '',
           subcategorySlug: '',
           productAuthors: '', // если массив авторов пустой
+          tags: '',
         },
       };
     },
@@ -253,6 +260,7 @@
       getProducts()
         .then((data) => (this.products = data))
         .finally(() => (this.loading = false));
+      getAuthors().then((data) => this.authors = data);
     },
 
     methods: {
@@ -279,13 +287,12 @@
           subcategorySlug: this.subcategorySlug,
           picture: this.picture,
           productAuthors: this.productAuthors.length > 0 ? JSON.stringify(this.productAuthors.map((a) => a.id)) : [],
-          tags: JSON.stringify(this.selected),
+          tags: this.selected.length > 0 ? JSON.stringify(this.selected) : [],
         };
 
-        if (!isValid(params, ['picture', 'tags'])) {
-          fillErrors(this.validationErrors, params, ['picture', 'tags']);
+        if (!isValid(params, ['picture'])) {
+          fillErrors(this.validationErrors, params, ['picture']);
           this.processing = false;
-          console.dir(this.validationErrors.productAuthors);
           return;
         }
 
@@ -313,7 +320,11 @@
         this.processing = true;
         axios
           .post('/admin/authors/create', { name: this.currentAuthor })
-          .then(() => document.location.reload())
+          .then(({ data }) => {
+            this.authors = [({ title: this.currentAuthor, id: data.id }), ...this.authors];
+            this.validationErrors.productAuthors = '';
+            this.addAuthorToAuthors();
+          })
           .finally(() => (this.processing = false));
       },
 
@@ -336,8 +347,7 @@
         this.validationErrors.price = '';
       },
       currentAuthor() {
-        this.validationErrors.authorId = '';
-        this.validationErrors.currentAuthor = '';
+        this.validationErrors.productAuthors = '';
       },
     },
   };

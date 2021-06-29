@@ -7,14 +7,12 @@
         "watch-poll": "mix watch -- --watch-options-poll=1000",
         "hot": "mix watch --hot",
         "prod": "npm run production",
-        "production": "mix --production"
+        "production": "mix --production",
+        "eslint": "./node_modules/.bin/eslint resources/assets/js/ test/ --ext .js,.vue"
     },
     "devDependencies": {
         "axios": "^0.21",
         "bootstrap": "^4.6.0",
-        "eslint": "^7.29.0",
-        "eslint-loader": "^4.0.2",
-        "eslint-plugin-vue": "^7.12.1",
         "jquery": "^3.6",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",

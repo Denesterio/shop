@@ -21,7 +21,15 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+        <nav class="
+            navbar
+            navbar-expand-md
+            navbar-light
+            bg-white
+            shadow-sm
+            border-bottom
+            border-4
+            border-info">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Shop') }}
