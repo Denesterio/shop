@@ -65,7 +65,7 @@
       </button>
     </div>
     <div class="container-xl">
-      <div v-if="loading" class="text-center">
+      <!-- <div class="text-center">
         <svg
           xmlns:svg="http://www.w3.org/2000/svg"
           xmlns="http://www.w3.org/2000/svg"
@@ -91,8 +91,8 @@
             ></animateTransform>
           </g>
         </svg>
-      </div>
-      <ul v-else class="list-group">
+      </div> -->
+      <ul class="list-group">
         <li
           v-for="subcategory in filteredSubcategories"
           :key="subcategory.id"

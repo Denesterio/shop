@@ -8,6 +8,8 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Exception;
 
 class OrderController extends Controller
 {
@@ -63,34 +65,77 @@ class OrderController extends Controller
         $productId = $request->productId;
         $orderId = $request->orderId;
 
-        $ordersProduct = OrdersProduct::where('order_id', $orderId)
+        $orderProducts = OrdersProduct::where('order_id', $orderId)
             ->where('product_id', $productId)
             ->first();
 
-        $ordersProduct->quantity -= 1;
-        if ($ordersProduct->quantity === 0) {
-            $ordersProduct->delete();
+        $orderProducts->quantity -= 1;
+        if ($orderProducts->quantity === 0) {
+            $orderProducts->delete();
         } else {
-            $ordersProduct->save();
+            $orderProducts->save();
         }
+
+        return $orderProducts;
     }
 
     public function showCart ()
     {
         $user = Auth::user();
         $order = Order::where('user_id', $user->id)->where('status', 0)->first();
-        $ordersProduct = collect();
+        $orderProducts = collect();
         if (isset($order)) {
-            $ordersProduct = DB::table('orders_products as op')
+            $orderProducts = DB::table('orders_products as op')
                 ->select(
                     'p.*',
-                    'op.quantity'
+                    'op.quantity',
+                    'op.order_id'
                 )
                 ->join('products as p', 'p.id', 'op.product_id')
                 ->where('op.order_id', $order->id)
                 ->get();
         }
 
-        return view('/cart', ['ordersProduct' => $ordersProduct]);
+        return view('/cart', ['orderProducts' => $orderProducts]);
+    }
+
+    public function comfirm ()
+    {
+        $user = Auth::user();
+        $order = Order::where('user_id', $user->id)->where('status', 0)->first();
+        $orderProducts = DB::table('orders_products as op')
+        ->select(
+            'op.id',
+            'op.quantity',
+            'op.product_id',
+            'p.title',
+            'p.price',
+            'p.picture'
+        )
+        ->join('products as p', 'p.id', 'op.product_id')
+        ->where('op.order_id', $order->id)
+        ->get();
+
+
+
+        $sum = $orderProducts->map(function($orderProduct) {
+            return $orderProduct->quantity * $orderProduct->price;
+        })->sum();
+
+        $data = [
+            'orderProducts' => $orderProducts,
+            'sum' => $sum
+        ];
+        try {
+            $res = Mail::send('mail.orderFinish', $data, function($message) use ($user) {
+                $message->subject('Новый заказ');
+                $message->sdfsd('asdfkhskdfhskdfhkshdfk@sdkfhsdkf');
+            });
+        } catch (Exception $e) {
+
+        }
+
+        $order->status = 1;
+        $order->save();
     }
 }

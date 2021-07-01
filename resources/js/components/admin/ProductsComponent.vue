@@ -47,7 +47,7 @@
         </datalist>
         <p
           class="font-weight-bolder m-1 p-1 font-italic"
-        > {{ productAuthors.map((a) => a.title) }}
+        > {{ formattedAuthors }}
         </p>
         <p v-if="validationErrors.productAuthors.startsWith('Поле ')" class="text-danger">
           {{ validationErrors.productAuthors }}
@@ -65,7 +65,7 @@
           :class="{ 'is-invalid': validationErrors.tags }"
         >Выбрать тэги</b-button>
         <a href="/admin/tags">На страницу добавления тэгов</a>
-        <b-collapse id="collapse-tags">
+        <b-collapse id="collapse-tags" class="mt-3">
           <b-form-group v-slot="{ ariaDescribedby }">
             <b-form-checkbox-group
               id="checkbox-group-tags"
@@ -246,14 +246,16 @@
         if (this.currentAuthor.length > 1) {
           return this.authors
             .filter((a) =>
-              a.title
-                .split(' ')
-                .some((name) => name.toLowerCase().startsWith(this.currentAuthor.toLowerCase()))
+              a.title.toLowerCase().startsWith(this.currentAuthor.toLowerCase())
             )
             .slice(0, 10);
         }
         return [];
       },
+
+      formattedAuthors() {
+        return this.productAuthors.map((a) => a.title).join(', ');
+      }
     },
 
     created() {
@@ -304,7 +306,7 @@
         axios
           .post('/admin/products/create', fData)
           .then(() => {
-            // document.location.reload();
+            document.location.reload();
           })
           .finally(() => {
             this.processing = false;

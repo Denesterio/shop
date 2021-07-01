@@ -26,7 +26,7 @@ const deleteTag = (tagId) => {
   });
 };
 
-const deleteProductFromOrder = (productId, orderId) => {
+const deleteProductFromOrder = (productId, orderId = null) => {
   return axios.post('/order/deleteProduct', {
     productId,
     orderId,

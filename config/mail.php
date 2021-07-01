@@ -64,7 +64,13 @@ return [
 
         'log' => [
             'transport' => 'log',
-            'channel' => env('MAIL_LOG_CHANNEL'),
+            'channels' => [
+                env('MAIL_LOG_CHANNEL'),
+                'maillog' => [
+                    'driver' => 'single',
+                    'path' => storage_path('mails/laravel.log'),
+                ],
+            ],
         ],
 
         'array' => [
@@ -84,8 +90,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('MAIL_FROM_ADDRESS', 'mrdnsong@gmail.com'),
+        'name' => env('MAIL_FROM_NAME', 'Bookshop'),
     ],
 
     /*

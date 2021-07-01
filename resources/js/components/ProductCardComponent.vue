@@ -34,13 +34,13 @@
                   В корзине: {{ quantity }}
                 </button>
                 <button
-                  @click="addToOrder"
+                  @click="addToOrder(product.id)"
                   class="btn btn-outline-dark btn-sm font-weight-bold"
                 >
                   +
                 </button>
               </span>
-              <button v-else @click="addToOrder" class="btn btn-info btn-sm ml-3">
+              <button v-else @click="addToOrder(product.id)" class="btn btn-info btn-sm ml-3">
                 Добавить в корзину
               </button>
             </p>
@@ -53,6 +53,7 @@
 
 <script>
   import { deleteProductFromOrder } from '../api/delete';
+  import { addProductToOrder } from '../api/create';
   export default {
     props: ['product', 'orderProducts'],
 
@@ -77,14 +78,9 @@
     },
 
     methods: {
-      addToOrder() {
-        const params = {
-          productId: this.product.id,
-        };
-
-        axios
-          .post('/order/addProduct', params)
-          .then((response) => {
+      addToOrder(productId) {
+        addProductToOrder(productId)
+          .then(() => {
             this.quantity += 1;
             Vue.swal.fire({
               position: 'top-end',
@@ -122,6 +118,7 @@
             Vue.swal.fire({
               icon: 'error',
               title: 'Товар не удалось удалить',
+              showConfirmButton: true,
             });
           });
       },

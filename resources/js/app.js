@@ -51,6 +51,10 @@ Vue.component(
     "tags-component",
     require("./components/admin/TagsComponent.vue").default
 );
+Vue.component(
+    "cart-component",
+    require("./components/CartComponent.vue").default
+);
 
 
 Vue.directive('focus', {

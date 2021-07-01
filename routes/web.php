@@ -5,6 +5,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ConfirmOrderController;
 use App\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -62,6 +63,7 @@ Route::prefix('order')->middleware('auth')->group(function() {
     Route::get('get', [OrderController::class, 'get']);
     Route::post('addProduct', [OrderController::class, 'addProduct']);
     Route::post('deleteProduct', [OrderController::class, 'deleteProduct']);
+    Route::get('confirm', [ConfirmOrderController::class, 'confirm']);
 });
 
 Route::middleware('auth')->group(function() {
