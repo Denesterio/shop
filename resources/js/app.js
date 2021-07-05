@@ -55,6 +55,22 @@ Vue.component(
     "cart-component",
     require("./components/CartComponent.vue").default
 );
+Vue.component(
+    'navbar-component',
+    require('./components/NavbarComponent.vue').default
+);
+Vue.component(
+    'profile-component',
+    require('./components/ProfileComponent.vue').default
+);
+Vue.component(
+    'authors-list-component',
+    require('./components/admin/AuthorsListComponent.vue').default
+);
+Vue.component(
+    'carousel-component',
+    require('./components/CarouselComponent.vue').default
+);
 
 
 Vue.directive('focus', {

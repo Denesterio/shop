@@ -33,11 +33,11 @@ class ConfirmOrderController extends Controller
             return $orderProduct->quantity * $orderProduct->price;
         })->sum();
 
-        $data = new stdClass();
-        $data->products = $orderProducts;
-        $data->sum = $sum;
+        // $data = new stdClass();
+        // $data->products = $orderProducts;
+        // $data->sum = $sum;
 
-        Mail::to('mrdnsong@gmail.com')->send(new ConfirmOrderMailer($data));
+        // Mail::to('mrdnsong@gmail.com')->send(new ConfirmOrderMailer($data));
 
         $order->status = 1;
         $order->save();

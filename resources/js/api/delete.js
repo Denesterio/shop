@@ -33,4 +33,11 @@ const deleteProductFromOrder = (productId, orderId = null) => {
   });
 };
 
-export { deleteSubcategory, deleteCategory, deleteProduct, deleteProductFromOrder, deleteTag };
+const deleteAuthor = (authorId) => {
+  return axios.post('/admin/authors/delete', {
+    id: authorId,
+    _method: 'DELETE',
+  });
+};
+
+export { deleteSubcategory, deleteCategory, deleteProduct, deleteProductFromOrder, deleteTag, deleteAuthor };

@@ -6,6 +6,7 @@ use App\Models\Subcategory;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Tag;
+use App\Models\Product;
 use App\Models\OrdersProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -27,9 +28,10 @@ class SubcategoryController extends Controller
 
     public function show ($subcategorySlug)
     {
-        $products = DB::table('products')
+        $products = Product::with('authors')
             ->where('subcategory_slug', '=', $subcategorySlug)
             ->get();
+
         $categories = Category::get();
         $subcategories = Subcategory::get();
 
@@ -45,14 +47,19 @@ class SubcategoryController extends Controller
             $orderProducts = OrdersProduct::where('order_id', $order->id)->get();
         }
 
-        $tags = Tag::get();
+        $authors = collect();
+
+        $products->each(function($item) use ($authors) {
+            $id = $item->id;
+            $authors[$id] = $item->authors;
+        });
 
         return view('categoryProducts', [
             'products' => $products,
             'categories' => $categories,
             'subcategories' => $subcategories,
             'orderProducts' => $orderProducts,
-            'tags' => $tags,
+            'authors' => $authors,
         ]);
     }
 

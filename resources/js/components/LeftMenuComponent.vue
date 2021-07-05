@@ -19,6 +19,7 @@
                 :id="`accordion` + category.id"
                 accordion="my-accordion"
                 role="tabpanel"
+                :visible="isOpen(category.id)"
             >
                 <b-card-body>
                     <div
@@ -63,7 +64,28 @@ export default {
         };
     },
 
-    methods: {}
+    computed: {
+        currentPage() {
+            const path = window.location.pathname;
+            const [currentPage] = path.split('/').reverse();
+            return currentPage;
+        },
+        isCategoryPage() {
+            return !Number.isNaN(parseInt(this.currentPage));
+        }
+    },
+
+    methods: {
+        isOpen(id) {
+            if (this.isCategoryPage) {
+                return this.currentPage === String(id);
+            }
+            const currentSubcategories = this.subcategories.filter(
+                (sub) => sub['category_id'] === id
+            );
+            return !!currentSubcategories.find((sub) => sub.slug === this.currentPage);
+        }
+    },
 };
 </script>
 

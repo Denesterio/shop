@@ -12,7 +12,13 @@
             <product-list-component
                 :products='{{$products}}'
                 :order-products='{{$orderProducts}}'
-                :tags='{{$tags}}'>
+                @isset($tags)
+                :tags='{{$tags}}'
+                @endisset
+                @isset($authors)
+                :authors='{{$authors}}'
+                @endisset
+            >
             </product-list-component>
         </main>
     </div>

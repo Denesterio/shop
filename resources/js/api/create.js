@@ -5,4 +5,8 @@ const addProductToOrder = (productId, orderId = null) => {
   });
 };
 
-export { addProductToOrder };
+const createAuthor = (name) => {
+  return axios.post('/admin/authors/create', { name }).then((response) => response.data);
+};
+
+export { addProductToOrder, createAuthor };

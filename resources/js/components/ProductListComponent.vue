@@ -6,6 +6,8 @@
         :product="product"
         :key="product.id"
         :orderProducts="orderProducts"
+        :tags="tags.filter((tag) => tag['product_id'] === product.id)"
+        :authors="authors[product.id]"
       >
       </product-card-component>
     </div>
@@ -18,7 +20,26 @@
 <script>
   import ProductCardComponent from './ProductCardComponent.vue';
   export default {
-    props: ['products', 'orderProducts'],
+    props: {
+      products: {
+        type: Array,
+        required: true,
+      },
+      orderProducts: {
+        type: Array,
+        required: true,
+      },
+      tags: {
+        type: Array,
+        required: false,
+        default: () => [],
+      },
+      authors: {
+        type: Object,
+        required: false,
+        default: () => {},
+      }
+    },
     components: { ProductCardComponent },
   };
 </script>

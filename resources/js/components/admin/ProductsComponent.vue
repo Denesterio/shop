@@ -29,33 +29,10 @@
         </p>
       </div>
 
-      <div class="form-group">
-        <input
-          list="authorDatalist"
-          v-model="currentAuthor"
-          @keyup.enter="addAuthorToAuthors"
-          class="form-control"
-          :class="{ 'is-invalid': validationErrors.currentAuthor || validationErrors.productAuthors || validationErrors.currentAuthor }"
-          placeholder="Автор"
-        />
-        <datalist v-if="filteredAuthors.length > 0" id="authorDatalist">
-          <option
-            v-for="author in filteredAuthors"
-            :key="author.id"
-            :value="author.title"
-          ></option>
-        </datalist>
-        <p
-          class="font-weight-bolder m-1 p-1 font-italic"
-        > {{ formattedAuthors }}
-        </p>
-        <p v-if="validationErrors.productAuthors.startsWith('Поле ')" class="text-danger">
-          {{ validationErrors.productAuthors }}
-        </p>
-        <p v-else-if="validationErrors.productAuthors === 'нет в базе'" class="text-danger">
-          Такого автора нет в базе <a @click.prevent="createAuthor" href="" noreferrer>добавить</a>
-        </p>
-      </div>
+      <author-component
+          class="form-group"
+          @add-author="addAuthorToAuthors"
+          @clear-authors="clearProductAuthors" />
 
       <div class="form-group">
 
@@ -146,33 +123,7 @@
       </button>
     </div>
     <div class="container-xl">
-      <div v-if="loading" class="text-center">
-        <svg
-          xmlns:svg="http://www.w3.org/2000/svg"
-          xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink"
-          version="1.0"
-          width="64px"
-          height="64px"
-          viewBox="0 0 128 128"
-          xml:space="preserve"
-        >
-          <g>
-            <circle cx="16" cy="64" r="16" fill="#000" />
-            <circle cx="16" cy="64" r="16" fill="#555" transform="rotate(45,64,64)" />
-            <circle cx="16" cy="64" r="16" fill="#949494" transform="rotate(90,64,64)" />
-            <circle cx="16" cy="64" r="16" fill="#ccc" transform="rotate(135,64,64)" />
-            <animateTransform
-              attributeName="transform"
-              type="rotate"
-              values="0 64 64;315 64 64;270 64 64;225 64 64;180 64 64;135 64 64;90 64 64;45 64 64"
-              calcMode="discrete"
-              dur="800ms"
-              repeatCount="indefinite"
-            ></animateTransform>
-          </g>
-        </svg>
-      </div>
+      <svg-loading-component v-if="loading" />
       <ul v-else-if="filteredProducts.length > 0">
         <li
           v-for="product in filteredProducts"
@@ -197,11 +148,15 @@
 </template>
 
 <script>
-  import { getProducts, getAuthors } from '../../api/get.js';
+  import { getProducts } from '../../api/get.js';
   import { deleteProduct } from '../../api/delete.js';
   import { isValid, fillErrors } from '../../validate.js';
+  import SvgLoadingComponent from '../SvgLoadingComponent.vue';
+  import AuthorComponent from './AuthorComponent.vue';
   export default {
     props: ['categories', 'subcategories', 'tags'],
+    components: {SvgLoadingComponent, AuthorComponent},
+
     data() {
       return {
         productName: '',
@@ -210,7 +165,6 @@
         picture: [],
         subcategorySlug: '',
         productAuthors: [], // массив авторов - объектов, связан с параграфом
-        currentAuthor: '', // текущий автор связан с инпутом
         selected: [], // массив тэгов
 
         authors: [],
@@ -241,38 +195,21 @@
           this.subcategorySlug ? prod['subcategory_slug'] === this.subcategorySlug : true
         );
       },
-
-      filteredAuthors() {
-        if (this.currentAuthor.length > 1) {
-          return this.authors
-            .filter((a) =>
-              a.title.toLowerCase().startsWith(this.currentAuthor.toLowerCase())
-            )
-            .slice(0, 10);
-        }
-        return [];
-      },
-
-      formattedAuthors() {
-        return this.productAuthors.map((a) => a.title).join(', ');
-      }
     },
 
     created() {
       getProducts()
         .then((data) => (this.products = data))
         .finally(() => (this.loading = false));
-      getAuthors().then((data) => this.authors = data);
     },
 
     methods: {
-      addAuthorToAuthors() {
-        if (this.currentAuthor === this.filteredAuthors[0]?.title) {
-          this.productAuthors.push(this.filteredAuthors[0]);
-          this.currentAuthor = '';
-        } else {
-          this.validationErrors.productAuthors = 'нет в базе';
-        }
+      addAuthorToAuthors(author) {
+        this.productAuthors.push(author);
+      },
+
+      clearProductAuthors() {
+        this.productAuthors = [];
       },
 
       getPicture(e) {
@@ -313,23 +250,6 @@
           });
       },
 
-      createAuthor() {
-        if (this.currentAuthor.length === 0) {
-          this.validationErrors.productAuthors = 'Поле не должно быть пустым';
-          return;
-        }
-
-        this.processing = true;
-        axios
-          .post('/admin/authors/create', { name: this.currentAuthor })
-          .then(({ data }) => {
-            this.authors = [({ title: this.currentAuthor, id: data.id }), ...this.authors];
-            this.validationErrors.productAuthors = '';
-            this.addAuthorToAuthors();
-          })
-          .finally(() => (this.processing = false));
-      },
-
       removeProduct(productId) {
         deleteProduct(productId).then(() => document.location.reload());
       },
@@ -347,9 +267,6 @@
       },
       productPrice() {
         this.validationErrors.price = '';
-      },
-      currentAuthor() {
-        this.validationErrors.productAuthors = '';
       },
     },
   };

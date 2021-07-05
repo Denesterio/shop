@@ -14,4 +14,11 @@
             ></welcome-category-list-component>
         </main>
     </div>
+    <section>
+        <h4>Новинки:</h4>
+        <carousel-component
+                :products="{{$products}}"
+                :authors="{{$authors}}"
+        ></carousel-component>
+    </section>
 @endsection

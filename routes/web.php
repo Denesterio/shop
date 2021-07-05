@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ConfirmOrderController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,11 +31,13 @@ Route::get('/', [CategoryController::class, 'welcome'])->name('welcome');
 Route::get('/categories/{categoryId}', [CategoryController::class, 'show']);
 
 Route::get('/products/get', [ProductController::class, 'get']);
+Route::get('/products/carousel', [ProductController::class, 'carousel']);
 
 Route::get('/subcategories/get', [SubcategoryController::class, 'get']);
 Route::get('/subcategories/{subcategorySlug}', [SubcategoryController::class, 'show']);
 
 Route::get('/authors/get', [AuthorController::class, 'get']);
+Route::get('/authors/{authorId}', [AuthorController::class, 'show']);
 
 Route::get('/tags/get', [TagController::class, 'get']);
 
@@ -51,6 +54,7 @@ Route::prefix('admin')->middleware('admin')->group(function() {
     Route::delete('/subcategories/delete', [SubcategoryController::class, 'delete']);
     Route::get('/subcategories', [SubcategoryController::class, 'list'])->name('subcategories');
 
+    Route::get('/authors', [AuthorController::class, 'list'])->name('authors');
     Route::post('/authors/create', [AuthorController::class, 'create']);
     Route::delete('/authors/delete', [AuthorController::class, 'delete']);
 
@@ -59,11 +63,14 @@ Route::prefix('admin')->middleware('admin')->group(function() {
     Route::get('/tags', [TagController::class, 'list'])->name('tags');
 });
 
+Route::get('/profile', [ProfileController::class, 'show'])->middleware('auth')->name('profile');
+
 Route::prefix('order')->middleware('auth')->group(function() {
     Route::get('get', [OrderController::class, 'get']);
     Route::post('addProduct', [OrderController::class, 'addProduct']);
     Route::post('deleteProduct', [OrderController::class, 'deleteProduct']);
     Route::get('confirm', [ConfirmOrderController::class, 'confirm']);
+    Route::get('{orderId}/products', [OrderController::class, 'products']);
 });
 
 Route::middleware('auth')->group(function() {

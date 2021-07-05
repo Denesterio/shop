@@ -16,4 +16,19 @@ class Product extends Model
         'description',
         'price',
     ];
+
+    public function authors()
+    {
+        return $this->belongsToMany(Author::class, 'authors_products');
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'tags_products');
+    }
+
+    public function subcategories()
+    {
+        return $this->belongsTo(Subcategory::class, 'subcategory_slug', 'slug');
+    }
 }

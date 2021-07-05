@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Subcategory;
 use App\Models\Order;
-use App\Models\Tag;
+use App\Models\Product;
 use App\Models\OrdersProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -17,19 +17,25 @@ class CategoryController extends Controller
     {
         $categories = Category::get();
         $subcategories = Subcategory::get();
+        ['products' => $products, 'authors' => $authors] = ProductController::carousel();
         return view('welcome', [
             'categories' => $categories,
             'subcategories' => $subcategories,
+            'products' => $products,
+            'authors' => $authors,
         ]);
     }
 
     public function show ($categoryId)
     {
-        $products = DB::table('subcategories')
-            ->select('category_id', 'products.*')
-            ->join('products', 'subcategories.slug', '=', 'products.subcategory_slug')
-            ->where('category_id', '=', $categoryId)
+        $slugs = DB::table('subcategories')
+            ->select('slug')
+            ->where('category_id', $categoryId)
             ->get();
+
+        $slugs = $slugs->map(function ($item) {
+            return $item->slug;
+        })->all();
 
         $categories = Category::get();
         $subcategories = Subcategory::get();
@@ -46,14 +52,23 @@ class CategoryController extends Controller
             $orderProducts = OrdersProduct::where('order_id', $order->id)->get();
         }
 
-        $tags = Tag::get();
+        $products = Product::with('authors')
+            ->whereIn('subcategory_slug', $slugs)
+            ->get();
+
+        $authors = collect();
+
+        $products->each(function($item) use ($authors) {
+            $id = $item->id;
+            $authors[$id] = $item->authors;
+        });
 
         return view('categoryProducts', [
             'products' => $products,
             'categories' => $categories,
             'subcategories' => $subcategories,
             'orderProducts' => $orderProducts,
-            'tags' => $tags,
+            'authors' => $authors,
         ]);
     }
 

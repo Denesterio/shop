@@ -1,22 +1,24 @@
 <template>
   <div class="card mb-12 m-3 border-right-0">
     <div class="row">
-      <div class="col-md-3">
+      <div class=" bg-grey col-md-3 d-flex align-items-center justify-content-center">
         <img
           :src="product.picture ? '/storage/' + product.picture : '/img/cap.png'"
           :alt="product.title"
-          style="width: 100%"
+          style="width: 80%; height: 96%"
           class="my-auto"
         /><img />
       </div>
       <div class="col-md-9">
         <div class="card border-0" style="height:100%">
-          <div class="card-body">
+          <div class="m-1 p-1 font-italic" v-html="formattedAuthorsHtml.join(' / ')">
+          </div>
+          <div class="mx-2 p-2 mb-2">
             <h4>
-              {{ product.title }}
+              <a class="text-reset" :href="`/products/${product.id}`">{{ product.title }}</a>
             </h4>
             <p style="font-size: 1rem">
-              {{ product.description }}
+              <a class="text-reset" :href="`/products/${product.id}`">{{ formattedDescription }}</a>
             </p>
           </div>
           <div class="card-footer bg-white">
@@ -55,7 +57,7 @@
   import { deleteProductFromOrder } from '../api/delete';
   import { addProductToOrder } from '../api/create';
   export default {
-    props: ['product', 'orderProducts'],
+    props: ['product', 'orderProducts', 'tags', 'authors'],
 
     data() {
       return {
@@ -74,6 +76,19 @@
         return this.orderProducts.find(
           (prod) => prod['product_id'] === this.product.id
         )['order_id'];
+      },
+
+      formattedDescription() {
+        if (this.product.description.length > 140) {
+          return this.product.description.slice(0, 140) + '\u2026';
+        }
+        return this.product.description;
+      },
+
+      formattedAuthorsHtml() {
+        return this.authors.map(
+          (author) => `<a class="text-muted" href="/authors/${author.id}">${author.title}</a>`
+        );
       }
     },
 
@@ -125,3 +140,9 @@
     },
   };
 </script>
+
+<style scoped>
+  .bg-grey {
+    background-color: #EEF5FC;
+  }
+</style>

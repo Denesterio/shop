@@ -79,19 +79,15 @@ export default {
     computed: {
         commonQuantity() {
             return this.products.reduce((sum, product) => {
-                return sum + product.quantity;
+                return sum += product.quantity;
             }, 0);
         },
 
         commonPrice() {
             return this.products.reduce((sum, product) => {
-                return sum + product.price * product.quantity;
+                return sum += product.price * product.quantity;
             }, 0);
         },
-    },
-
-    mounted () {
-        console.dir(this.products);
     },
 
     methods: {

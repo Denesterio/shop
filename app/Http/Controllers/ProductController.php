@@ -79,4 +79,20 @@ class ProductController extends Controller
         AuthorsProduct::where('product_id', $id)->delete();
         Product::find($id)->delete();
     }
+
+    public static function carousel()
+    {
+        $products = Product::with('authors')
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        $authors = collect();
+        $products->each(function ($item) use ($authors) {
+            $key = $item->id;
+            $authors[$key] = $item->authors()->get();
+        });
+
+        return ['products' => $products, 'authors' => $authors];
+    }
 }
