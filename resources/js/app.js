@@ -71,6 +71,10 @@ Vue.component(
     'carousel-component',
     require('./components/CarouselComponent.vue').default
 );
+Vue.component(
+    "products-main-component",
+    require("./components/ProductsMainComponent.vue").default
+);
 
 
 Vue.directive('focus', {

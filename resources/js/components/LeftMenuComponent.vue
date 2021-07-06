@@ -70,7 +70,7 @@ export default {
         currentPage() {
             const path = window.location.pathname;
             const [currentPage] = path.split('/').reverse();
-            return currentPage;
+            return currentPage || String(Math.min(...this.categories.map((cat) => cat.id)));
         },
         isCategoryPage() {
             return !Number.isNaN(parseInt(this.currentPage));

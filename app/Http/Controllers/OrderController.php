@@ -63,9 +63,10 @@ class OrderController extends Controller
     public function deleteProduct (Request $request)
     {
         $productId = $request->productId;
-        $orderId = $request->orderId;
+        $user = Auth::user();
+        $order = Order::where('user_id', $user->id)->where('status', 0)->first();
 
-        $orderProducts = OrdersProduct::where('order_id', $orderId)
+        $orderProducts = OrdersProduct::where('order_id', $order->id)
             ->where('product_id', $productId)
             ->first();
 

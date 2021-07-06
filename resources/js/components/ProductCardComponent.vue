@@ -1,12 +1,11 @@
 <template>
-  <div class="card mb-12 m-3 border-right-0">
-    <div class="row">
-      <div class=" bg-grey col-md-3 d-flex align-items-center justify-content-center">
+  <article class="mb-12 m-3 border-right-0" :class="{ 'card': type === 'card' }">
+    <div v-if="type === 'card'" class="row">
+      <div class="image-bg col-md-3 d-flex align-items-center justify-content-center">
         <img
           :src="product.picture ? '/storage/' + product.picture : '/img/cap.png'"
           :alt="product.title"
-          style="width: 80%; height: 96%"
-          class="my-auto"
+          class="my-auto card-image"
         /><img />
       </div>
       <div class="col-md-9">
@@ -22,46 +21,98 @@
             </p>
           </div>
           <div class="card-footer bg-white">
-            <p class="card-text text-right">
-              <span class="text-secondary"> {{ product.price }} руб. </span>
-
-              <span class="" v-if="quantity">
-                <button
-                  @click="deleteFromOrder(product.id)"
-                  class="btn btn-outline-dark btn-sm ml-3 font-weight-bold"
+              <addto-cart-button-component
+                :quantity="quantity"
+                :product="product"
+                @add-to-order="addToOrder"
+                @delete-from-order="deleteFromOrder"
+                class="mt-2"
+                :class="{ 'text-right': type === 'card' }"
                 >
-                  -
-                </button>
-                <button class="btn btn-outline-dark btn-sm font-weight-bold" disabled>
-                  В корзине: {{ quantity }}
-                </button>
-                <button
-                  @click="addToOrder(product.id)"
-                  class="btn btn-outline-dark btn-sm font-weight-bold"
-                >
-                  +
-                </button>
-              </span>
-              <button v-else @click="addToOrder(product.id)" class="btn btn-info btn-sm ml-3">
-                Добавить в корзину
-              </button>
-            </p>
+                <template v-slot:start>
+                  <span class="text-secondary"> {{ product.price }} руб. </span>
+                </template>
+              </addto-cart-button-component>
           </div>
         </div>
       </div>
     </div>
-  </div>
+
+
+
+    <div v-else class="row">
+        <div class="col-md-12">
+            <div class="ms-2 me-auto">
+              <div class="font-weight-bold font-size-point">
+                <a class="text-reset" :href="`/products/${product.id}`">{{ product.title }}</a> |
+                <span class="font-italic font-weight-light" v-html="formattedAuthorsHtml.join(' / ')"></span> |
+                <span class="text-secondary"> {{ product.price }} руб. </span>
+              </div>
+              <addto-cart-button-component
+                :quantity="quantity"
+                :product="product"
+                @add-to-order="addToOrder"
+                @delete-from-order="deleteFromOrder"
+                class="mt-2"
+                >
+                <template v-slot:start>
+                  <button @click="isModalOpen = true" class="btn btn-outline-primary btn-sm ml-3">Быстрый просмотр</button>
+                </template>
+              </addto-cart-button-component>
+            </div>
+        </div>
+    </div>
+
+    <b-modal
+        v-model="isModalOpen"
+        centered
+        id="modal-lg"
+        size="lg"
+        :title="product.title"
+        hide-backdrop
+        content-class="shadow"
+    >
+        <img :src="`/storage/${product.picture}`" :alt="product.title" class="modal-image"> {{ product.description }}
+        <template v-slot:modal-footer>
+            <addto-cart-button-component
+              :quantity="quantity"
+              :product="product"
+              @add-to-order="addToOrder"
+              @delete-from-order="deleteFromOrder"
+              class="mt-2"
+              :class="{ 'text-right': type === 'card' }"
+              >
+              <template v-slot:start>
+                <span class="text-secondary"> {{ product.price }} руб. </span>
+              </template>
+            </addto-cart-button-component>
+        </template>
+    </b-modal>
+
+    <!-- <modal-product-component v-if="isModalOpen">
+      <template v-slot:title>
+        {{ product.title }}
+      </template>
+      <template v-slot:footer>
+        <button @click="isModalOpen = false" class="btn btn-secondary">Закрыть</button>
+      </template>
+    </modal-product-component> -->
+  </article>
 </template>
 
 <script>
+  import ModalProductComponent from './ModalProductComponent.vue';
+  import AddtoCartButtonComponent from './AddtoCartButtonComponent.vue';
   import { deleteProductFromOrder } from '../api/delete';
   import { addProductToOrder } from '../api/create';
   export default {
-    props: ['product', 'orderProducts', 'tags', 'authors'],
+    props: ['product', 'orderProducts', 'tags', 'authors', 'type'],
+    components: { AddtoCartButtonComponent, ModalProductComponent },
 
     data() {
       return {
         quantity: null,
+        isModalOpen: false,
       }
     },
 
@@ -118,7 +169,7 @@
       },
 
       deleteFromOrder(productId) {
-        deleteProductFromOrder(productId, this.orderId)
+        deleteProductFromOrder(productId)
           .then(() => {
             this.quantity -= 1;
             Vue.swal.fire({
@@ -142,7 +193,19 @@
 </script>
 
 <style scoped>
-  .bg-grey {
+  .image-bg {
     background-color: #EEF5FC;
+  }
+  .card-image {
+    width: 80%;
+    height: 96%;
+  }
+  .font-size-point {
+    font-size: 1.1rem;
+  }
+  .modal-image {
+    width: 25%;
+    float: left;
+    margin-right: 20px;
   }
 </style>

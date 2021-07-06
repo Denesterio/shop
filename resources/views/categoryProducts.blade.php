@@ -20,7 +20,7 @@
                 @else
                 :authors='{{$authors}}'
                 @endif
-            >
+                class="">
             </product-list-component>
         </main>
     </div>
