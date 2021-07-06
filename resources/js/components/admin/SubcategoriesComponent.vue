@@ -57,12 +57,7 @@
         </p>
       </div>
 
-      <button @click="createNewSubcategory" :disabled="processing" class="btn btn-success">
-        <div v-if="processing" class="spinner-border text-light spinner-border-sm" role="status">
-          <span class="visually-hidden"></span>
-        </div>
-        <span v-else>Сохранить</span>
-      </button>
+      <create-button-component @click.native="createNewSubcategory" :processing="processing" />
     </div>
 
     <div class="container-xl">
@@ -90,12 +85,14 @@
 </template>
 
 <script>
+  import CreateButtonComponent from './CreateButtonComponent.vue';
   import { deleteSubcategory } from '../../api/delete.js';
   import transliterate from '../../transliterate.js';
   import { isValid, fillErrors } from '../../validate.js';
 
   export default {
     props: ['title', 'subcategories', 'categories'],
+    components: { CreateButtonComponent },
     data() {
       return {
         subcategoryName: '',

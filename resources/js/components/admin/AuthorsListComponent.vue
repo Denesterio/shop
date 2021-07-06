@@ -20,19 +20,9 @@
         </p>
       </div>
 
-      <button
-          @click.prevent="createNewAuthor"
-          type="submit"
-          :disabled="processing"
-          class="btn btn-success">
-        <div
-          v-if="processing"
-          class="spinner-border text-light spinner-border-sm"
-          role="status">
-          <span class="visually-hidden"></span>
-        </div>
-        <span v-else>Сохранить</span>
-      </button>
+      <create-button-component
+        @click.native="createNewAuthor"
+        :processing="processing" />
     </form>
     <div class="container-xl">
       <ul class="list-group">

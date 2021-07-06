@@ -32,6 +32,7 @@
                     >
                         <a
                             class="list-group-item list-group-item-action"
+                            :class="{ 'active': isActive(subcategory.slug) }"
                             v-for="subcategory in subcategories.filter(
                                 subcat => subcat['category_id'] === category.id
                             )"
@@ -41,14 +42,15 @@
                             {{ subcategory.title }}
                         </a>
                     </div>
-                    <ul class="list-group list-group-flush" v-else>
-                        <li
-                            class="list-group-item"
+                    <div v-else class="list-group list-group-flush">
+                        <a
+                            class="list-group-item list-group-item-action"
+                            :class="{ 'active': isOpen(category.id) }"
                             :href="`/categories/${category.id}`"
                         >
-                            {{ category.title }}
-                        </li>
-                    </ul>
+                        {{ category.title }}
+                        </a>
+                    </div>
                 </b-card-body>
             </b-collapse>
         </b-card>
@@ -84,7 +86,11 @@ export default {
                 (sub) => sub['category_id'] === id
             );
             return !!currentSubcategories.find((sub) => sub.slug === this.currentPage);
-        }
+        },
+
+        isActive(slug) {
+            return this.currentPage === slug;
+        },
     },
 };
 </script>

@@ -10,11 +10,22 @@
 </template>
 
 <script>
-    import WelcomeCategoryCardComponent from './WelcomeCategoryCardComponent.vue';
+  import WelcomeCategoryCardComponent from './WelcomeCategoryCardComponent.vue';
 
 export default {
     props: ['categories'],
     components: {WelcomeCategoryCardComponent},
+    data() {
+        return {
+            isModalOpen: false,
+        }
+    },
+    methods: {
+      openModal() {
+        this.isModalOpen = true;
+      }
+    },
+
     mounted () {
 
     }

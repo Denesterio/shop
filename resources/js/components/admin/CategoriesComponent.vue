@@ -31,13 +31,9 @@
         </div>
       </div>
 
-      <button @click="createNewCategory" :disabled="processing" class="btn btn-success">
-        <div v-if="processing" class="spinner-border text-light spinner-border-sm" role="status">
-          <span class="visually-hidden"></span>
-        </div>
-        <span v-else>Сохранить</span>
-      </button>
+      <create-button-component @click.native="createNewCategory" :processing="processing" />
     </div>
+
     <div class="container-xl">
       <div v-if="loading" class="text-center">
         <svg
@@ -93,11 +89,13 @@
 </template>
 
 <script>
+  import CreateButtonComponent from './CreateButtonComponent.vue';
   import { getCategories } from '../../api/get.js';
   import { deleteCategory } from '../../api/delete.js';
   import { isValid, fillErrors } from '../../validate.js';
   export default {
     props: ['title'],
+    components: { CreateButtonComponent },
     data() {
       return {
         categoryName: '',

@@ -15,9 +15,11 @@
                 @isset($tags)
                 :tags='{{$tags}}'
                 @endisset
-                @isset($authors)
+                @if(count($authors) === 0)
+                :authors='{}'
+                @else
                 :authors='{{$authors}}'
-                @endisset
+                @endif
             >
             </product-list-component>
         </main>
