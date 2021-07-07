@@ -21,10 +21,11 @@
       </div>
 
       <create-button-component
-        @click.native="createNewAuthor"
-        :processing="processing" />
+      @click.native="createNewAuthor"
+      :processing="processing" />
     </form>
-    <div class="container-xl">
+    <svg-loading-component v-if='processing' />
+    <div v-else class="container-xl">
       <ul class="list-group">
         <li
           v-for="author in authors"
@@ -35,10 +36,10 @@
             <a :href="`/authors/${author.id}`">{{ author.title }}</a>
           </div>
           <button
-            @click="removeAuthor(author.id)"
-            type="button"
-            class="btn btn-outline-danger btn-sm col-1"
-            aria-label="Close"
+          @click="removeAuthor(author.id)"
+          type="button"
+          class="btn btn-outline-danger btn-sm col-1"
+          aria-label="Close"
           >
             Удалить
           </button>
@@ -49,61 +50,67 @@
 </template>
 
 <script>
-import { createAuthor } from '../../api/create';
-import { deleteAuthor } from '../../api/delete';
-import SvgLoadingComponent from '../SvgLoadingComponent.vue';
+import { createAuthor } from '../../api/create.js';
+import { getAuthors } from '../../api/get.js';
+import { deleteAuthor } from '../../api/delete.js';
+import SvgLoadingComponent from '../svg/SvgLoadingComponent.vue';
+import CreateButtonComponent from './CreateButtonComponent.vue';
 export default {
-    props: {
-        title: {
-            type: String,
-            required: true,
-        },
-        authors: {
-            type: Array,
-            required: true,
-        },
+  props: {
+    title: {
+      type: String,
+      required: true,
     },
-    components: {SvgLoadingComponent},
+  },
+  components: {SvgLoadingComponent, CreateButtonComponent},
 
-    data() {
-        return {
-            authorsList: this.authors,
-            currentAuthor: "",
-            error: "",
-            processing: false,
-        }
-    },
-
-    methods: {
-        createNewAuthor() {
-            if (this.currentAuthor.length === 0) {
-                this.error = "Поле не должно быть пустым";
-                return;
-            }
-            this.processing = true;
-            createAuthor(this.currentAuthor)
-              .then(() => window.location.reload())
-              .finally(() => this.processing = false);
-        },
-
-        removeAuthor(authorId) {
-            deleteAuthor(authorId).then(() => window.location.reload()).catch((error) => {
-                if (error.response.data.message.startsWith('SQLSTATE[23000]')) {
-                    Vue.swal.fire({
-                        title: 'Ошибка',
-                        text: 'Нельзя удалить автора, на которого записаны книги',
-                        icon: 'error',
-                        confirmButtonText: 'OK',
-                    });
-                }
-            });
-        }
-    },
-
-    watch: {
-        currentAuthor() {
-            this.error = '';
-        }
+  data() {
+    return {
+      authors: [],
+      currentAuthor: "",
+      error: "",
+      processing: false,
     }
+  },
+
+  mounted() {
+    getAuthors().then((data) => this.authors = data.reverse());
+  },
+
+  methods: {
+    createNewAuthor() {
+      if (this.currentAuthor.length === 0) {
+        this.error = "Поле не должно быть пустым";
+        return;
+      }
+      this.processing = true;
+      createAuthor(this.currentAuthor)
+        .then((data) => {
+          this.authors = [({ title: this.currentAuthor, id: data.id }), ...this.authors];
+          this.validationError = '';
+          this.currentAuthor = '';
+        })
+        .finally(() => (this.processing = false));
+    },
+
+    removeAuthor(authorId) {
+      deleteAuthor(authorId).then(() => window.location.reload()).catch((error) => {
+        if (error.response.data.message.startsWith('SQLSTATE[23000]')) {
+          Vue.swal.fire({
+            title: 'Ошибка',
+            text: 'Нельзя удалить автора, на которого записаны книги',
+            icon: 'error',
+            confirmButtonText: 'OK',
+          });
+        }
+      });
+    }
+  },
+
+  watch: {
+    currentAuthor() {
+    this.error = '';
+    }
+  }
 }
 </script>

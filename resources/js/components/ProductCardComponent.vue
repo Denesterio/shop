@@ -3,7 +3,7 @@
     <div v-if="type === 'card'" class="row">
       <div class="image-bg col-md-3 d-flex align-items-center justify-content-center">
         <img
-          :src="product.picture ? '/storage/' + product.picture : '/img/cap.png'"
+          :src="picturePath"
           :alt="product.title"
           class="my-auto card-image"
         /><img />
@@ -23,7 +23,7 @@
           <div class="card-footer bg-white">
               <addto-cart-button-component
                 :quantity="quantity"
-                :product="product"
+                :id="product.id"
                 @add-to-order="addToOrder"
                 @delete-from-order="deleteFromOrder"
                 class="mt-2"
@@ -50,7 +50,7 @@
               </div>
               <addto-cart-button-component
                 :quantity="quantity"
-                :product="product"
+                :id="product.id"
                 @add-to-order="addToOrder"
                 @delete-from-order="deleteFromOrder"
                 class="mt-2"
@@ -76,7 +76,7 @@
         <template v-slot:modal-footer>
             <addto-cart-button-component
               :quantity="quantity"
-              :product="product"
+              :id="product.id"
               @add-to-order="addToOrder"
               @delete-from-order="deleteFromOrder"
               class="mt-2"
@@ -88,26 +88,16 @@
             </addto-cart-button-component>
         </template>
     </b-modal>
-
-    <!-- <modal-product-component v-if="isModalOpen">
-      <template v-slot:title>
-        {{ product.title }}
-      </template>
-      <template v-slot:footer>
-        <button @click="isModalOpen = false" class="btn btn-secondary">Закрыть</button>
-      </template>
-    </modal-product-component> -->
   </article>
 </template>
 
 <script>
-  import ModalProductComponent from './ModalProductComponent.vue';
   import AddtoCartButtonComponent from './AddtoCartButtonComponent.vue';
   import { deleteProductFromOrder } from '../api/delete';
   import { addProductToOrder } from '../api/create';
   export default {
     props: ['product', 'orderProducts', 'tags', 'authors', 'type'],
-    components: { AddtoCartButtonComponent, ModalProductComponent },
+    components: { AddtoCartButtonComponent },
 
     data() {
       return {
@@ -140,6 +130,10 @@
         return this.authors.map(
           (author) => `<a class="text-muted" href="/authors/${author.id}">${author.title}</a>`
         );
+      },
+
+      picturePath() {
+        return this.product.picture ? '/storage/' + this.product.picture : '/img/cap.png';
       }
     },
 

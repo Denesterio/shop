@@ -3,7 +3,7 @@
       <slot name="start"></slot>
       <span class="" v-if="quantity">
         <button
-          @click="$emit('delete-from-order', product.id)"
+          @click="$emit('delete-from-order', id)"
           class="btn btn-outline-dark btn-sm ml-3 font-weight-bold"
         >
           -
@@ -12,7 +12,7 @@
           В корзине: {{ quantity }}
         </button>
         <button
-          @click="$emit('add-to-order', product.id)"
+          @click="$emit('add-to-order', id)"
           class="btn btn-outline-dark btn-sm font-weight-bold"
         >
           +
@@ -20,7 +20,7 @@
       </span>
       <button
         v-else
-        @click="$emit('add-to-order', product.id)"
+        @click="$emit('add-to-order', id)"
         class="btn btn-info btn-sm ml-3"
       >
         Добавить в корзину
@@ -30,6 +30,6 @@
 
 <script>
 export default {
-    props: ['quantity', 'product'],
+    props: ['quantity', 'id'],
 }
 </script>

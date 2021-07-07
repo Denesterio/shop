@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-form-group label="Отбразить товары" v-slot="{ ariaDescribedby }">
+    <b-form-group label="Отобразить товары" v-slot="{ ariaDescribedby }">
       <b-form-radio-group
         id="btn-radios-1"
         v-model="selectedView"
@@ -65,12 +65,6 @@
         ],
       };
     },
-
-    computed: {
-      currentComponent() {
-        return `product-${this.component}-component`;
-      }
-    }
   };
 </script>
 

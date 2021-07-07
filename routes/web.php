@@ -64,6 +64,7 @@ Route::prefix('admin')->middleware('admin')->group(function() {
 });
 
 Route::get('/profile', [ProfileController::class, 'show'])->middleware('auth')->name('profile');
+Route::post('/user/edit', [UserController::class, 'edit'])->middleware('auth')->name('user.edit');
 
 Route::prefix('order')->middleware('auth')->group(function() {
     Route::get('get', [OrderController::class, 'get']);

@@ -151,7 +151,7 @@
   import { getProducts } from '../../api/get.js';
   import { deleteProduct } from '../../api/delete.js';
   import { isValid, fillErrors } from '../../validate.js';
-  import SvgLoadingComponent from '../SvgLoadingComponent.vue';
+  import SvgLoadingComponent from '../svg/SvgLoadingComponent.vue';
   import AuthorComponent from './AuthorComponent.vue';
   export default {
     props: ['categories', 'subcategories', 'tags'],

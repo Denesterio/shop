@@ -31,6 +31,7 @@
 
 <script>
 import { getAuthors } from '../../api/get.js';
+import { createAuthor } from '../../api/create.js';
 
 export default {
     data() {
@@ -74,9 +75,8 @@ export default {
         }
 
         this.processing = true;
-        axios
-          .post('/admin/authors/create', { name: this.currentAuthor })
-          .then(({ data }) => {
+        createAuthor(this.currentAuthor)
+          .then((data) => {
             this.authors = [({ title: this.currentAuthor, id: data.id }), ...this.authors];
             this.validationError = '';
             this.addAuthorToAuthors();
