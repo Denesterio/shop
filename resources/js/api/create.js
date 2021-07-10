@@ -1,12 +1,16 @@
 const addProductToOrder = (productId, orderId = null) => {
-  return axios.post('/order/addProduct', {
+  return axios.post('/api/order/addProduct', {
     productId,
     orderId,
   });
 };
 
 const createAuthor = (name) => {
-  return axios.post('/admin/authors/create', { name }).then((response) => response.data);
+  return axios.post('/api/admin/authors/create', { name });
 };
 
-export { addProductToOrder, createAuthor };
+const confirmOrder = () => {
+  return axios.get("/api/order/confirm");
+};
+
+export { addProductToOrder, createAuthor, confirmOrder };

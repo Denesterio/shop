@@ -1,13 +1,5 @@
 <?php
 
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\SubcategoryController;
-use App\Http\Controllers\AuthorController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\ConfirmOrderController;
-use App\Http\Controllers\TagController;
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,62 +14,13 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::any('/', function () {
+//     return view('welcome');
+// });
 
-Route::get('/categories/get', [CategoryController::class, 'get']);
-Route::get('/', [CategoryController::class, 'welcome'])->name('welcome');
-Route::get('/categories/{categoryId}', [CategoryController::class, 'show']);
+Route::any('/{any}', function () {
+    return view('layouts.app');
+})->where('any', '.*');
 
-Route::get('/products/get', [ProductController::class, 'get']);
-Route::get('/products/carousel', [ProductController::class, 'carousel']);
-
-Route::get('/subcategories/get', [SubcategoryController::class, 'get']);
-Route::get('/subcategories/{subcategorySlug}', [SubcategoryController::class, 'show']);
-
-Route::get('/authors/get', [AuthorController::class, 'get']);
-Route::get('/authors/{authorId}', [AuthorController::class, 'show']);
-
-Route::get('/tags/get', [TagController::class, 'get']);
-
-Route::prefix('admin')->middleware('admin')->group(function() {
-    Route::get('/categories', [CategoryController::class, 'list'])->name('categories');
-    Route::post('/categories/create', [CategoryController::class, 'create']);
-    Route::delete('/categories/delete', [CategoryController::class, 'delete']);
-
-    Route::get('/products', [ProductController::class, 'list'])->name('products');
-    Route::post('/products/create', [ProductController::class, 'create']);
-    Route::delete('/products/delete', [ProductController::class, 'delete'])->name('product.delete');
-
-    Route::post('/subcategories/create', [SubcategoryController::class, 'create']);
-    Route::delete('/subcategories/delete', [SubcategoryController::class, 'delete']);
-    Route::get('/subcategories', [SubcategoryController::class, 'list'])->name('subcategories');
-
-    Route::get('/authors', [AuthorController::class, 'list'])->name('authors');
-    Route::post('/authors/create', [AuthorController::class, 'create']);
-    Route::delete('/authors/delete', [AuthorController::class, 'delete']);
-
-    Route::post('/tags/create', [TagController::class, 'create']);
-    Route::delete('/tags/delete', [TagController::class, 'delete']);
-    Route::get('/tags', [TagController::class, 'list'])->name('tags');
-});
-
-Route::get('/profile', [ProfileController::class, 'show'])->middleware('auth')->name('profile');
-Route::post('/user/edit', [UserController::class, 'edit'])->middleware('auth')->name('user.edit');
-
-Route::prefix('order')->middleware('auth')->group(function() {
-    Route::get('get', [OrderController::class, 'get']);
-    Route::post('addProduct', [OrderController::class, 'addProduct']);
-    Route::post('deleteProduct', [OrderController::class, 'deleteProduct']);
-    Route::get('confirm', [ConfirmOrderController::class, 'confirm']);
-    Route::get('{orderId}/products', [OrderController::class, 'products']);
-});
-
-Route::middleware('auth')->group(function() {
-    Route::get('/cart', [OrderController::class, 'showCart'])->name('cart');
-});
-
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Route::get('/', [CategoryController::class, 'welcome'])->name('welcome');
+// Auth::routes();

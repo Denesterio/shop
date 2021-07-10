@@ -12,7 +12,7 @@
         size="sm"
       ></b-form-radio-group>
     </b-form-group>
-    <ul class="product-list" v-if='products.length'>
+    <ul class="product-list" v-if="products.length">
       <li>
         <product-card-component
           v-for="product in products"
@@ -20,7 +20,6 @@
           :product="product"
           :key="product.id"
           :orderProducts="orderProducts"
-          :tags="tags.filter((tag) => tag['product_id'] === product.id)"
           :authors="authors[product.id]"
         >
         </product-card-component>
@@ -33,45 +32,79 @@
 </template>
 
 <script>
-  import ProductCardComponent from './ProductCardComponent.vue';
-  export default {
-    props: {
-      products: {
-        type: Array,
-        required: true,
-      },
-      orderProducts: {
-        type: Array,
-        required: true,
-      },
-      tags: {
-        type: Array,
-        required: false,
-        default: () => [],
-      },
-      authors: {
-        type: Object,
-        required: false,
-        default: () => {},
-      }
+import ProductCardComponent from "./ProductCardComponent.vue";
+import { getProductsByType } from "../api/get";
+export default {
+  props: {
+    categories: {
+      type: Array,
+      required: true,
     },
-    components: { ProductCardComponent },
-    data() {
-      return {
-        selectedView: 'card',
-        optionsView: [
-          { text: 'Карточками', value: 'card' },
-          { text: 'Списком', value: 'point' },
-        ],
-      };
+    subcategories: {
+      type: Array,
+      required: true,
     },
-  };
+  },
+  components: { ProductCardComponent },
+  data() {
+    return {
+      selectedView: "card",
+      optionsView: [
+        { text: "Карточками", value: "card" },
+        { text: "Списком", value: "point" },
+      ],
+
+      products: [],
+      orderProducts: [],
+      authors: {},
+      loading: true,
+    };
+  },
+
+  computed: {
+    user() {
+      return this.$store.state.user;
+    },
+  },
+
+  beforeRouteUpdate(to, _from, next) {
+    const id = to.params.id;
+    const types = ["categories", "subcategories", "authors"];
+    const type = to.path.split("/").find((type) => types.includes(type));
+    getProductsByType(type, id)
+      .then(({ data }) => {
+        this.products = data.products;
+        this.authors = data.authors;
+        this.orderProducts = data.orderProducts;
+      })
+      .finally(() => (this.loading = false));
+    next();
+  },
+
+  beforeRouteEnter(to, _from, next) {
+    const id = to.params.id;
+    const types = ["categories", "subcategories", "authors"];
+    const type = to.path.split("/").find((type) => types.includes(type));
+    getProductsByType(type, id)
+      .then(({ data }) =>
+        next((vm) => {
+          vm.products = data.products;
+          vm.authors = data.authors;
+          vm.orderProducts = data.orderProducts;
+          vm.loading = false;
+        })
+      )
+      .catch((err) => {
+        alert(err);
+      });
+  },
+};
 </script>
 
 <style scoped>
-  .product-list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
+.product-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
 </style>

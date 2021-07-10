@@ -8,12 +8,16 @@ use App\Models\Category;
 use App\Models\Subcategory;
 use App\Models\Author;
 use App\Models\Tag;
+use App\Models\Order;
+use App\Models\OrdersProduct;
 use App\Models\AuthorsProduct;
 use App\Models\TagsProduct;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    public function list ()
+    public function list()
     {
         $authors = Author::get();
         $categories = Category::get();
@@ -28,12 +32,12 @@ class ProductController extends Controller
         ]);
     }
 
-    public function get ()
+    public function get()
     {
         return Product::get();
     }
 
-    public function create (Request $request)
+    public function create(Request $request)
     {
         [
             'name' => $name,
@@ -94,5 +98,58 @@ class ProductController extends Controller
         });
 
         return ['products' => $products, 'authors' => $authors];
+    }
+
+    public function showProductsBy(Request $request, $id)
+    {
+        $products = collect();
+
+        if ($request->routeIs('categoryProducts')) {
+            $slugs = DB::table('subcategories')
+                ->select('slug')
+                ->where('category_id', $id)
+                ->get();
+
+            $slugs = $slugs
+                ->map(function ($item) {
+                    return $item->slug;
+                })
+                ->all();
+            $products = Product::with('authors')
+                ->whereIn('subcategory_slug', $slugs)
+                ->get();
+        } elseif ($request->routeIs('subcategoryProducts')) {
+            $products = Product::with('authors')
+                ->where('subcategory_slug', '=', $id)
+                ->get();
+        } elseif ($request->routeIs('authorProducts')) {
+            $author = Author::where('id', $id)->first();
+            $products = $author->products()->get();
+        }
+
+        $user = Auth::user();
+        if ($user) {
+            $order = Order::where('user_id', $user->id)
+                ->where('status', 0)
+                ->first();
+        }
+
+        $orderProducts = collect();
+        if (isset($order)) {
+            $orderProducts = OrdersProduct::where('order_id', $order->id)->get();
+        }
+
+        $authors = collect();
+
+        $products->each(function ($item) use ($authors) {
+            $id = $item->id;
+            $authors[$id] = $item->authors;
+        });
+
+        return [
+            'products' => $products,
+            'orderProducts' => $orderProducts,
+            'authors' => $authors,
+        ];
     }
 }

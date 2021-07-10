@@ -13,28 +13,28 @@ const deleteCategory = (categoryId) => {
 };
 
 const deleteProduct = (productId) => {
-  return axios.post('/admin/products/delete', {
+  return axios.post('/api/admin/products/delete', {
     id: productId,
     _method: 'DELETE',
   });
 };
 
 const deleteTag = (tagId) => {
-  return axios.post('/admin/tags/delete', {
+  return axios.post('/api/admin/tags/delete', {
     id: tagId,
     _method: 'DELETE',
   });
 };
 
 const deleteProductFromOrder = (productId, orderId = null) => {
-  return axios.post('/order/deleteProduct', {
+  return axios.post('/api/order/deleteProduct', {
     productId,
     orderId,
   });
 };
 
 const deleteAuthor = (authorId) => {
-  return axios.post('/admin/authors/delete', {
+  return axios.post('/api/admin/authors/delete', {
     id: authorId,
     _method: 'DELETE',
   });

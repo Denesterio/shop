@@ -13,7 +13,7 @@ use Exception;
 
 class OrderController extends Controller
 {
-    public function addProduct (Request $request)
+    public function addProduct(Request $request)
     {
         $user = Auth::user();
         $order = Order::where('user_id', $user->id)->where('status', 0)->first();
@@ -43,24 +43,7 @@ class OrderController extends Controller
         return $ordersProduct;
     }
 
-    // public function get (Request $request)
-    // {
-    //     $user = Auth::user();
-    //     $order = Order::where('user_id', $user->id)->where('status', 0)->first();
-
-    //     if (!$order) {
-    //         $orders = [];
-    //     } else {
-    //         $ordersProducts = OrdersProduct::where('order_id', $order->id)->get();
-    //         $orders = [
-    //             'orders' => $ordersProducts,
-    //         ];
-    //     }
-
-    //     return $orders;
-    // }
-
-    public function deleteProduct (Request $request)
+    public function deleteProduct(Request $request)
     {
         $productId = $request->productId;
         $user = Auth::user();
@@ -80,7 +63,7 @@ class OrderController extends Controller
         return $orderProducts;
     }
 
-    public function showCart ()
+    public function showCart()
     {
         $user = Auth::user();
         $order = Order::where('user_id', $user->id)->where('status', 0)->first();
@@ -97,29 +80,29 @@ class OrderController extends Controller
                 ->get();
         }
 
-        return view('/cart', ['orderProducts' => $orderProducts]);
+        return $orderProducts;
     }
 
-    public function comfirm ()
+    public function comfirm()
     {
         $user = Auth::user();
         $order = Order::where('user_id', $user->id)->where('status', 0)->first();
         $orderProducts = DB::table('orders_products as op')
-        ->select(
-            'op.id',
-            'op.quantity',
-            'op.product_id',
-            'p.title',
-            'p.price',
-            'p.picture'
-        )
-        ->join('products as p', 'p.id', 'op.product_id')
-        ->where('op.order_id', $order->id)
-        ->get();
+            ->select(
+                'op.id',
+                'op.quantity',
+                'op.product_id',
+                'p.title',
+                'p.price',
+                'p.picture'
+            )
+            ->join('products as p', 'p.id', 'op.product_id')
+            ->where('op.order_id', $order->id)
+            ->get();
 
 
 
-        $sum = $orderProducts->map(function($orderProduct) {
+        $sum = $orderProducts->map(function ($orderProduct) {
             return $orderProduct->quantity * $orderProduct->price;
         })->sum();
 
@@ -128,33 +111,32 @@ class OrderController extends Controller
             'sum' => $sum
         ];
         try {
-            $res = Mail::send('mail.orderFinish', $data, function($message) use ($user) {
+            $res = Mail::send('mail.orderFinish', $data, function ($message) use ($user) {
                 $message->subject('Новый заказ');
                 $message->sdfsd('asdfkhskdfhskdfhkshdfk@sdkfhsdkf');
             });
         } catch (Exception $e) {
-
         }
 
         $order->status = 1;
         $order->save();
     }
 
-    public function products ($orderId)
+    public function products($orderId)
     {
         // TODO:: ПОЛУЧИТЬ МОДЕЛЬ ИЗ ПАРАМЕТРА
         $order = Order::find($orderId);
         return DB::table('orders_products as op')
-        ->select(
-            'op.id',
-            'op.quantity',
-            'op.product_id',
-            'p.title',
-            'p.price',
-            'p.picture'
-        )
-        ->join('products as p', 'p.id', 'op.product_id')
-        ->where('op.order_id', $order->id)
-        ->get();
+            ->select(
+                'op.id',
+                'op.quantity',
+                'op.product_id',
+                'p.title',
+                'p.price',
+                'p.picture'
+            )
+            ->join('products as p', 'p.id', 'op.product_id')
+            ->where('op.order_id', $order->id)
+            ->get();
     }
 }
