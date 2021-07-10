@@ -2,9 +2,21 @@
   <div class="container mt-5">
     <form class="container-xl mb-4">
       <h1>{{ title }}</h1>
-      <p><a href="/admin/categories">на страницу добавления категорий</a></p>
-      <p><a href="/admin/subcategories">на страницу добавления подкатегорий</a></p>
-      <p><a href="/admin/products">на страницу добавления товаров</a></p>
+      <p>
+        <router-link :to="{ name: 'categories' }"
+          >на страницу добавления категорий</router-link
+        >
+      </p>
+      <p>
+        <router-link :to="{ name: 'subcategories' }"
+          >на страницу добавления подкатегорий</router-link
+        >
+      </p>
+      <p>
+        <router-link :to="{ name: 'products' }"
+          >на страницу добавления товаров</router-link
+        >
+      </p>
 
       <div class="form-group">
         <input
@@ -74,7 +86,7 @@ export default {
   },
 
   mounted() {
-    getAuthors().then((data) => this.authors = data.reverse());
+    getAuthors().then(({ data }) => this.authors = data.reverse());
   },
 
   methods: {
@@ -85,8 +97,8 @@ export default {
       }
       this.processing = true;
       createAuthor(this.currentAuthor)
-        .then((data) => {
-          this.authors = [({ title: this.currentAuthor, id: data.id }), ...this.authors];
+        .then(({ data }) => {
+          this.authors = [data, ...this.authors];
           this.validationError = '';
           this.currentAuthor = '';
         })
@@ -94,7 +106,9 @@ export default {
     },
 
     removeAuthor(authorId) {
-      deleteAuthor(authorId).then(() => window.location.reload()).catch((error) => {
+      deleteAuthor(authorId)
+        .then(() => this.authors.filter((a) => a.id !== authorId))
+        .catch((error) => {
         if (error.response.data.message.startsWith('SQLSTATE[23000]')) {
           Vue.swal.fire({
             title: 'Ошибка',
@@ -109,7 +123,7 @@ export default {
 
   watch: {
     currentAuthor() {
-    this.error = '';
+      this.error = '';
     }
   }
 }

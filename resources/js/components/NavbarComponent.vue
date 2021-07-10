@@ -51,16 +51,16 @@
                 class="dropdown-menu dropdown-menu-right"
                 aria-labelledby="navbarDropdown"
               >
-                <a
+                <router-link
                   v-if="isUserAdmin"
-                  href="/admin/products"
-                  class="dropdown-item"
-                  >Добавить товар</a
+                  :to="{ name: 'products' }"
+                  class="dropdown-item nav-link text-center"
+                  >Добавить товар</router-link
                 >
-                <!-- <a
-                                    :href="routeProfile"
-                                    class="dropdown-item"
-                                >Личный кабинет</a> -->
+                <router-link
+                  :to="{ name: 'profile' }"
+                  class="dropdown-item nav-link text-center"
+                >Личный кабинет</router-link>
                 <button
                   @click="logout"
                   class="btn btn-link dropdown-item nav-link text-center"
@@ -122,10 +122,10 @@ export default {
 </script>
 
 <style scoped>
-.dropdown-item {
+/* .dropdown-item {
   color: rgba(0, 0, 0, 0.5);
 }
 .dropdown-item:hover {
   color: rgba(0, 0, 0, 0.7);
-}
+} */
 </style>

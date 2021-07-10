@@ -1,11 +1,15 @@
 const authLogin = (params) => {
     return axios.post("/api/auth/login", {
         params,
-    })
-
+    });
+};
+  
+const authLogout = () => {
+    return axios.post("/api/auth/logout");
 };
 
-export { authLogin };
+const authRegister = (params) => {
+    return axios.post("/api/auth/register", params);
+}
 
-// axios.get("sanctum/csrf-cookie")
-//     .then((response) => { })
+export { authLogin, authRegister, authLogout };

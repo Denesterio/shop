@@ -1,9 +1,17 @@
 <template>
   <div class="container mt-5">
     <div class="container-xl mb-4">
-      <h1>{{ title }}</h1>
-      <p><a href="/admin/subcategories">на страницу добавления подкатегорий</a></p>
-      <p><a href="/admin/products">на страницу добавления товаров</a></p>
+      <h1>Добавить категорию</h1>
+      <p>
+        <router-link :to="{ name: 'subcategories' }"
+          >на страницу добавления подкатегорий</router-link
+        >
+      </p>
+      <p>
+        <router-link :to="{ name: 'products' }"
+          >на страницу добавления товаров</router-link
+        >
+      </p>
 
       <div class="form-group">
         <input
@@ -35,33 +43,7 @@
     </div>
 
     <div class="container-xl">
-      <div v-if="loading" class="text-center">
-        <svg
-          xmlns:svg="http://www.w3.org/2000/svg"
-          xmlns="http://www.w3.org/2000/svg"
-          xmlns:xlink="http://www.w3.org/1999/xlink"
-          version="1.0"
-          width="64px"
-          height="64px"
-          viewBox="0 0 128 128"
-          xml:space="preserve"
-        >
-          <g>
-            <circle cx="16" cy="64" r="16" fill="#000" />
-            <circle cx="16" cy="64" r="16" fill="#555" transform="rotate(45,64,64)" />
-            <circle cx="16" cy="64" r="16" fill="#949494" transform="rotate(90,64,64)" />
-            <circle cx="16" cy="64" r="16" fill="#ccc" transform="rotate(135,64,64)" />
-            <animateTransform
-              attributeName="transform"
-              type="rotate"
-              values="0 64 64;315 64 64;270 64 64;225 64 64;180 64 64;135 64 64;90 64 64;45 64 64"
-              calcMode="discrete"
-              dur="800ms"
-              repeatCount="indefinite"
-            ></animateTransform>
-          </g>
-        </svg>
-      </div>
+      <svg-loading-component v-if="loading" />
       <ul v-else class="list-group">
         <li
           v-for="category in categories"
@@ -90,12 +72,13 @@
 
 <script>
   import CreateButtonComponent from './CreateButtonComponent.vue';
+  import SvgLoadingComponent from '../svg/SvgLoadingComponent.vue';
+  import { createCategory } from "../../api/create.js";
   import { getCategories } from '../../api/get.js';
   import { deleteCategory } from '../../api/delete.js';
   import { isValid, fillErrors } from '../../validate.js';
   export default {
-    props: ['title'],
-    components: { CreateButtonComponent },
+    components: { CreateButtonComponent, SvgLoadingComponent },
     data() {
       return {
         categoryName: '',
@@ -113,7 +96,7 @@
     },
     mounted() {
       getCategories()
-        .then((data) => (this.categories = data))
+        .then(({ data }) => (this.categories = data))
         .finally(() => (this.loading = false));
     },
     methods: {
@@ -130,17 +113,18 @@
           return;
         }
 
-        axios
-          .post('/admin/categories/create', params)
+        createCategory(params)
           .then(() => {
-            document.location.reload();
+            this.categories = [data, ...this.categories];
           })
           .finally(() => {
             this.processing = false;
           });
       },
       removeCategory(categoryId) {
-        deleteCategory(categoryId).then(() => document.location.reload());
+        deleteCategory(categoryId).then(() => {
+          this.categories = this.categories.filter((cat) => cat.id !== categoryId)
+        });
       },
     },
     watch: {

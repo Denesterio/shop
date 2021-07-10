@@ -56,7 +56,33 @@ const routes = [
         path: '/profile',
         component: ProfileComponent,
         name: 'profile',
-    }
+    },
+    {
+        path: '/admin/categories',
+        name: 'categories',
+        component: CategoriesComponent,
+    },
+    {
+        path: '/admin/subcategories',
+        name: 'subcategories',
+        component: SubcategoriesComponent,
+    },
+    {
+        path: '/admin/products',
+        name: 'products',
+        component: ProductsComponent,
+    },
+    {
+        path: '/admin/tags',
+        name: 'tags',
+        component: TagsComponent,
+    },
+    {
+        path: '/admin/authors',
+        name: 'authors',
+        component: AuthorsListComponent,
+    },
+    
 ]
 
 const router = new VueRouter({

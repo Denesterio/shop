@@ -50,7 +50,9 @@ class ProductController extends Controller
 
         $filename = '';
         if ($request->hasFile('picture')) {
-            $filename = $request->file('picture')->store('img', 'public');
+            $file = $request->file('picture');
+            $filename = time() . $file->getClientOriginalName();
+            $request->file('picture')->storeAs('public/img', $filename);
         }
 
         $productId = Product::create([

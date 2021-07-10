@@ -64,7 +64,7 @@ export default {
     },
 
     mounted() {
-        getAuthors().then((data) => this.authors = data);
+        getAuthors().then(({ data }) => this.authors = data);
     },
 
     methods: {
@@ -76,8 +76,8 @@ export default {
 
         this.processing = true;
         createAuthor(this.currentAuthor)
-          .then((data) => {
-            this.authors = [({ title: this.currentAuthor, id: data.id }), ...this.authors];
+          .then(({ data }) => {
+            this.authors = [data, ...this.authors];
             this.validationError = '';
             this.addAuthorToAuthors();
           })
