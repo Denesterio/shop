@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SubcategoryController;
@@ -26,9 +27,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
     Route::post('/login', [LoginController::class, 'login']);
-    Route::post('/logout', function () {
-        Auth::logout();
-    });
+    Route::post('/logout', [LoginController::class, 'logout']);
+    Route::post('/register', [RegisterController::class, 'create']);
 
     Route::middleware('auth:sanctum')->get('/getUser', function (Request $request) {
         return $request->user();
@@ -82,8 +82,6 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::get('/tags', [TagController::class, 'list'])->name('tags');
 });
 
-Route::post('/user/edit', [UserController::class, 'edit'])->middleware('auth')->name('user.edit');
-
 Route::prefix('order')->middleware('auth')->group(function () {
     Route::get('get', [OrderController::class, 'get']);
     Route::post('addProduct', [OrderController::class, 'addProduct']);
@@ -95,6 +93,7 @@ Route::prefix('order')->middleware('auth')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::post('/user/edit', [UserController::class, 'edit'])->name('user.edit');
 });
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

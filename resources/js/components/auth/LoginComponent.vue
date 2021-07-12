@@ -1,7 +1,8 @@
 <template>
-  <div class="row justify-content-center">
+  <div class="row justify-content-center mt-4">
     <div class="col-md-8">
-      <div class="card">
+      <svg-loading-component v-if="processing" />
+      <div v-else class="card">
         <div class="card-header">Авторизация</div>
 
         <div class="card-body">
@@ -47,7 +48,7 @@
           </div>
           <div class="form-group row mb-0">
             <div class="col-md-8 offset-md-4">
-              <button @click="login" class="btn btn-primary">Войти</button>
+              <button @click="redirect" class="btn btn-primary">Войти</button>
             </div>
           </div>
         </div>
@@ -57,23 +58,34 @@
 </template>
 
 <script>
+import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
 export default {
+  components: { SvgLoadingComponent },
   data() {
     return {
       email: "",
       password: "",
       errors: [],
+      previousPage: "",
+      processing: false,
     };
   },
   methods: {
-    login() {
+    async login() {
       this.errors = [];
       const params = {
         email: this.email,
         password: this.password,
       };
-      this.$store.dispatch("login", params).then(() => {
-        //this.$router.push('/')
+      await this.$store.dispatch("login", params);
+    },
+    redirect() {
+      this.processing = true;
+      this.login().then(() => {
+        setTimeout(() => {
+          this.processing = false;
+          this.$router.push(this.$route.query.redirect || "/");
+        }, 10);
       });
     },
   },

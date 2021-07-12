@@ -14,7 +14,10 @@ const store = new Vuex.Store({
         getUser({ commit }) {
             axios.get('/api/auth/getUser')
                 .then(response => {
-                    commit('setUser', response.data)
+                    return new Promise((resolve, reject) => {
+                        commit('setUser', response.data);
+                        resolve();
+                    })
                 })
         },
         login({ commit }, params) {
@@ -22,10 +25,7 @@ const store = new Vuex.Store({
             axios.get("sanctum/csrf-cookie").then(() => {
                 axios.post('/api/auth/login', { params })
                     .then(response => {
-                        return new Promise((resolve, reject) => {
-                            commit('setUser', response.data)
-                            resolve()
-                        })
+                        this.dispatch('getUser');
                     })
                     .catch(error => {
                         commit('setLoginErrors', error.response.data.errors)

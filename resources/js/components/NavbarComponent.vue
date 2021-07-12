@@ -60,7 +60,8 @@
                 <router-link
                   :to="{ name: 'profile' }"
                   class="dropdown-item nav-link text-center"
-                >Личный кабинет</router-link>
+                  >Личный кабинет</router-link
+                >
                 <button
                   @click="logout"
                   class="btn btn-link dropdown-item nav-link text-center"
@@ -73,12 +74,12 @@
           <template v-else>
             <!-- Authentication Links -->
             <li class="nav-item">
-              <router-link class="nav-link" to="/login"
-                >Авторизация</router-link
+              <a @click.prevent="moveToLogin" class="nav-link" href=""
+                >Авторизация</a
               >
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/register"
+              <router-link class="nav-link" :to="{ name: 'register' }"
                 >Регистрация</router-link
               >
             </li>
@@ -90,6 +91,7 @@
 </template>
 
 <script>
+import { authLogout } from "../api/auth.js";
 export default {
   props: {
     appName: {
@@ -109,8 +111,15 @@ export default {
 
   methods: {
     logout() {
-      axios.post("/api/auth/logout").then(() => {
+      authLogout().then(() => {
         this.$store.dispatch("logout");
+        this.$router.push({ name: "welcome" });
+      });
+    },
+    moveToLogin() {
+      this.$router.push({
+        name: "login",
+        query: { redirect: this.$route.path },
       });
     },
   },
@@ -122,10 +131,10 @@ export default {
 </script>
 
 <style scoped>
-/* .dropdown-item {
+.dropdown-item {
   color: rgba(0, 0, 0, 0.5);
 }
 .dropdown-item:hover {
   color: rgba(0, 0, 0, 0.7);
-} */
+}
 </style>

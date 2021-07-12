@@ -6,6 +6,7 @@ Vue.use(VueRouter);
 import ProductListComponent from '../ProductListComponent.vue';
 import WelcomeCategoryListComponent from '../welcome/WelcomeCategoryListComponent.vue';
 import LoginComponent from '../auth/LoginComponent.vue';
+import RegisterComponent from '../auth/RegisterComponent.vue';
 import CartComponent from '../CartComponent.vue';
 import LayoutComponent from '../welcome/LayoutComponent.vue';
 import ProfileComponent from '../profile/ProfileComponent.vue';
@@ -48,6 +49,11 @@ const routes = [
         name: 'login',
     },
     {
+        path: '/login',
+        component: RegisterComponent,
+        name: 'register',
+    },
+    {
         path: '/cart',
         component: CartComponent,
         name: 'cart',
@@ -82,7 +88,7 @@ const routes = [
         name: 'authors',
         component: AuthorsListComponent,
     },
-    
+
 ]
 
 const router = new VueRouter({

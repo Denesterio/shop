@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div v-if="products.length">
+  <div class="container mt-4">
+    <template v-if="products.length">
       <h4>Заказ №{{ products[0]["order_id"] }}</h4>
       <table class="table mt-4 text-center align-middle">
         <thead class="table-light">
@@ -47,7 +47,7 @@
           Оформить заказ
         </button>
       </section>
-    </div>
+    </template>
     <span v-else>
       <em>В корзине отсутствуют продукты</em>
     </span>

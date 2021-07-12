@@ -7,6 +7,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
 
 class LoginController extends Controller
 {
@@ -44,14 +45,24 @@ class LoginController extends Controller
     {
         $credentials = $request->only('params');
 
-        // dd($credentials);
-
         if (Auth::attempt($credentials['params'])) {
             $request->session()->regenerate();
+            $user = Auth::user();
+            $userJson = json_encode($user);
 
-            return Auth::user();
+            return redirect()->intended();
         }
 
         return 'none';
+    }
+    public function logout(Request $request)
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect('/');
     }
 }
