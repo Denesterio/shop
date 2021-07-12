@@ -96,11 +96,7 @@
       hide-backdrop
       content-class="shadow"
     >
-      <img
-        :src="`/storage/${product.picture}`"
-        :alt="product.title"
-        class="modal-image"
-      />
+      <img :src="picturePath" :alt="product.title" class="modal-image" />
       {{ product.description }}
       <template v-slot:modal-footer>
         <addto-cart-button-component
@@ -165,7 +161,7 @@ export default {
 
     picturePath() {
       return this.product.picture
-        ? "/storage/" + this.product.picture
+        ? "/storage/img/" + this.product.picture
         : "/img/cap.png";
     },
   },
@@ -243,7 +239,7 @@ export default {
   background-color: #eef5fc;
 }
 .card-image {
-  width: 80%;
+  width: 95%;
   height: 96%;
 }
 .font-size-point {

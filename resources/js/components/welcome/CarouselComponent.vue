@@ -7,7 +7,9 @@
     </template>
     <div v-for="product in products" :key="product.id" class="card border-info">
       <img
-        :src="product.picture ? '/storage/' + product.picture : '/img/cap.png'"
+        :src="
+          product.picture ? '/storage/img/' + product.picture : '/img/cap.png'
+        "
         :alt="product.title"
         class="card-img-top image"
       />

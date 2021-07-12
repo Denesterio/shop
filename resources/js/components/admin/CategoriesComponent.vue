@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-5">
     <div class="container-xl mb-4">
-      <h1>Добавить категорию</h1>
+      <h2>Добавить категорию</h2>
       <p>
         <router-link :to="{ name: 'subcategories' }"
           >на страницу добавления подкатегорий</router-link
@@ -39,7 +39,10 @@
         </div>
       </div>
 
-      <create-button-component @click.native="createNewCategory" :processing="processing" />
+      <create-button-component
+        @click.native="createNewCategory"
+        :processing="processing"
+      />
     </div>
 
     <div class="container-xl">
@@ -48,7 +51,12 @@
         <li
           v-for="category in categories"
           :key="category.id"
-          class="list-group-item d-flex justify-content-between align-items-start"
+          class="
+            list-group-item
+            d-flex
+            justify-content-between
+            align-items-start
+          "
         >
           <div class="ms-2 me-auto font-weight-light">
             <div class="font-weight-bold">
@@ -71,69 +79,71 @@
 </template>
 
 <script>
-  import CreateButtonComponent from './CreateButtonComponent.vue';
-  import SvgLoadingComponent from '../svg/SvgLoadingComponent.vue';
-  import { createCategory } from "../../api/create.js";
-  import { getCategories } from '../../api/get.js';
-  import { deleteCategory } from '../../api/delete.js';
-  import { isValid, fillErrors } from '../../validate.js';
-  export default {
-    components: { CreateButtonComponent, SvgLoadingComponent },
-    data() {
-      return {
-        categoryName: '',
-        categoryDesc: '',
+import CreateButtonComponent from "./CreateButtonComponent.vue";
+import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
+import { createCategory } from "../../api/create.js";
+import { getCategories } from "../../api/get.js";
+import { deleteCategory } from "../../api/delete.js";
+import { isValid, fillErrors } from "../../validate.js";
+export default {
+  components: { CreateButtonComponent, SvgLoadingComponent },
+  data() {
+    return {
+      categoryName: "",
+      categoryDesc: "",
 
-        categories: [],
+      categories: [],
 
-        loading: true,
-        processing: false,
-        validationErrors: {
-          name: null,
-          desc: null,
-        },
+      loading: true,
+      processing: false,
+      validationErrors: {
+        name: null,
+        desc: null,
+      },
+    };
+  },
+  mounted() {
+    getCategories()
+      .then(({ data }) => (this.categories = data))
+      .finally(() => (this.loading = false));
+  },
+  methods: {
+    createNewCategory() {
+      this.processing = true;
+      const params = {
+        name: this.categoryName,
+        desc: this.categoryDesc,
       };
-    },
-    mounted() {
-      getCategories()
-        .then(({ data }) => (this.categories = data))
-        .finally(() => (this.loading = false));
-    },
-    methods: {
-      createNewCategory() {
-        this.processing = true;
-        const params = {
-          name: this.categoryName,
-          desc: this.categoryDesc,
-        };
 
-        if (!isValid(params)) {
-          fillErrors(this.validationErrors, params);
+      if (!isValid(params)) {
+        fillErrors(this.validationErrors, params);
+        this.processing = false;
+        return;
+      }
+
+      createCategory(params)
+        .then(({ data }) => {
+          this.categories = [data, ...this.categories];
+        })
+        .finally(() => {
           this.processing = false;
-          return;
-        }
-
-        createCategory(params)
-          .then(() => {
-            this.categories = [data, ...this.categories];
-          })
-          .finally(() => {
-            this.processing = false;
-          });
-      },
-      removeCategory(categoryId) {
-        deleteCategory(categoryId).then(() => {
-          this.categories = this.categories.filter((cat) => cat.id !== categoryId)
         });
-      },
     },
-    watch: {
-      categoryName() {
-        this.validationErrors.name = null;
-      },
-      categoryDesc() {
-        this.validationErrors.desc = null;
-      },
+    removeCategory(categoryId) {
+      deleteCategory(categoryId).then(() => {
+        this.categories = this.categories.filter(
+          (cat) => cat.id !== categoryId
+        );
+      });
     },
-  };
+  },
+  watch: {
+    categoryName() {
+      this.validationErrors.name = null;
+    },
+    categoryDesc() {
+      this.validationErrors.desc = null;
+    },
+  },
+};
 </script>

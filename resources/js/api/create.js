@@ -23,7 +23,12 @@ const createSubcategory = (params) => {
 
 const createCategory = (params) => {
   return axios.post("/api/admin/categories/create", params);
-}
+};
+
+const createProduct = (params) => {
+  return axios.post("/api/admin/products/create", params);
+};
+
 export {
   addProductToOrder,
   createAuthor,
@@ -31,4 +36,5 @@ export {
   createCategory,
   createTag,
   createSubcategory,
+  createProduct,
 };

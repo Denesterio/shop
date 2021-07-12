@@ -17,20 +17,20 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    public function list()
-    {
-        $authors = Author::get();
-        $categories = Category::get();
-        $subcategories = Subcategory::get();
-        $tags = Tag::get();
+    // public function list()
+    // {
+    //     $authors = Author::get();
+    //     $categories = Category::get();
+    //     $subcategories = Subcategory::get();
+    //     $tags = Tag::get();
 
-        return view('admin/products', [
-            'authors' => $authors,
-            'categories' => $categories,
-            'tags' => $tags,
-            'subcategories' => $subcategories,
-        ]);
-    }
+    //     return view('admin/products', [
+    //         'authors' => $authors,
+    //         'categories' => $categories,
+    //         'tags' => $tags,
+    //         'subcategories' => $subcategories,
+    //     ]);
+    // }
 
     public function get()
     {
@@ -55,29 +55,32 @@ class ProductController extends Controller
             $request->file('picture')->storeAs('public/img', $filename);
         }
 
-        $productId = Product::create([
+        $product = Product::create([
             'title' => $name,
             'subcategory_slug' => $subcategorySlug,
             'picture' => $filename,
             'price' => $price,
             'description' => $description,
-        ])->id;
+        ]);
 
 
         foreach (json_decode($tags) as $tagId) {
             TagsProduct::create([
                 'tag_id' => $tagId,
-                'product_id' => $productId,
+                'product_id' => $product->id,
             ]);
         };
 
         foreach (json_decode($authors) as $authorId) {
             AuthorsProduct::create([
-                'product_id' => $productId,
+                'product_id' => $product->id,
                 'author_id' => $authorId,
             ]);
         };
+
+        return $product;
     }
+
     public function delete(Request $request)
     {
         $id = $request['id'];

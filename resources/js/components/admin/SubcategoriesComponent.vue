@@ -1,9 +1,17 @@
 <template>
   <div class="container mt-5">
     <div class="container-xl mb-4">
-      <h1>{{ title }}</h1>
-      <p><a href="/admin/categories">На страницу добавления категорий</a></p>
-      <p><a href="/admin/products">На страницу добавления товаров</a></p>
+      <h2>Добавить раздел</h2>
+      <p>
+        <router-link :to="{ name: 'categories' }"
+          >На страницу добавления категорий</router-link
+        >
+      </p>
+      <p>
+        <router-link :to="{ name: 'products' }"
+          >На страницу добавления товаров</router-link
+        >
+      </p>
 
       <div class="form-group">
         <input
@@ -19,26 +27,25 @@
       </div>
 
       <div class="form-group">
-          <input
-            v-if="slugStatus"
-            v-model="slug"
-            v-focus
-            class="form-control"
-            :class="{ 'is-invalid': validationErrors.slug }"
-            placeholder="Заполнитель в строке адреса"
-          />
+        <input
+          v-if="slugStatus"
+          v-model="slug"
+          v-focus
+          class="form-control"
+          :class="{ 'is-invalid': validationErrors.slug }"
+          placeholder="Заполнитель в строке адреса"
+        />
 
-          <div
-            v-else
-            @click="prepareForEditSlug"
-            class="form-control text-muted"
-          >
-            {{ subcategorySlug || 'Заполнитель в строке адреса (кликните по полю для редактирования)' }}
-          </div>
+        <div v-else @click="prepareForEditSlug" class="form-control text-muted">
+          {{
+            subcategorySlug ||
+            "Заполнитель в строке адреса (кликните по полю для редактирования)"
+          }}
+        </div>
 
-          <p v-if="validationErrors.slug" class="invalid-feedback">
-            {{ validationErrors.slug }}
-          </p>
+        <p v-if="validationErrors.slug" class="invalid-feedback">
+          {{ validationErrors.slug }}
+        </p>
       </div>
 
       <div class="form-group">
@@ -48,7 +55,11 @@
           :class="{ 'is-invalid': validationErrors.categoryId }"
         >
           <option value="" selected>Все</option>
-          <option v-for="category in categories" :key="category.id" :value="category.id">
+          <option
+            v-for="category in categories"
+            :key="category.id"
+            :value="category.id"
+          >
             {{ category.title }}
           </option>
         </select>
@@ -57,11 +68,15 @@
         </p>
       </div>
 
-      <create-button-component @click.native="createNewSubcategory" :processing="processing" />
+      <create-button-component
+        @click.native="createNewSubcategory"
+        :processing="processing"
+      />
     </div>
 
     <div class="container-xl">
-      <ul class="list-group">
+      <svg-loading-component v-if="loading" />
+      <ul v-else class="list-group">
         <li
           v-for="subcategory in filteredSubcategories"
           :key="subcategory.id"
@@ -85,85 +100,104 @@
 </template>
 
 <script>
-  import CreateButtonComponent from './CreateButtonComponent.vue';
-  import { deleteSubcategory } from '../../api/delete.js';
-  import transliterate from '../../transliterate.js';
-  import { isValid, fillErrors } from '../../validate.js';
+import CreateButtonComponent from "./CreateButtonComponent.vue";
+import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
+import { getCategories, getSubcategories } from "../../api/get.js";
+import { createSubcategory } from "../../api/create.js";
+import { deleteSubcategory } from "../../api/delete.js";
+import transliterate from "../../transliterate.js";
+import { isValid, fillErrors } from "../../validate.js";
 
-  export default {
-    props: ['title', 'subcategories', 'categories'],
-    components: { CreateButtonComponent },
-    data() {
-      return {
-        subcategoryName: '',
-        categoryId: '',
-        slug: '',
-        slugStatus: null,
+export default {
+  components: { CreateButtonComponent, SvgLoadingComponent },
+  data() {
+    return {
+      categories: [],
+      subcategories: [],
+      subcategoryName: "",
+      categoryId: "",
+      slug: "",
+      slugStatus: null,
 
-        processing: false,
-        validationErrors: {
-          name: '',
-          categoryId: '',
-          slug: '',
-        },
+      processing: false,
+      loading: true,
+      validationErrors: {
+        name: "",
+        categoryId: "",
+        slug: "",
+      },
+    };
+  },
+
+  created() {
+    const promises = [
+      getCategories().then(({ data }) => (this.categories = data.reverse())),
+      getSubcategories().then(
+        ({ data }) => (this.subcategories = data.reverse())
+      ),
+    ];
+    Promise.all(promises).finally(() => (this.loading = false));
+  },
+
+  computed: {
+    subcategorySlug() {
+      if (!this.slugStatus) {
+        return transliterate.fromCyrillic(this.subcategoryName);
+      }
+    },
+
+    filteredSubcategories() {
+      return this.subcategories.filter((subcat) =>
+        this.categoryId ? subcat["category_id"] === this.categoryId : true
+      );
+    },
+  },
+
+  methods: {
+    prepareForEditSlug() {
+      this.slug = this.subcategorySlug;
+      this.slugStatus = "edited";
+    },
+
+    createNewSubcategory() {
+      this.processing = true;
+      const params = {
+        name: this.subcategoryName,
+        categoryId: this.categoryId,
+        slug: this.slugStatus ? this.slug : this.subcategorySlug,
       };
-    },
 
-    computed: {
-      subcategorySlug() {
-        if (!this.slugStatus) {
-          return transliterate.fromCyrillic(this.subcategoryName);
-        }
-      },
+      if (!isValid(params)) {
+        fillErrors(this.validationErrors, params);
+        this.processing = false;
+        return;
+      }
 
-      filteredSubcategories() {
-        return this.subcategories.filter((subcat) =>
-          this.categoryId ? subcat['category_id'] === this.categoryId : true
-        );
-      },
-    },
-
-    methods: {
-      prepareForEditSlug() {
-        this.slug = this.subcategorySlug;
-        this.slugStatus = 'edited';
-      },
-
-      createNewSubcategory() {
-        this.processing = true;
-        const params = {
-          name: this.subcategoryName,
-          categoryId: this.categoryId,
-          slug: this.slugStatus ? this.slug : this.subcategorySlug,
-        };
-
-        if (!isValid(params)) {
-          fillErrors(this.validationErrors, params);
+      createSubcategory(params)
+        .then(({ data }) => {
+          this.subcategories = [data, ...this.subcategories];
+        })
+        .finally(() => {
           this.processing = false;
-          return;
-        }
-
-        axios
-          .post('/admin/subcategories/create', params)
-          .then(() => {
-            document.location.reload();
-          })
-          .finally(() => {
-            this.processing = false;
-          });
-      },
-
-      removeSubcategory(subId) {
-        deleteSubcategory(subId).then(() => document.location.reload());
-      },
+        });
     },
-    watch: {
-      subcategoryName() {
-        this.validationErrors.name = '';
-      },
-      categoryId() {
-        this.validationErrors.categoryId = '';
-      },
+
+    removeSubcategory(subId) {
+      deleteSubcategory(subId).then(
+        () =>
+          (this.subcategories = this.subcategories.filter(
+            (subcat) => subcat.id !== subId
+          ))
+      );
     },
-  };
+  },
+  watch: {
+    subcategoryName() {
+      this.validationErrors.name = "";
+    },
+    categoryId() {
+      this.validationErrors.categoryId = "";
+    },
+  },
+};
 </script>

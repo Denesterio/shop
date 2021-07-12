@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-5">
     <form class="container-xl mb-4">
-      <h1>{{ title }}</h1>
+      <h2>Добавить автора:</h2>
       <p>
         <router-link :to="{ name: 'categories' }"
           >на страницу добавления категорий</router-link
@@ -33,10 +33,11 @@
       </div>
 
       <create-button-component
-      @click.native="createNewAuthor"
-      :processing="processing" />
+        @click.native="createNewAuthor"
+        :processing="processing"
+      />
     </form>
-    <svg-loading-component v-if='processing' />
+    <svg-loading-component v-if="processing" />
     <div v-else class="container-xl">
       <ul class="list-group">
         <li
@@ -45,13 +46,16 @@
           class="row justify-content-between mb-2 p-2"
         >
           <div class="col-11 p-2 border-bottom">
-            <a :href="`/authors/${author.id}`">{{ author.title }}</a>
+            <router-link
+              :to="{ name: 'authorProducts', params: { id: author.id } }"
+              >{{ author.title }}</router-link
+            >
           </div>
           <button
-          @click="removeAuthor(author.id)"
-          type="button"
-          class="btn btn-outline-danger btn-sm col-1"
-          aria-label="Close"
+            @click="removeAuthor(author.id)"
+            type="button"
+            class="btn btn-outline-danger btn-sm col-1"
+            aria-label="Close"
           >
             Удалить
           </button>
@@ -62,19 +66,13 @@
 </template>
 
 <script>
-import { createAuthor } from '../../api/create.js';
-import { getAuthors } from '../../api/get.js';
-import { deleteAuthor } from '../../api/delete.js';
-import SvgLoadingComponent from '../svg/SvgLoadingComponent.vue';
-import CreateButtonComponent from './CreateButtonComponent.vue';
+import { createAuthor } from "../../api/create.js";
+import { getAuthors } from "../../api/get.js";
+import { deleteAuthor } from "../../api/delete.js";
+import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
+import CreateButtonComponent from "./CreateButtonComponent.vue";
 export default {
-  props: {
-    title: {
-      type: String,
-      required: true,
-    },
-  },
-  components: {SvgLoadingComponent, CreateButtonComponent},
+  components: { SvgLoadingComponent, CreateButtonComponent },
 
   data() {
     return {
@@ -82,11 +80,11 @@ export default {
       currentAuthor: "",
       error: "",
       processing: false,
-    }
+    };
   },
 
   mounted() {
-    getAuthors().then(({ data }) => this.authors = data.reverse());
+    getAuthors().then(({ data }) => (this.authors = data.reverse()));
   },
 
   methods: {
@@ -99,8 +97,8 @@ export default {
       createAuthor(this.currentAuthor)
         .then(({ data }) => {
           this.authors = [data, ...this.authors];
-          this.validationError = '';
-          this.currentAuthor = '';
+          this.validationError = "";
+          this.currentAuthor = "";
         })
         .finally(() => (this.processing = false));
     },
@@ -109,22 +107,26 @@ export default {
       deleteAuthor(authorId)
         .then(() => this.authors.filter((a) => a.id !== authorId))
         .catch((error) => {
-        if (error.response.data.message.startsWith('SQLSTATE[23000]')) {
-          Vue.swal.fire({
-            title: 'Ошибка',
-            text: 'Нельзя удалить автора, на которого записаны книги',
-            icon: 'error',
-            confirmButtonText: 'OK',
-          });
-        }
-      });
-    }
+          if (
+            error.response.data.message.includes(
+              "Integrity constraint violation"
+            )
+          ) {
+            Vue.swal.fire({
+              title: "Ошибка",
+              text: "Нельзя удалить автора, на которого записаны книги",
+              icon: "error",
+              confirmButtonText: "OK",
+            });
+          }
+        });
+    },
   },
 
   watch: {
     currentAuthor() {
-      this.error = '';
-    }
-  }
-}
+      this.error = "";
+    },
+  },
+};
 </script>
