@@ -9,6 +9,7 @@ use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ConfirmOrderController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

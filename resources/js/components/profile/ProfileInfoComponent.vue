@@ -1,60 +1,129 @@
 <template>
-    <section>
-        <ul class="list-group">
-            <li class="list-group-item">
-                Имя: <strong>{{ user.name }}</strong>
-                <a @click.prevent="isModalOpen = true" class="font-italic ml-4" noreferrer nofollow>изменить</a>
-            </li>
-            <li class="list-group-item">Электронный адрес: <strong>{{ user.email }}</strong></li>
-            <li class="list-group-item">Пароль: </li>
-            <li class="list-group-item">Дата регистации: <strong>{{ formattedDate }}</strong></li>
-        </ul>
+  <section>
+    <ul class="list-group">
+      <li class="list-group-item">
+        Имя: <strong>{{ user.name }}</strong>
+        <a
+          @click.prevent="openModal('name')"
+          class="font-italic ml-4"
+          noreferrer
+          nofollow
+          >изменить</a
+        >
+      </li>
+      <li class="list-group-item">
+        Электронный адрес: <strong>{{ user.email }}</strong>
+        <a
+          @click.prevent="openModal('email')"
+          class="font-italic ml-4"
+          noreferrer
+          nofollow
+          >изменить</a
+        >
+      </li>
+      <li class="list-group-item">Пароль:</li>
+      <li class="list-group-item">
+        Дата регистации: <strong>{{ formattedDate }}</strong>
+      </li>
+    </ul>
 
-
-        <modal-profile-component v-if="isModalOpen">
-          <template v-slot:title>
-
-          </template>
-          <template v-slot:footer>
-            <button @click="isModalOpen = false" class="btn btn-secondary">Закрыть</button>
-          </template>
-        </modal-profile-component>
-    </section>
+    <modal-profile-component
+      v-if="isModalOpen"
+      :field="fieldToChange"
+      :user="user"
+      :editing="editing"
+      @close-modal-window="closeModal"
+      @stop-editing="stopEditing"
+    >
+      <template v-slot:footer>
+        <p class="text-danger">
+          {{ "Для подтверждения введите текущий " + fieldToChange }}
+        </p>
+        <div class="input-group mb-3">
+          <input
+            v-model="confirmInput"
+            :type="typeInput"
+            :editing="editing"
+            class="form-control form-control-sm"
+            aria-label="old value"
+            aria-describedby="button-addon2"
+          />
+          <button
+            @click="editUser"
+            class="btn btn-success ml-2 btn-sm"
+            type="button"
+            id="button-addon2"
+            :disabled="isButtonDisabled"
+          >
+            Сохранить
+          </button>
+        </div>
+      </template>
+    </modal-profile-component>
+  </section>
 </template>
 
 <script>
-import ModalProfileComponent from './ModalProfileComponent.vue';
+import ModalProfileComponent from "./ModalProfileComponent.vue";
 
 export default {
-    props: {
-        user: {
-            type: Object,
-            required: true,
-        }
+  components: { ModalProfileComponent },
+  props: {
+    user: {
+      type: Object,
+      required: true,
     },
+  },
 
-    components: { ModalProfileComponent },
+  data() {
+    return {
+      isModalOpen: false,
+      fieldToChange: "",
+      confirmInput: "",
+      editing: false,
+    };
+  },
 
-    data() {
-        return {
-            isModalOpen: false,
-        }
+  computed: {
+    formattedDate() {
+      const [date] = this.user["updated_at"].split("T");
+      return date.split("-").reverse().join(".");
     },
+    typeInput() {
+      return this.fieldToChange === "name" ? "text" : "email";
+    },
+    isButtonDisabled() {
+      return this.confirmInput !== this.user[this.fieldToChange];
+    },
+  },
 
-    computed: {
-        formattedDate() {
-            const [date] = this.user['updated_at'].split('T');
-            return date.split('-').reverse().join('.');
-        }
-    }
-}
+  methods: {
+    openModal(field) {
+      this.isModalOpen = true;
+      this.fieldToChange = field;
+    },
+    closeModal() {
+      this.confirmInput = "";
+      this.fieldToChange = "";
+      this.isModalOpen = false;
+    },
+    editUser() {
+      this.editing = true;
+    },
+    stopEditing() {
+      this.editing = false;
+      this.isModalOpen = false;
+      this.confirmInput = "";
+    },
+  },
+};
 </script>
 
 <style scoped>
-    strong {
-        font-size: 1.1rem,
-    }
-    .list-group-item a:hover {
-        cursor: pointer;
-    }
+strong {
+  font-size: 1rem;
+}
+.list-group-item a:hover {
+  cursor: pointer;
+}
 </style>

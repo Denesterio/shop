@@ -80,7 +80,6 @@ export default {
     return {
       history: false,
       orders: [],
-      user: {},
       loading: true,
     };
   },
@@ -89,7 +88,6 @@ export default {
     getProfile()
       .then(({ data }) => {
         this.orders = data.orders;
-        this.user = data.user;
       })
       .finally(() => (this.loading = false));
   },
@@ -100,6 +98,9 @@ export default {
     },
     currentOrder() {
       return this.orders.find((order) => order.status === 0);
+    },
+    user() {
+      return this.$store.state.user;
     },
   },
 

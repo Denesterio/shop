@@ -10,14 +10,24 @@ class UserController extends Controller
 {
     public function edit(Request $request)
     {
+        $field = $request->field;
         $userId = Auth::user()->id;
-        $name = $request->name;
-        $user = User::where('user_id', $userId);
+        $user = User::where('id', $userId)->first();
 
-        $user->name = $name;
+        if ($field === 'name') {
+            $validated = $request->validate([
+                'name' => 'required',
+            ]);
+            $user->name = $validated['name'];
+        } else if ($field === 'email') {
+            $validated = $request->validate([
+                'email' => ['required', 'email']
+            ]);
+            $user->email = $validated['email'];
+        }
 
         $user->save();
 
-        return ['user' => $user];
+        return $user;
     }
 }
