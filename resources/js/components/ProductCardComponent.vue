@@ -36,10 +36,9 @@
           </div>
           <div class="card-footer bg-white">
             <addto-cart-button-component
-              :quantity="quantity"
-              :id="product.id"
-              @add-to-order="addToOrder"
-              @delete-from-order="deleteFromOrder"
+              :order-products="orderProducts"
+              :product-id="product.id"
+              size="sm"
               class="mt-2"
               :class="{ 'text-right': type === 'card' }"
             >
@@ -68,10 +67,8 @@
             <span class="text-secondary"> {{ product.price }} руб. </span>
           </div>
           <addto-cart-button-component
-            :quantity="quantity"
-            :id="product.id"
-            @add-to-order="addToOrder"
-            @delete-from-order="deleteFromOrder"
+            :product-id="product.id"
+            :order-products="orderProducts"
             class="mt-2"
           >
             <template v-slot:start>
@@ -100,10 +97,8 @@
       {{ product.description }}
       <template v-slot:modal-footer>
         <addto-cart-button-component
-          :quantity="quantity"
-          :id="product.id"
-          @add-to-order="addToOrder"
-          @delete-from-order="deleteFromOrder"
+          :product-id="product.id"
+          :order-products="orderProducts"
           class="mt-2"
           :class="{ 'text-right': type === 'card' }"
         >
@@ -118,33 +113,37 @@
 
 <script>
 import AddtoCartButtonComponent from "./AddtoCartButtonComponent.vue";
-import { deleteProductFromOrder } from "../api/delete";
-import { addProductToOrder } from "../api/create";
 export default {
-  props: ["product", "orderProducts", "tags", "authors", "type"],
+  props: {
+    product: {
+      type: Object,
+      required: true,
+    },
+    authors: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+    type: {
+      type: String,
+      required: true,
+    },
+    orderProducts: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+  },
+
   components: { AddtoCartButtonComponent },
 
   data() {
     return {
-      quantity: null,
       isModalOpen: false,
     };
   },
 
-  mounted() {
-    this.quantity =
-      this.orderProducts.find(
-        (prodInOrder) => prodInOrder["product_id"] === this.product.id
-      )?.quantity ?? 0;
-  },
-
   computed: {
-    orderId() {
-      return this.orderProducts.find(
-        (prod) => prod["product_id"] === this.product.id
-      )["order_id"];
-    },
-
     formattedDescription() {
       if (this.product.description.length > 140) {
         return this.product.description.slice(0, 140) + "\u2026";
@@ -163,72 +162,6 @@ export default {
       return this.product.picture
         ? "/storage/img/" + this.product.picture
         : "/img/cap.png";
-    },
-  },
-
-  methods: {
-    addToOrder(productId) {
-      addProductToOrder(productId)
-        .then(() => {
-          this.quantity += 1;
-          Vue.swal.fire({
-            position: "top-end",
-            icon: "success",
-            title: "Товар успешно добавлен",
-            showConfirmButton: false,
-            timer: 1100,
-          });
-        })
-        .catch((error) => {
-          if (error.response.status === 401) {
-            Vue.swal
-              .fire({
-                icon: "error",
-                title: "Товар не добавлен",
-                text: "Пожалуйста, авторизуйтесь, чтобы совершать заказы",
-                showDenyButton: true,
-                showCancelButton: true,
-                confirmButtonText: `Войти`,
-                denyButtonText: "Регистрация",
-                denyButtonColor: "#29AF4F",
-                cancelButtonText: "Отмена",
-              })
-              .then((result) => {
-                if (result.isConfirmed) {
-                  this.moveToLogin();
-                } else if (result.isDenied) {
-                  this.$router.push({ name: "register" });
-                }
-              });
-          }
-        });
-    },
-
-    deleteFromOrder(productId) {
-      deleteProductFromOrder(productId)
-        .then(() => {
-          this.quantity -= 1;
-          Vue.swal.fire({
-            position: "top-end",
-            icon: "success",
-            title: "Товар удален",
-            showConfirmButton: false,
-            timer: 1100,
-          });
-        })
-        .catch(() => {
-          Vue.swal.fire({
-            icon: "error",
-            title: "Товар не удалось удалить",
-            showConfirmButton: true,
-          });
-        });
-    },
-    moveToLogin() {
-      this.$router.push({
-        name: "login",
-        query: { redirect: this.$route.path },
-      });
     },
   },
 };

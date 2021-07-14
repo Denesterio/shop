@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-4">
-    <template v-if="products.length">
-      <h4>Заказ №{{ products[0]["order_id"] }}</h4>
+    <template v-if="products">
+      <h4>Заказ №{{ orderId }}</h4>
       <table class="table mt-4 text-center align-middle">
         <thead class="table-light">
           <tr>
@@ -18,23 +18,11 @@
             </td>
             <td>{{ product.price }} руб.</td>
             <td>
-              <span>
-                <button
-                  @click="deleteFromOrder(product.id, product['order_id'])"
-                  class="btn btn-outline-dark font-weight-bold"
-                >
-                  -
-                </button>
-                <button class="btn btn-outline-dark font-weight-bold" disabled>
-                  {{ product.quantity }}
-                </button>
-                <button
-                  @click="addToOrder(product.id, product['order_id'])"
-                  class="btn btn-outline-dark font-weight-bold"
-                >
-                  +
-                </button>
-              </span>
+              <addto-cart-button-component
+                :productId="product.id"
+                :order-products="products"
+                size="md"
+              />
             </td>
             <td>{{ product.quantity * product.price }} руб.</td>
           </tr>
@@ -57,20 +45,14 @@
 <script>
 import { addProductToOrder } from "../api/create.js";
 import { deleteProductFromOrder } from "../api/delete.js";
-import { getCart } from "../api/get.js";
+import AddtoCartButtonComponent from "./AddtoCartButtonComponent.vue";
 
 export default {
+  components: { AddtoCartButtonComponent },
   data() {
     return {
-      products: [],
       processing: false,
     };
-  },
-
-  mounted() {
-    getCart().then(({ data }) => {
-      this.products = data;
-    });
   },
 
   computed: {
@@ -84,6 +66,14 @@ export default {
       return this.products.reduce((sum, product) => {
         return (sum += product.price * product.quantity);
       }, 0);
+    },
+
+    products() {
+      return this.$store.state.cartProducts;
+    },
+
+    orderId() {
+      return this.products[0]?.order_id;
     },
   },
 
@@ -108,35 +98,35 @@ export default {
         });
     },
 
-    deleteFromOrder(productId, orderId) {
-      this.processing = true;
-      deleteProductFromOrder(productId, orderId)
-        .then(({ data }) => {
-          if (data.quantity === 0) {
-            this.products = this.products.filter((product) => {
-              return product.id !== data["product_id"];
-            });
-          } else {
-            const product = this.products.find((product) => {
-              return product.id === data["product_id"];
-            });
-            product.quantity = data.quantity;
-          }
-        })
-        .finally(() => (this.processing = false));
-    },
+    // deleteFromOrder(productId, orderId) {
+    //   this.processing = true;
+    //   deleteProductFromOrder(productId, orderId)
+    //     .then(({ data }) => {
+    //       if (data.quantity === 0) {
+    //         this.products = this.products.filter((product) => {
+    //           return product.id !== data["product_id"];
+    //         });
+    //       } else {
+    //         const product = this.products.find((product) => {
+    //           return product.id === data["product_id"];
+    //         });
+    //         product.quantity = data.quantity;
+    //       }
+    //     })
+    //     .finally(() => (this.processing = false));
+    // },
 
-    addToOrder(productId, orderId) {
-      this.processing = true;
-      addProductToOrder(productId, orderId)
-        .then(({ data }) => {
-          const product = this.products.find((product) => {
-            return product.id === data["product_id"];
-          });
-          product.quantity = data.quantity;
-        })
-        .finally(() => (this.processing = false));
-    },
+    // addToOrder(productId, orderId) {
+    //   this.processing = true;
+    //   addProductToOrder(productId, orderId)
+    //     .then(({ data }) => {
+    //       const product = this.products.find((product) => {
+    //         return product.id === data["product_id"];
+    //       });
+    //       product.quantity = data.quantity;
+    //     })
+    //     .finally(() => (this.processing = false));
+    // },
   },
 };
 </script>

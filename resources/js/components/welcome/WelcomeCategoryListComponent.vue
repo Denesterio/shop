@@ -14,19 +14,21 @@
 <script>
 import WelcomeCategoryCardComponent from "./WelcomeCategoryCardComponent.vue";
 import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
+import { getCategories } from "../../api/get.js";
 
 export default {
-  props: {
-    categories: {
-      type: Array,
-      required: true,
-    },
-  },
   components: { WelcomeCategoryCardComponent, SvgLoadingComponent },
-  computed: {
-    loading() {
-      return this.categories.length === 0;
-    },
+  data() {
+    return {
+      categories: [],
+      loading: true,
+    };
+  },
+
+  created() {
+    getCategories()
+      .then(({ data }) => (this.categories = data))
+      .finally(() => (this.loading = false));
   },
 };
 </script>

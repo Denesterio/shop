@@ -43,14 +43,14 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->only('params');
+        $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials['params'])) {
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            $user = Auth::user();
-            $userJson = json_encode($user);
+            // $user = Auth::user();
 
-            return redirect()->intended();
+            return back();
+            // return redirect()->intended();
         }
 
         return 'none';

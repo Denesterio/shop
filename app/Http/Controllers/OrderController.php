@@ -30,8 +30,12 @@ class OrderController extends Controller
             ->first();
 
         if ($ordersProduct) {
-            $ordersProduct->quantity += 1;
-            $ordersProduct->save();
+            $ordersProduct->quantity += $request['quantityChange'];
+            if ($ordersProduct->quantity === 0) {
+                $ordersProduct->delete();
+            } else {
+                $ordersProduct->save();
+            }
         } else {
             $ordersProduct = OrdersProduct::create([
                 'order_id' => $order->id,
@@ -40,27 +44,11 @@ class OrderController extends Controller
                 'price' => $product->price
             ]);
         }
-        return $ordersProduct;
-    }
 
-    public function deleteProduct(Request $request)
-    {
-        $productId = $request->productId;
-        $user = Auth::user();
-        $order = Order::where('user_id', $user->id)->where('status', 0)->first();
+        $product->quantity = $ordersProduct->quantity;
+        $product->order_id = $ordersProduct->order_id;
 
-        $orderProducts = OrdersProduct::where('order_id', $order->id)
-            ->where('product_id', $productId)
-            ->first();
-
-        $orderProducts->quantity -= 1;
-        if ($orderProducts->quantity === 0) {
-            $orderProducts->delete();
-        } else {
-            $orderProducts->save();
-        }
-
-        return $orderProducts;
+        return $product;
     }
 
     public function showCart()

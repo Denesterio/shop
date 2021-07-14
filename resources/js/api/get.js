@@ -40,6 +40,10 @@ const getOrderProducts = (orderId) => {
 
 const getCart = () => {
     return axios.get("/api/order/cart");
+};
+
+const getUser = () => {
+    return axios.get('/api/auth/getUser');
 }
 
 export {
@@ -54,4 +58,5 @@ export {
     getProfile,
     getOrderProducts,
     getCart,
+    getUser,
 };

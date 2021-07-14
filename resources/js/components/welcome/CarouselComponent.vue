@@ -1,46 +1,64 @@
 <template>
-  <VueSlickCarousel v-bind="settings" class="carousel border border-info">
-    <template v-slot:prevArrow="arrowOption">
-      <button class="carousel-control-prev bg-info" type="button">
-        {{ arrowOption.currentSlide }}/{{ arrowOption.slideCount }}
-      </button>
+  <section class="mt-4">
+    <svg-loading-component v-if="loading" />
+    <template v-else>
+      <h4>Новинки:</h4>
+      <VueSlickCarousel v-bind="settings" class="carousel border border-info">
+        <template v-slot:prevArrow="arrowOption">
+          <button class="carousel-control-prev bg-info" type="button">
+            {{ arrowOption.currentSlide }}/{{ arrowOption.slideCount }}
+          </button>
+        </template>
+        <div
+          v-for="product in newProducts"
+          :key="product.id"
+          class="card border-info"
+        >
+          <img
+            :src="
+              product.picture
+                ? '/storage/img/' + product.picture
+                : '/img/cap.png'
+            "
+            :alt="product.title"
+            class="card-img-top image"
+          />
+          <div class="card-body text-center">
+            <p class="title">
+              <a @click.prevent="openModal(product.id)" class="text-reset">{{
+                product.title
+              }}</a>
+            </p>
+            <p v-html="formattedAuthorsHtml(product.id)"></p>
+          </div>
+        </div>
+        <template v-slot:nextArrow="arrowOption">
+          <button class="carousel-control-next bg-info" type="button">
+            {{ arrowOption.currentSlide }}/{{ arrowOption.slideCount }}
+          </button>
+        </template>
+      </VueSlickCarousel>
     </template>
-    <div v-for="product in products" :key="product.id" class="card border-info">
-      <img
-        :src="
-          product.picture ? '/storage/img/' + product.picture : '/img/cap.png'
-        "
-        :alt="product.title"
-        class="card-img-top image"
-      />
-      <div class="card-body text-center">
-        <p class="title">
-          <a @click.prevent="openModal(product.id)" class="text-reset">{{
-            product.title
-          }}</a>
-        </p>
-        <p v-html="formattedAuthorsHtml(product.id)"></p>
-      </div>
-    </div>
-    <template v-slot:nextArrow="arrowOption">
-      <button class="carousel-control-next bg-info" type="button">
-        {{ arrowOption.currentSlide }}/{{ arrowOption.slideCount }}
-      </button>
-    </template>
-  </VueSlickCarousel>
+  </section>
 </template>
 
 <script>
 import VueSlickCarousel from "vue-slick-carousel";
 import "vue-slick-carousel/dist/vue-slick-carousel.css";
 import "vue-slick-carousel/dist/vue-slick-carousel-theme.css";
+import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
+import { getNewProducts } from "../../api/get.js";
 
 export default {
   name: "MyComponent",
-  components: { VueSlickCarousel },
-  props: ["products", "authors"],
+  components: { VueSlickCarousel, SvgLoadingComponent },
   data() {
     return {
+      loading: true,
+
+      newProducts: [],
+      authors: [],
+
       settings: {
         infinite: true,
         slidesToShow: 4,
@@ -77,6 +95,15 @@ export default {
         ],
       },
     };
+  },
+
+  created() {
+    getNewProducts()
+      .then(({ data }) => {
+        this.newProducts = data.products;
+        this.authors = data.authors;
+      })
+      .finally(() => (this.loading = false));
   },
 
   methods: {

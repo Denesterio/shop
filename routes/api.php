@@ -83,7 +83,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::get('/tags', [TagController::class, 'list'])->name('tags');
 });
 
-Route::prefix('order')->middleware('auth')->group(function () {
+Route::prefix('order')->middleware('auth:sanctum')->group(function () {
     Route::get('get', [OrderController::class, 'get']);
     Route::post('addProduct', [OrderController::class, 'addProduct']);
     Route::post('deleteProduct', [OrderController::class, 'deleteProduct']);

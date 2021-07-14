@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import store from '../store';
 
 Vue.use(VueRouter);
 
@@ -57,43 +58,83 @@ const routes = [
         path: '/cart',
         component: CartComponent,
         name: 'cart',
+        meta: {
+            requiresAuth: true,
+        },
     },
     {
         path: '/profile',
         component: ProfileComponent,
         name: 'profile',
+        meta: {
+            requiresAuth: true,
+        },
     },
     {
         path: '/admin/categories',
         name: 'categories',
         component: CategoriesComponent,
+        meta: {
+            adminOnly: true,
+        },
     },
     {
         path: '/admin/subcategories',
         name: 'subcategories',
         component: SubcategoriesComponent,
+        meta: {
+            adminOnly: true,
+        },
     },
     {
         path: '/admin/products',
         name: 'products',
         component: ProductsComponent,
+        meta: {
+            adminOnly: true,
+        },
     },
     {
         path: '/admin/tags',
         name: 'tags',
         component: TagsComponent,
+        meta: {
+            adminOnly: true,
+        },
     },
     {
         path: '/admin/authors',
         name: 'authors',
         component: AuthorsListComponent,
+        meta: {
+            adminOnly: true,
+        },
     },
 
 ]
 
 const router = new VueRouter({
-    mode: 'history',
     routes,
+    mode: 'history',
+    base: process.env.BASE_URL,
 })
+
+router.beforeEach((to, from, next) => {
+    if (to.matched.some((route) => route.meta?.requiresAuth)) {
+        if (store.state.isAuthenticated) {
+            next();
+        } else {
+            next({ name: 'login' });
+        }
+    } else if (to.matched.some((route) => route.meta?.adminOnly)) {
+        if (store.state.user?.admin) {
+            next();
+        } else {
+            next({ name: 'welcome' });
+        }
+    } else {
+        next();
+    }
+});
 
 export default router;

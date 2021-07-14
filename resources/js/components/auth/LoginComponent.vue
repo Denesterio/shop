@@ -48,7 +48,7 @@
           </div>
           <div class="form-group row mb-0">
             <div class="col-md-8 offset-md-4">
-              <button @click="redirect" class="btn btn-primary">Войти</button>
+              <button @click="login" class="btn btn-primary">Войти</button>
             </div>
           </div>
         </div>
@@ -72,21 +72,17 @@ export default {
   },
   methods: {
     async login() {
-      this.errors = [];
+      this.processing = true;
       const params = {
         email: this.email,
         password: this.password,
       };
       await this.$store.dispatch("login", params);
+      this.processing = false;
+      await this.redirect();
     },
-    redirect() {
-      this.processing = true;
-      this.login().then(() => {
-        setTimeout(() => {
-          this.processing = false;
-          this.$router.push(this.$route.query.redirect || "/");
-        }, 10);
-      });
+    async redirect() {
+      this.$router.push(this.$route.query.redirect || "/");
     },
   },
 };

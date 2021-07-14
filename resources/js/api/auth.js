@@ -1,9 +1,7 @@
 const authLogin = (params) => {
-    return axios.post("/api/auth/login", {
-        params,
-    });
+    return axios.post('/api/auth/login', params);
 };
-  
+
 const authLogout = () => {
     return axios.post("/api/auth/logout");
 };

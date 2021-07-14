@@ -18,8 +18,8 @@
           v-for="product in products"
           :type="selectedView"
           :product="product"
+          :order-products="orderProducts"
           :key="product.id"
-          :orderProducts="orderProducts"
           :authors="authors[product.id]"
         >
         </product-card-component>
@@ -35,16 +35,6 @@
 import ProductCardComponent from "./ProductCardComponent.vue";
 import { getProductsByType } from "../api/get";
 export default {
-  props: {
-    categories: {
-      type: Array,
-      required: true,
-    },
-    subcategories: {
-      type: Array,
-      required: true,
-    },
-  },
   components: { ProductCardComponent },
   data() {
     return {
@@ -55,7 +45,6 @@ export default {
       ],
 
       products: [],
-      orderProducts: [],
       authors: {},
       loading: true,
     };
@@ -64,6 +53,9 @@ export default {
   computed: {
     user() {
       return this.$store.state.user;
+    },
+    orderProducts() {
+      return this.$store.state.cartProducts;
     },
   },
 
@@ -75,7 +67,6 @@ export default {
       .then(({ data }) => {
         this.products = data.products;
         this.authors = data.authors;
-        this.orderProducts = data.orderProducts;
       })
       .finally(() => (this.loading = false));
     next();
@@ -90,7 +81,6 @@ export default {
         next((vm) => {
           vm.products = data.products;
           vm.authors = data.authors;
-          vm.orderProducts = data.orderProducts;
           vm.loading = false;
         })
       )

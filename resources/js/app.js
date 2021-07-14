@@ -76,6 +76,8 @@ Vue.directive('focus', {
 import router from './components/router';
 import store from './components/store';
 
+Vue.config.productionTip = false;
+
 const app = new Vue({
     el: "#app",
     router,

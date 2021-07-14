@@ -30,7 +30,7 @@
           <template v-if="user">
             <li class="nav-item">
               <router-link class="nav-link" :to="{ name: 'cart' }"
-                >Корзина</router-link
+                >Корзина({{ cartProductsQuantity }})</router-link
               >
             </li>
 
@@ -106,6 +106,9 @@ export default {
     },
     user() {
       return this.$store.state.user;
+    },
+    cartProductsQuantity() {
+      return this.$store.getters.cartProductsQuantity;
     },
   },
 
