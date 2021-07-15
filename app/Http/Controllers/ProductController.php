@@ -14,24 +14,10 @@ use App\Models\AuthorsProduct;
 use App\Models\TagsProduct;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
-    // public function list()
-    // {
-    //     $authors = Author::get();
-    //     $categories = Category::get();
-    //     $subcategories = Subcategory::get();
-    //     $tags = Tag::get();
-
-    //     return view('admin/products', [
-    //         'authors' => $authors,
-    //         'categories' => $categories,
-    //         'tags' => $tags,
-    //         'subcategories' => $subcategories,
-    //     ]);
-    // }
-
     public function get()
     {
         return Product::get();
@@ -91,18 +77,26 @@ class ProductController extends Controller
 
     public static function carousel()
     {
-        $products = Product::with('authors')
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
-            ->get();
+        $resp = [];
+        $key = 'carousel';
+        if (Cache::has($key)) {
+            $resp = Cache::get($key);
+        } else {
+            $products = Product::with('authors')
+                ->orderBy('created_at', 'desc')
+                ->limit(10)
+                ->get();
 
-        $authors = collect();
-        $products->each(function ($item) use ($authors) {
-            $key = $item->id;
-            $authors[$key] = $item->authors()->get();
-        });
+            $authors = collect();
+            $products->each(function ($item) use ($authors) {
+                $key = $item->id;
+                $authors[$key] = $item->authors()->get();
+            });
+            $resp = ['products' => $products, 'authors' => $authors];
+            Cache::add($key, $resp, 900);
+        }
 
-        return ['products' => $products, 'authors' => $authors];
+        return $resp;
     }
 
     public function showProductsBy(Request $request, $id)

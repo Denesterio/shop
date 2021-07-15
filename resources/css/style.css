@@ -1,0 +1,11 @@
+@font-face {
+  font-family: 'BERNIER';
+  src: url('../fonts/BERNIER.otf') format('truetype');
+  font-style: normal;
+  font-weight: normal;
+}
+
+.logo-text {
+    font-size: 1.2rem;
+    font-family: 'BERNIER', 'Nunito', 'verdana', serif;
+}

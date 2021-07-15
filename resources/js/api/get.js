@@ -6,6 +6,10 @@ const getSubcategories = () => {
     return axios.get("/api/subcategories/get");
 };
 
+const getMenu = () => {
+    return axios.get("/api/categories/menu");
+}
+
 const getAuthors = () => {
     return axios.get("/api/authors/get");
 };
@@ -50,6 +54,7 @@ export {
     getCategories,
     getTags,
     getSubcategories,
+    getMenu,
     getAuthors,
     getProducts,
     getOrders,

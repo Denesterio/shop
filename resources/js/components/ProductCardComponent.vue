@@ -1,5 +1,8 @@
 <template>
-  <article class="mb-12 m-3 border-right-0" :class="{ card: type === 'card' }">
+  <article
+    class="item mb-12 m-3 border-right-0"
+    :class="{ card: type === 'card' }"
+  >
     <div v-if="type === 'card'" class="row">
       <div
         class="
@@ -19,7 +22,7 @@
       <div class="col-md-9">
         <div class="card border-0" style="height: 100%">
           <div
-            class="m-1 p-1 font-italic"
+            class="authors mt-1 p-1 font-italic"
             v-html="formattedAuthorsHtml.join(' / ')"
           ></div>
           <div class="mx-2 p-2 mb-2">
@@ -168,11 +171,15 @@ export default {
 </script>
 
 <style scoped>
+.item {
+  min-width: 350px;
+}
 .image-bg {
   background-color: #eef5fc;
 }
 .card-image {
   width: 95%;
+  max-width: 300px;
   height: 96%;
 }
 .font-size-point {
@@ -182,5 +189,8 @@ export default {
   width: 25%;
   float: left;
   margin-right: 20px;
+}
+.authors {
+  font-size: 0.9rem;
 }
 </style>

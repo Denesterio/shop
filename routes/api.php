@@ -40,6 +40,7 @@ Route::prefix('categories')->group(function () {
     Route::get('/get', [CategoryController::class, 'get']);
     Route::get('/{categoryId}/products', [ProductController::class, 'showProductsBy'])
         ->name('categoryProducts');
+    Route::get('/menu', [CategoryController::class, 'menu'])->name('menu');
 });
 
 Route::prefix('products')->group(function () {

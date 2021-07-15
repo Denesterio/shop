@@ -29,8 +29,15 @@
         </tbody>
       </table>
       <section class="text-right mt-4 p-2">
-        <p>Всего товаров в корзине: {{ commonQuantity }}</p>
-        <p>На сумму: {{ commonPrice }} руб.</p>
+        <p>
+          {{ $t("message.inCart") }}
+          <strong>
+            {{ commonQuantity + " " + $tc("message.product", commonQuantity) }}
+          </strong>
+        </p>
+        <p>
+          на сумму <strong>{{ commonPrice }} руб.</strong>
+        </p>
         <button @click="confirmOrder" class="btn btn-success">
           Оформить заказ
         </button>
@@ -43,8 +50,6 @@
 </template>
 
 <script>
-import { addProductToOrder } from "../api/create.js";
-import { deleteProductFromOrder } from "../api/delete.js";
 import AddtoCartButtonComponent from "./AddtoCartButtonComponent.vue";
 
 export default {

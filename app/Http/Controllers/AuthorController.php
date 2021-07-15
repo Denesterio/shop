@@ -34,16 +34,7 @@ class AuthorController extends Controller
         Author::find($id)->delete();
     }
 
-    public function list ()
-    {
-        $authors = Author::orderBy('id', 'desc')->get();
-        return view('admin/authors', [
-            'authors' => $authors,
-            'title' => 'Добавить автора'
-            ]);
-    }
-
-    public function show ($autorId)
+    public function show($autorId)
     {
         // DB::listen(function($query) {
         //     var_dump($query->sql, $query->bindings, "...  ||  ...");
@@ -66,8 +57,8 @@ class AuthorController extends Controller
         $user = Auth::user();
         if ($user) {
             $order = Order::where('user_id', $user->id)
-            ->where('status', 0)
-            ->first();
+                ->where('status', 0)
+                ->first();
         }
 
         $orderProducts = collect();

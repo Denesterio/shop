@@ -135,10 +135,11 @@ export default {
 .card-body {
   margin: 5px;
   padding: 5px;
-  height: 120px;
+  height: 80px;
 }
 .card-body p {
   margin-bottom: 5px;
+  font-size: 0.9rem;
 }
 .title a {
   font-size: 1rem;

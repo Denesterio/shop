@@ -8,7 +8,9 @@
     "
   >
     <div class="container">
-      <router-link :to="{ name: 'welcome' }">{{ appName }}</router-link>
+      <router-link class="logo-text" :to="{ name: 'welcome' }"
+        >BOOKSHOP</router-link
+      >
       <button
         class="navbar-toggler"
         type="button"
@@ -60,7 +62,7 @@
                 <router-link
                   :to="{ name: 'profile' }"
                   class="dropdown-item nav-link text-center"
-                  >Личный кабинет</router-link
+                  >{{ $t("link.profile") }}</router-link
                 >
                 <button
                   @click="logout"
@@ -137,7 +139,22 @@ export default {
 .dropdown-item {
   color: rgba(0, 0, 0, 0.5);
 }
+
 .dropdown-item:hover {
   color: rgba(0, 0, 0, 0.7);
+}
+
+@font-face {
+  font-family: "BERNIER";
+  src: url("../../fonts/BERNIER.otf") format("truetype");
+  font-style: normal;
+  font-weight: normal;
+}
+
+.logo-text {
+  font-size: 1.8rem;
+  font-family: "BERNIER", "Nunito", "verdana", serif;
+  color: #3490dc;
+  letter-spacing: 1px;
 }
 </style>

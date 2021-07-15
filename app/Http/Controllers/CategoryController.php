@@ -13,20 +13,17 @@ use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
-    public function welcome ()
+    public function menu()
     {
         $categories = Category::get();
         $subcategories = Subcategory::get();
-        ['products' => $products, 'authors' => $authors] = ProductController::carousel();
-        return view('welcome', [
+        return [
             'categories' => $categories,
             'subcategories' => $subcategories,
-            'products' => $products,
-            'authors' => $authors,
-        ]);
+        ];
     }
 
-    public function show ($categoryId)
+    public function show($categoryId)
     {
         $slugs = DB::table('subcategories')
             ->select('slug')
@@ -43,8 +40,8 @@ class CategoryController extends Controller
         $user = Auth::user();
         if ($user) {
             $order = Order::where('user_id', $user->id)
-            ->where('status', 0)
-            ->first();
+                ->where('status', 0)
+                ->first();
         }
 
         $orderProducts = collect();
@@ -58,7 +55,7 @@ class CategoryController extends Controller
 
         $authors = collect();
 
-        $products->each(function($item) use ($authors) {
+        $products->each(function ($item) use ($authors) {
             $id = $item->id;
             $authors[$id] = $item->authors;
         });
@@ -72,13 +69,13 @@ class CategoryController extends Controller
         ]);
     }
 
-    public function list ()
+    public function list()
     {
         $categories = Category::get();
         return view('admin/categories', [
             'categories' => $categories,
             'title' => 'Категории'
-            ]);
+        ]);
     }
 
     public function create(Request $request)

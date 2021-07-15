@@ -95,9 +95,9 @@
       <div class="form-group">
         <label for="category">Категория:</label>
         <p>
-          <router-link :to="{ name: 'categories' }"
-            >на страницу добавления категорий</router-link
-          >
+          <router-link :to="{ name: 'categories' }">{{
+            $t("link.toCategories")
+          }}</router-link>
         </p>
         <select v-model="categoryId" class="form-control" name="category">
           <option value="" selected>Все</option>

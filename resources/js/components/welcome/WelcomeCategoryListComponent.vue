@@ -1,34 +1,25 @@
 <template>
-  <div>
-    <svg-loading-component v-if="loading" />
+  <article>
     <welcome-category-card-component
-      v-else
       v-for="category in categories"
       :category="category"
       :key="category.id"
     >
     </welcome-category-card-component>
-  </div>
+  </article>
 </template>
 
 <script>
 import WelcomeCategoryCardComponent from "./WelcomeCategoryCardComponent.vue";
-import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
-import { getCategories } from "../../api/get.js";
 
 export default {
-  components: { WelcomeCategoryCardComponent, SvgLoadingComponent },
-  data() {
-    return {
-      categories: [],
-      loading: true,
-    };
+  props: {
+    categories: {
+      type: Array,
+      required: true,
+    },
   },
 
-  created() {
-    getCategories()
-      .then(({ data }) => (this.categories = data))
-      .finally(() => (this.loading = false));
-  },
+  components: { WelcomeCategoryCardComponent },
 };
 </script>
