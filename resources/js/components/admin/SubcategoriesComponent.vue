@@ -1,16 +1,16 @@
 <template>
   <div class="container mt-5">
     <div class="container-xl mb-4">
-      <h2>Добавить раздел</h2>
+      <h2>{{ `${$t("label.add")} ${$t("label.subcategory")}` }}</h2>
       <p>
-        <router-link :to="{ name: 'categories' }"
-          >На страницу добавления категорий</router-link
-        >
+        <router-link :to="{ name: 'categories' }">{{
+          $t("link.toCategories")
+        }}</router-link>
       </p>
       <p>
-        <router-link :to="{ name: 'products' }"
-          >На страницу добавления товаров</router-link
-        >
+        <router-link :to="{ name: 'products' }">{{
+          $t("link.toAdminPage") + " " + $tc("message.product", 0)
+        }}</router-link>
       </p>
 
       <div class="form-group">

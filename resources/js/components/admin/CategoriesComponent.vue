@@ -3,14 +3,14 @@
     <div class="container-xl mb-4">
       <h2>Добавить категорию</h2>
       <p>
-        <router-link :to="{ name: 'subcategories' }"
-          >на страницу добавления подкатегорий</router-link
-        >
+        <router-link :to="{ name: 'subcategories' }">{{
+          $t("link.toSubcategories")
+        }}</router-link>
       </p>
       <p>
-        <router-link :to="{ name: 'products' }"
-          >на страницу добавления товаров</router-link
-        >
+        <router-link :to="{ name: 'products' }">{{
+          $t("link.toAdminPage") + " " + $tc("message.product", 0)
+        }}</router-link>
       </p>
 
       <div class="form-group">

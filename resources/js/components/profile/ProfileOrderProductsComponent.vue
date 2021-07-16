@@ -24,10 +24,13 @@
         </tbody>
       </table>
       <p>
-        Всего товаров в заказе: <strong>{{ commonQuantity }}</strong>
+        {{ $t("message.inOrder") }}
+        <strong>
+          {{ commonQuantity + " " + $tc("message.product", commonQuantity) }}
+        </strong>
       </p>
       <p>
-        На сумму: <strong>{{ commonPrice }} руб.</strong>
+        на сумму: <strong>{{ commonPrice }} руб.</strong>
       </p>
     </template>
   </div>
@@ -65,6 +68,12 @@ export default {
   mounted() {
     getOrderProducts(this.orderId)
       .then(({ data }) => {
+        data.forEach((product) => {
+          if (this.isConfirmed) {
+            product.price = product.pivot.price;
+          }
+          product.quantity = product.pivot.quantity;
+        });
         this.products = data;
       })
       .finally(() => (this.loading = false));

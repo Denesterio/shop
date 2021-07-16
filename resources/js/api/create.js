@@ -1,10 +1,3 @@
-const addProductToOrder = (productId, orderId = null) => {
-  return axios.post('/api/order/addProduct', {
-    productId,
-    orderId,
-  });
-};
-
 const createAuthor = (name) => {
   return axios.post('/api/admin/authors/create', { name });
 };
@@ -30,7 +23,6 @@ const createProduct = (params) => {
 };
 
 export {
-  addProductToOrder,
   createAuthor,
   confirmOrder,
   createCategory,

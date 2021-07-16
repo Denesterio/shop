@@ -1,7 +1,7 @@
 <template>
   <section class="mt-4">
     <svg-loading-component v-if="loading" />
-    <template v-else>
+    <template v-else-if="newProducts.length >= settings.slidesToShow">
       <h4>Новинки:</h4>
       <VueSlickCarousel v-bind="settings" class="carousel border border-info">
         <template v-slot:prevArrow="arrowOption">
@@ -63,7 +63,7 @@ export default {
         infinite: true,
         slidesToShow: 4,
         slidesToScroll: 1,
-        autoplay: false,
+        autoplay: true,
         autoplaySpeed: 3000,
         pauseOnDotsHover: true,
         pauseOnFocus: true,

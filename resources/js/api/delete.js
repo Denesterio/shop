@@ -26,13 +26,6 @@ const deleteTag = (tagId) => {
   });
 };
 
-const deleteProductFromOrder = (productId, orderId = null) => {
-  return axios.post('/api/order/deleteProduct', {
-    productId,
-    orderId,
-  });
-};
-
 const deleteAuthor = (authorId) => {
   return axios.post('/api/admin/authors/delete', {
     id: authorId,
@@ -40,4 +33,4 @@ const deleteAuthor = (authorId) => {
   });
 };
 
-export { deleteSubcategory, deleteCategory, deleteProduct, deleteProductFromOrder, deleteTag, deleteAuthor };
+export { deleteSubcategory, deleteCategory, deleteProduct, deleteTag, deleteAuthor };

@@ -7,12 +7,10 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\ConfirmOrderController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,7 +36,7 @@ Route::prefix('auth')->group(function () {
 
 Route::prefix('categories')->group(function () {
     Route::get('/get', [CategoryController::class, 'get']);
-    Route::get('/{categoryId}/products', [ProductController::class, 'showProductsBy'])
+    Route::get('/{categoryId}/products', [CategoryController::class, 'showProducts'])
         ->name('categoryProducts');
     Route::get('/menu', [CategoryController::class, 'menu'])->name('menu');
 });
@@ -50,13 +48,13 @@ Route::prefix('products')->group(function () {
 
 Route::prefix('subcategories')->group(function () {
     Route::get('/get', [SubcategoryController::class, 'get']);
-    Route::get('/{subcategorySlug}/products', [ProductController::class, 'showProductsBy'])
+    Route::get('/{subcategorySlug}/products', [SubcategoryController::class, 'showProducts'])
         ->name('subcategoryProducts');
 });
 
 Route::prefix('authors')->group(function () {
     Route::get('/get', [AuthorController::class, 'get']);
-    Route::get('/{authorId}/products', [ProductController::class, 'showProductsBy'])
+    Route::get('/{authorId}/products', [AuthorController::class, 'showProducts'])
         ->name('authorProducts');
 });
 
@@ -88,7 +86,7 @@ Route::prefix('order')->middleware('auth:sanctum')->group(function () {
     Route::get('get', [OrderController::class, 'get']);
     Route::post('addProduct', [OrderController::class, 'addProduct']);
     Route::post('deleteProduct', [OrderController::class, 'deleteProduct']);
-    Route::get('confirm', [ConfirmOrderController::class, 'confirm']);
+    Route::get('confirm', [OrderController::class, 'confirm']);
     Route::get('{orderId}/products', [OrderController::class, 'products']);
     Route::get('/cart', [OrderController::class, 'showCart'])->name('cart');
 });

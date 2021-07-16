@@ -26,9 +26,4 @@ class Product extends Model
     {
         return $this->belongsToMany(Tag::class, 'tags_products');
     }
-
-    public function subcategories()
-    {
-        return $this->belongsTo(Subcategory::class, 'subcategory_slug', 'slug');
-    }
 }

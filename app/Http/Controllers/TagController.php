@@ -7,21 +7,13 @@ use App\Models\Tag;
 
 class TagController extends Controller
 {
-    public function list ()
-    {
-        $tags = Tag::get();
-        return view('admin/tags', [
-            'title' => 'Список тэгов'
-            ]);
-    }
-
     public function create(Request $request)
     {
         $tag = Tag::create([
             'title' => $request['name'],
         ]);
 
-        return ['tag' => $tag];
+        return $tag;
     }
 
     public function get()

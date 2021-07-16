@@ -71,18 +71,16 @@ export default {
     };
   },
   methods: {
-    async login() {
+    login() {
       this.processing = true;
       const params = {
         email: this.email,
         password: this.password,
       };
-      await this.$store.dispatch("login", params);
-      this.processing = false;
-      await this.redirect();
-    },
-    async redirect() {
-      this.$router.push(this.$route.query.redirect || "/");
+      this.$store.dispatch("login", params).then(() => {
+        this.processing = false;
+        this.$router.push(this.$route.query.redirect || "/");
+      });
     },
   },
 };

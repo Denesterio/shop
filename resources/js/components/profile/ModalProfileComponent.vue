@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import { editUserField } from "../../api/edit.js";
 export default {
   props: {
     field: {
@@ -71,8 +72,7 @@ export default {
         name: this.currentValue,
         field: this.field,
       };
-      axios
-        .post("/api/user/edit", params)
+      editUserField()
         .then(({ data }) => this.$store.commit("setUser", data))
         .finally(() => this.$emit("stop-editing"));
     },

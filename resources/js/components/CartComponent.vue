@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-4">
-    <template v-if="products">
+    <template v-if="products.length">
       <h4>Заказ №{{ orderId }}</h4>
       <table class="table mt-4 text-center align-middle">
         <thead class="table-light">
@@ -38,9 +38,7 @@
         <p>
           на сумму <strong>{{ commonPrice }} руб.</strong>
         </p>
-        <button @click="confirmOrder" class="btn btn-success">
-          Оформить заказ
-        </button>
+        <button @click="confirm" class="btn btn-success">Оформить заказ</button>
       </section>
     </template>
     <span v-else>
@@ -51,6 +49,7 @@
 
 <script>
 import AddtoCartButtonComponent from "./AddtoCartButtonComponent.vue";
+import { confirmOrder } from "../api/create.js";
 
 export default {
   components: { AddtoCartButtonComponent },
@@ -83,7 +82,7 @@ export default {
   },
 
   methods: {
-    confirmOrder() {
+    confirm() {
       confirmOrder()
         .then(() => {
           Vue.swal.fire({
@@ -92,6 +91,8 @@ export default {
             icon: "success",
             confirmButtonText: "OK",
           });
+          this.$store.dispatch("confirmOrder");
+          this.$router.push({ name: "welcome" });
         })
         .catch(() => {
           Vue.swal.fire({

@@ -7,7 +7,7 @@
     >
       <span class="visually-hidden"></span>
     </div>
-    <span v-else>{{ $t("message.save") }}</span>
+    <span v-else>{{ $t("label.save") }}</span>
   </button>
 </template>
 

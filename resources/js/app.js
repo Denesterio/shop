@@ -32,10 +32,10 @@ Vue.use(VueSweetalert2);
 // );
 
 // welcome
-Vue.component(
-    'welcome-category-list-component',
-    require('./components/welcome/WelcomeCategoryListComponent.vue').default
-);
+// Vue.component(
+//     'welcome-category-list-component',
+//     require('./components/welcome/WelcomeCategoryListComponent.vue').default
+// );
 // Vue.component(
 //     'carousel-component',
 //     require('./components/welcome/CarouselComponent.vue').default
@@ -64,6 +64,10 @@ Vue.component(
 Vue.component(
     'navbar-component',
     require('./components/NavbarComponent.vue').default
+);
+Vue.component(
+    'page-not-found-component',
+    require('./components/PageNotFoundComponent.vue').default
 );
 
 

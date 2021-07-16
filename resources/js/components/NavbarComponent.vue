@@ -118,7 +118,9 @@ export default {
     logout() {
       authLogout().then(() => {
         this.$store.dispatch("logout");
-        this.$router.push({ name: "welcome" });
+        if (this.$route.name !== "welcome") {
+          this.$router.push({ name: "welcome" });
+        }
       });
     },
     moveToLogin() {
@@ -135,7 +137,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .dropdown-item {
   color: rgba(0, 0, 0, 0.5);
 }

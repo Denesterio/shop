@@ -34,6 +34,12 @@
 <script>
 import ProductCardComponent from "./ProductCardComponent.vue";
 import { getProductsByType } from "../api/get";
+const makeRequest = (to) => {
+  const id = to.params.id;
+  const types = ["categories", "subcategories", "authors"];
+  const type = to.path.split("/").find((type) => types.includes(type));
+  return getProductsByType(type, id);
+};
 export default {
   components: { ProductCardComponent },
   data() {
@@ -59,34 +65,33 @@ export default {
     },
   },
 
-  beforeRouteUpdate(to, _from, next) {
-    const id = to.params.id;
-    const types = ["categories", "subcategories", "authors"];
-    const type = to.path.split("/").find((type) => types.includes(type));
-    getProductsByType(type, id)
+  beforeRouteUpdate(to, from, next) {
+    makeRequest(to)
       .then(({ data }) => {
-        this.products = data.products;
-        this.authors = data.authors;
+        this.fillData(this, data);
       })
       .finally(() => (this.loading = false));
     next();
   },
 
   beforeRouteEnter(to, _from, next) {
-    const id = to.params.id;
-    const types = ["categories", "subcategories", "authors"];
-    const type = to.path.split("/").find((type) => types.includes(type));
-    getProductsByType(type, id)
+    makeRequest(to)
       .then(({ data }) =>
         next((vm) => {
-          vm.products = data.products;
-          vm.authors = data.authors;
+          vm.fillData(vm, data);
           vm.loading = false;
         })
       )
       .catch((err) => {
         alert(err);
       });
+  },
+
+  methods: {
+    fillData(target, source) {
+      target.products = source.products;
+      target.authors = source.authors;
+    },
   },
 };
 </script>

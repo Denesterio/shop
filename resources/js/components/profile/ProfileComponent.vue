@@ -1,20 +1,23 @@
 <template>
   <div class="container mt-4">
     <profile-info-component :user="user" class="mb-4" />
+    <div class="form-check mb-3">
+      <input
+        v-model="history"
+        class="form-check-input"
+        type="checkbox"
+        value=""
+        id="сheck"
+      />
+      <label class="form-check-label" for="сheck">
+        Показать историю заказов
+        <span v-if="!confirmedOrders.length"
+          >({{ $t("message.noComfirmOrders") }})</span
+        >
+      </label>
+    </div>
     <div v-if="currentOrder">
       <h5>Текущий заказ:</h5>
-      <div class="form-check mb-3">
-        <input
-          v-model="history"
-          class="form-check-input"
-          type="checkbox"
-          value=""
-          id="сheck"
-        />
-        <label class="form-check-label" for="сheck">
-          Показать историю заказов
-        </label>
-      </div>
       <p>
         <button
           class="btn btn-primary"
@@ -87,7 +90,7 @@ export default {
   mounted() {
     getProfile()
       .then(({ data }) => {
-        this.orders = data.orders;
+        this.orders = data.reverse();
       })
       .finally(() => (this.loading = false));
   },

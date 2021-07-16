@@ -13,4 +13,16 @@ class Category extends Model
         'title',
         'description'
     ];
+
+    public function products()
+    {
+        return $this->hasManyThrough(
+            Product::class,
+            Subcategory::class,
+            'category_id',
+            'subcategory_slug',
+            'id',
+            'slug',
+        );
+    }
 }

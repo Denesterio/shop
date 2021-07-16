@@ -45,9 +45,9 @@
           :class="{ 'is-invalid': validationErrors.tags }"
           >Выбрать тэги</b-button
         >
-        <router-link :to="{ name: 'tags' }"
-          >на страницу добавления тэгов</router-link
-        >
+        <router-link :to="{ name: 'tags' }">{{
+          $t("link.toTags")
+        }}</router-link>
         <b-collapse id="collapse-tags" class="mt-3">
           <b-form-group v-slot="{ ariaDescribedby }">
             <b-form-checkbox-group
@@ -83,7 +83,7 @@
       </div>
 
       <div class="form-group">
-        <label for="picture">Загрузить изображение товара:</label>
+        <label for="picture">{{ $t("label.pictureUpload") }}:</label>
         <input
           @change="getPicture"
           class="form-control-file"
@@ -114,9 +114,9 @@
       <div class="form-group">
         <label for="subcategory">Подкатегория:</label>
         <p>
-          <router-link :to="{ name: 'subcategories' }"
-            >на страницу добавления подкатегорий</router-link
-          >
+          <router-link :to="{ name: 'subcategories' }">{{
+            $t("link.toSubcategories")
+          }}</router-link>
         </p>
         <select
           v-model="subcategorySlug"
@@ -160,7 +160,7 @@
             class="btn btn-outline-danger btn-sm col-1"
             aria-label="Close"
           >
-            Удалить
+            {{ $t("label.delete") }}
           </button>
         </li>
       </ul>

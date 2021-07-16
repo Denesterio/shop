@@ -22,7 +22,7 @@ const store = new Vuex.Store({
     },
     actions: {
         getUser({ commit, dispatch }) {
-            getUser()
+            return getUser()
                 .then(response => {
                     return new Promise((resolve) => {
                         dispatch('getCartProducts');
@@ -35,8 +35,13 @@ const store = new Vuex.Store({
         login({ commit, dispatch }, params) {
             commit('clearLoginErrors');
 
-            authLogin(params)
-                .then(() => dispatch('getUser'))
+            return authLogin(params)
+                .then(() => {
+                    return new Promise((resolve) => {
+                        dispatch('getUser');
+                        resolve();
+                    });
+                })
                 .catch(error => {
                     commit('setLoginErrors', error.response.data.errors)
                 })
@@ -49,20 +54,23 @@ const store = new Vuex.Store({
         getCartProducts({ commit }) {
             getCart()
                 .then(({ data }) => {
+                    data.forEach((product) => product.quantity = product.pivot.quantity);
                     commit('setCartProducts', data)
                 })
         },
 
         changeCartProductQuantity({ commit }, params) {
-            changeOrderProductsQuantity(params)
+            const method = params.quantityChange > 0 ? 'addProduct' : 'deleteProduct';
+            return changeOrderProductsQuantity(params, method)
                 .then(({ data }) => {
-                    if (data.quantity === 0) {
-                        commit('deleteCartProduct', data)
-                    } else {
-                        commit('setCartProductQuantity', data)
-                    }
+                    data.forEach((product) => product.quantity = product.pivot.quantity);
+                    commit('setCartProducts', data);
                 })
         },
+
+        confirmOrder({ commit }) {
+            commit('clearCart');
+        }
     },
     mutations: {
         setUser(state, user) {
@@ -72,6 +80,7 @@ const store = new Vuex.Store({
         clearUser(state) {
             state.user = null;
             state.isAuthenticated = false;
+            state.cartProducts = [];
         },
         setLoginErrors(state, errors) {
             state.loginErrors = errors
@@ -79,24 +88,12 @@ const store = new Vuex.Store({
         clearLoginErrors(state) {
             state.loginErrors = []
         },
-        setCartProductQuantity(state, data) {
-            const product = state.cartProducts.find(product => {
-                return product.id === data.id;
-            })
-            if (!product) {
-                state.cartProducts = [data, ...state.cartProducts];
-            } else {
-                product.quantity = data.quantity;
-            }
-        },
-        deleteCartProduct(state, data) {
-            state.cartProducts = state.cartProducts.filter(product => {
-                return product.id !== data.id;
-            })
-        },
         setCartProducts(state, products) {
             state.cartProducts = products;
         },
+        clearCart(state) {
+            state.cartProducts = [];
+        }
     }
 })
 

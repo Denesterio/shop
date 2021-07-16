@@ -3,12 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Models\OrdersProduct;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use stdClass;
+use App\Mail\ConfirmOrderMailer;
 use Exception;
 
 class OrderController extends Controller
@@ -25,86 +25,76 @@ class OrderController extends Controller
 
         $product = Product::find($request['productId']);
 
-        $ordersProduct = OrdersProduct::where('order_id', $order->id)
-            ->where('product_id', $product->id)
-            ->first();
-
-        if ($ordersProduct) {
-            $ordersProduct->quantity += $request['quantityChange'];
-            if ($ordersProduct->quantity === 0) {
-                $ordersProduct->delete();
-            } else {
-                $ordersProduct->save();
-            }
+        if ($order->products->contains($product)) {
+            $orderProduct = $order->products()->where('product_id', $product->id)->first();
+            $quantity = $orderProduct->pivot->quantity + 1;
+            $order->products()->updateExistingPivot($product->id, [
+                'quantity' => $quantity
+            ]);
         } else {
-            $ordersProduct = OrdersProduct::create([
-                'order_id' => $order->id,
-                'product_id' => $product->id,
+            $order->products()->attach($product, [
                 'quantity' => 1,
                 'price' => $product->price
             ]);
+            $orderProduct = $order->products()->where('product_id', $product->id)->first();
         }
 
-        $product->quantity = $ordersProduct->quantity;
-        $product->order_id = $ordersProduct->order_id;
+        return $order->products()->get();
+    }
 
-        return $product;
+    public function deleteProduct(Request $request)
+    {
+        $user = Auth::user();
+        $order = Order::where('user_id', $user->id)->where('status', 0)->first();
+        if (!$order) {
+            $order = Order::create([
+                'user_id' => $user->id
+            ]);
+        }
+
+        $product = Product::find($request['productId']);
+
+        $orderProduct = $order->products()->where('product_id', $product->id)->first();
+        if ($orderProduct->pivot->quantity == 1) {
+            $order->products()->detach($product);
+        } else {
+            $quantity = $orderProduct->pivot->quantity - 1;
+            $order->products()->updateExistingPivot($product->id, [
+                'quantity' => $quantity
+            ]);
+        }
+
+        return $order->products()->get();
     }
 
     public function showCart()
     {
         $user = Auth::user();
         $order = Order::where('user_id', $user->id)->where('status', 0)->first();
-        $orderProducts = collect();
-        if (isset($order)) {
-            $orderProducts = DB::table('orders_products as op')
-                ->select(
-                    'p.*',
-                    'op.quantity',
-                    'op.order_id'
-                )
-                ->join('products as p', 'p.id', 'op.product_id')
-                ->where('op.order_id', $order->id)
-                ->get();
-        }
-
-        return $orderProducts;
+        return $order ? $order->products : collect();
     }
 
-    public function comfirm()
+    public function confirm()
     {
         $user = Auth::user();
         $order = Order::where('user_id', $user->id)->where('status', 0)->first();
-        $orderProducts = DB::table('orders_products as op')
-            ->select(
-                'op.id',
-                'op.quantity',
-                'op.product_id',
-                'p.title',
-                'p.price',
-                'p.picture'
-            )
-            ->join('products as p', 'p.id', 'op.product_id')
-            ->where('op.order_id', $order->id)
-            ->get();
+        $orderProducts = $order->products;
 
-
-
-        $sum = $orderProducts->map(function ($orderProduct) {
-            return $orderProduct->quantity * $orderProduct->price;
+        $sum = $orderProducts->map(function ($orderProduct) use ($order) {
+            $order->products()->updateExistingPivot($orderProduct->id, [
+                'price' => $orderProduct->price
+            ]);
+            return $orderProduct->pivot->quantity * $orderProduct->price;
         })->sum();
 
-        $data = [
-            'orderProducts' => $orderProducts,
-            'sum' => $sum
-        ];
-        try {
-            $res = Mail::send('mail.orderFinish', $data, function ($message) use ($user) {
-                $message->subject('Новый заказ');
-                $message->sdfsd('asdfkhskdfhskdfhkshdfk@sdkfhsdkf');
-            });
-        } catch (Exception $e) {
-        }
+        // try {
+        //     $data = new stdClass();
+        //     $data->products = $orderProducts;
+        //     $data->sum = $sum;
+
+        //     Mail::to('mrdnsong@gmail.com')->send(new ConfirmOrderMailer($data));
+        // } catch (Exception $e) {
+        // }
 
         $order->status = 1;
         $order->save();
@@ -112,19 +102,7 @@ class OrderController extends Controller
 
     public function products($orderId)
     {
-        // TODO:: ПОЛУЧИТЬ МОДЕЛЬ ИЗ ПАРАМЕТРА
         $order = Order::find($orderId);
-        return DB::table('orders_products as op')
-            ->select(
-                'op.id',
-                'op.quantity',
-                'op.product_id',
-                'p.title',
-                'p.price',
-                'p.picture'
-            )
-            ->join('products as p', 'p.id', 'op.product_id')
-            ->where('op.order_id', $order->id)
-            ->get();
+        return $order->products;
     }
 }

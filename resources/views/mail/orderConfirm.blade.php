@@ -3,13 +3,13 @@
 Вы оформили заказ:
 <br>
 <table>
-@foreach ($products as $product)
+    @foreach ($products as $product)
     <tr>
         <td>{{$product->title}}</td>
         <td>{{$product->price}} руб.</td>
-        <td>{{$product->quantity}} шт.</td>
-        <td>{{$product->price * $product->quantity}} руб.</td>
+        <td>{{$product->pivot->quantity}} шт.</td>
+        <td>{{$product->price * $product->pivot->quantity}} руб.</td>
     </tr>
-@endforeach
-<br>
-Общая сумма заказа: {{$sum}} руб.
+    @endforeach
+    <br>
+    Общая сумма заказа: {{$sum}} руб.

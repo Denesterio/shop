@@ -16,6 +16,7 @@ import SubcategoriesComponent from '../admin/SubcategoriesComponent.vue';
 import ProductsComponent from '../admin/ProductsComponent.vue';
 import TagsComponent from '../admin/TagsComponent.vue';
 import AuthorsListComponent from '../admin/AuthorsListComponent.vue';
+import PageNotFoundComponent from '../PageNotFoundComponent.vue';
 
 const routes = [
     {
@@ -110,6 +111,12 @@ const routes = [
             adminOnly: true,
         },
     },
+    {
+        path: '/notFound',
+        alias: '*',
+        name: '404',
+        component: PageNotFoundComponent,
+    },
 
 ]
 
@@ -119,7 +126,7 @@ const router = new VueRouter({
     base: process.env.BASE_URL,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
     if (to.matched.some((route) => route.meta?.requiresAuth)) {
         if (store.state.isAuthenticated) {
             next();

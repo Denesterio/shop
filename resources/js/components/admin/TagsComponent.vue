@@ -1,21 +1,21 @@
 <template>
   <div class="container mt-5">
     <form class="container-xl mb-4">
-      <h1>Добавить тэг</h1>
+      <h2>Добавить тэг</h2>
       <p>
-        <router-link :to="{ name: 'categories' }"
-          >на страницу добавления категорий</router-link
-        >
+        <router-link :to="{ name: 'categories' }">{{
+          $t("link.toCategories")
+        }}</router-link>
       </p>
       <p>
-        <router-link :to="{ name: 'subcategories' }"
-          >на страницу добавления подкатегорий</router-link
-        >
+        <router-link :to="{ name: 'subcategories' }">{{
+          $t("link.toSubcategories")
+        }}</router-link>
       </p>
       <p>
-        <router-link :to="{ name: 'products' }"
-          >на страницу добавления товаров</router-link
-        >
+        <router-link :to="{ name: 'products' }">{{
+          $t("link.toAdminPage") + " " + $tc("message.product", 0)
+        }}</router-link>
       </p>
 
       <div class="form-group">
@@ -103,7 +103,7 @@ export default {
       this.processing = true;
       createTag(params)
         .then(({ data }) => {
-          this.tags.push(data.tag);
+          this.tags.push(data);
           this.tagName = "";
         })
         .finally(() => {

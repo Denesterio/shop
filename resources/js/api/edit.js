@@ -1,5 +1,9 @@
-const changeOrderProductsQuantity = (params) => {
-    return axios.post('/api/order/addProduct', params);
+const changeOrderProductsQuantity = (params, method) => {
+    return axios.post(`/api/order/${method}`, params);
 };
 
-export { changeOrderProductsQuantity };
+const editUserField = (params) => {
+    return axios.post("/api/user/edit", params);
+}
+
+export { changeOrderProductsQuantity, editUserField };

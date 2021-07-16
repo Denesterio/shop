@@ -11,6 +11,6 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
         $orders = $user->orders;
-        return ['orders' => $orders, 'user' => $user];
+        return $orders;
     }
 }
