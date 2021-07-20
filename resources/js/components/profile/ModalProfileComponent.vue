@@ -24,7 +24,7 @@
           <input type="text" v-model="currentValue" class="form-control" />
         </div>
         <div class="modal-footer">
-          <slot name="footer"></slot>
+          <slot name="footer" :editUser="editUser"></slot>
         </div>
       </div>
     </div>
@@ -41,10 +41,6 @@ export default {
     },
     user: {
       type: Object,
-      required: true,
-    },
-    editing: {
-      type: Boolean,
       required: true,
     },
   },
@@ -72,17 +68,10 @@ export default {
         name: this.currentValue,
         field: this.field,
       };
-      editUserField()
-        .then(({ data }) => this.$store.commit("setUser", data))
-        .finally(() => this.$emit("stop-editing"));
-    },
-  },
-
-  watch: {
-    editing(newValue, oldValue) {
-      if (newValue) {
-        this.editUser();
-      }
+      editUserField(params).then(({ data }) => {
+        this.$store.commit("setUser", data);
+        this.closeModal();
+      });
     },
   },
 };

@@ -57,8 +57,8 @@
                   v-if="isUserAdmin"
                   :to="{ name: 'products' }"
                   class="dropdown-item nav-link text-center"
-                  >Добавить товар</router-link
-                >
+                  v-t="'label.productAdd'"
+                ></router-link>
                 <router-link
                   :to="{ name: 'profile' }"
                   class="dropdown-item nav-link text-center"
@@ -138,6 +138,14 @@ export default {
 </script>
 
 <style>
+.navbar {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 .dropdown-item {
   color: rgba(0, 0, 0, 0.5);
 }
@@ -158,5 +166,9 @@ export default {
   font-family: "BERNIER", "Nunito", "verdana", serif;
   color: #3490dc;
   letter-spacing: 1px;
+}
+
+.logo-text:hover {
+  color: #3490dc;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-5">
     <div class="container-xl mb-5">
-      <h2>Добавить товар</h2>
+      <h2>{{ $t("label.productAdd") }}</h2>
 
       <div class="form-group">
         <input
@@ -33,9 +33,9 @@
       </div>
 
       <author-component
-        class="form-group"
         @add-author="addAuthorToAuthors"
         @clear-authors="clearProductAuthors"
+        :error="validationErrors.productAuthors"
       />
 
       <div class="form-group">
@@ -177,7 +177,7 @@ import {
 } from "../../api/get.js";
 import { createProduct } from "../../api/create.js";
 import { deleteProduct } from "../../api/delete.js";
-import { isValid, fillErrors } from "../../validate.js";
+import { productSchema } from "../../validate.js";
 import CreateButtonComponent from "./CreateButtonComponent.vue";
 import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
 import AuthorComponent from "./AuthorComponent.vue";
@@ -231,10 +231,10 @@ export default {
 
   created() {
     const promises = [
-      getCategories().then(({ data }) => (this.categories = data)),
-      getSubcategories().then(({ data }) => (this.subcategories = data)),
-      getProducts().then(({ data }) => (this.products = data.reverse())),
-      getTags().then(({ data }) => (this.tags = data)),
+      getCategories().then((data) => (this.categories = data)),
+      getSubcategories().then((data) => (this.subcategories = data)),
+      getProducts().then((data) => (this.products = data)),
+      getTags().then((data) => (this.tags = data)),
     ];
     Promise.all(promises).finally(() => (this.loading = false));
   },
@@ -242,6 +242,7 @@ export default {
   methods: {
     addAuthorToAuthors(author) {
       this.productAuthors.push(author);
+      this.validationErrors.productAuthors = "";
     },
 
     clearProductAuthors() {
@@ -252,25 +253,27 @@ export default {
       this.picture = e.target.files[0];
     },
 
-    createNewProduct() {
-      this.processing = true;
+    async createNewProduct() {
+      // this.processing = true;
       let fData = new FormData();
       const params = {
         name: this.productName,
         description: this.productDescription,
-        price: this.productPrice,
+        price: Number(this.productPrice),
         subcategorySlug: this.subcategorySlug,
         picture: this.picture,
-        productAuthors:
-          this.productAuthors.length > 0
-            ? JSON.stringify(this.productAuthors.map((a) => a.id))
-            : [],
+        productAuthors: this.productAuthors.map((a) => a.id),
         tags: this.selected.length > 0 ? JSON.stringify(this.selected) : [],
       };
 
-      if (!isValid(params, ["picture"])) {
-        fillErrors(this.validationErrors, params, ["picture"]);
-        this.processing = false;
+      try {
+        const result = await productSchema.validate(params, {
+          abortEarly: false,
+        });
+      } catch (error) {
+        error.inner.forEach((err) => {
+          this.validationErrors[err.path] = err.message;
+        });
         return;
       }
 

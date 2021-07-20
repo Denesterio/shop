@@ -69,6 +69,7 @@
 import { createAuthor } from "../../api/create.js";
 import { getAuthors } from "../../api/get.js";
 import { deleteAuthor } from "../../api/delete.js";
+import { onlyNameSchema } from "../../validate.js";
 import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
 import CreateButtonComponent from "./CreateButtonComponent.vue";
 export default {
@@ -89,18 +90,19 @@ export default {
 
   methods: {
     createNewAuthor() {
-      if (this.currentAuthor.length === 0) {
-        this.error = "Поле не должно быть пустым";
-        return;
-      }
-      this.processing = true;
-      createAuthor(this.currentAuthor)
-        .then(({ data }) => {
-          this.authors = [data, ...this.authors];
-          this.validationError = "";
-          this.currentAuthor = "";
+      onlyNameSchema
+        .validate(this.currentAuthor)
+        .then(() => {
+          this.processing = true;
+          createAuthor(this.currentAuthor)
+            .then(({ data }) => {
+              this.authors = [data, ...this.authors];
+              this.validationError = "";
+              this.currentAuthor = "";
+            })
+            .finally(() => (this.processing = false));
         })
-        .finally(() => (this.processing = false));
+        .catch((error) => (this.error = error.message));
     },
 
     removeAuthor(authorId) {

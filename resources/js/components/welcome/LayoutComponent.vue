@@ -1,15 +1,16 @@
 <template>
   <div class="container-xl mt-4">
     <div class="row">
-      <aside ref="menu" class="menu col-md-3">
+      <aside class="col-lg-3 col-md-4" :class="{ error: 'text-center' }">
         <svg-loading-component v-if="loading" />
+        <span class="d-block mt-4" v-else-if="error">{{ error }}</span>
         <left-menu-component
-          v-else-if="showMenu"
+          v-else
           :categories="categories"
           :subcategories="subcategories"
         ></left-menu-component>
       </aside>
-      <main :class="showMenu ? 'col-md-9' : 'col-md-12'">
+      <main class="col-lg-9 col-md-7 col-sm-12">
         <svg-loading-component v-if="loading" />
         <router-view :categories="categories" v-else></router-view>
       </main>
@@ -35,44 +36,20 @@ export default {
       categories: [],
       subcategories: [],
       loading: true,
-      menuWidth: null,
+      error: "",
     };
-  },
-
-  computed: {
-    showMenu() {
-      return this.menuWidth >= 250;
-    },
   },
 
   created() {
     getMenu()
-      .then(({ data }) => {
+      .then((data) => {
         this.categories = data.categories;
         this.subcategories = data.subcategories;
       })
+      .catch((err) => {
+        this.error = err.response.data.message;
+      })
       .finally(() => (this.loading = false));
-    window.addEventListener("resize", this.watchMenu);
-  },
-
-  mounted() {
-    this.menuWidth = this.$refs.menu.offsetWidth;
-  },
-
-  beforeUnmount() {
-    window.removeEventListener("resize", this.watchMenu);
-  },
-
-  methods: {
-    watchMenu() {
-      this.menuWidth = this.$refs.menu.offsetWidth;
-    },
   },
 };
 </script>
-
-<style scoped>
-/* .menu {
-  min-width: 250px;
-} */
-</style>

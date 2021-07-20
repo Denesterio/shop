@@ -2,28 +2,28 @@
   <section>
     <ul class="list-group">
       <li class="list-group-item">
-        Имя: <strong>{{ user.name }}</strong>
+        {{ $t("label.login") }}: <strong>{{ user.name }}</strong>
         <a
           @click.prevent="openModal('name')"
           class="font-italic ml-4"
           noreferrer
           nofollow
-          >изменить</a
+          >{{ $t("label.change") }}</a
         >
       </li>
       <li class="list-group-item">
-        Электронный адрес: <strong>{{ user.email }}</strong>
+        {{ $t("label.email") }}: <strong>{{ user.email }}</strong>
         <a
           @click.prevent="openModal('email')"
           class="font-italic ml-4"
           noreferrer
           nofollow
-          >изменить</a
+          >{{ $t("label.change") }}</a
         >
       </li>
-      <li class="list-group-item">Пароль:</li>
+      <li class="list-group-item">{{ $t("label.password") }}:</li>
       <li class="list-group-item">
-        Дата регистации: <strong>{{ formattedDate }}</strong>
+        {{ $t("label.registerDate") }}: <strong>{{ formattedDate }}</strong>
       </li>
     </ul>
 
@@ -31,11 +31,9 @@
       v-if="isModalOpen"
       :field="fieldToChange"
       :user="user"
-      :editing="editing"
       @close-modal-window="closeModal"
-      @stop-editing="stopEditing"
     >
-      <template v-slot:footer>
+      <template v-slot:footer="{ editUser }">
         <p class="text-danger">
           {{ "Для подтверждения введите текущий " + fieldToChange }}
         </p>
@@ -43,7 +41,6 @@
           <input
             v-model="confirmInput"
             :type="typeInput"
-            :editing="editing"
             class="form-control form-control-sm"
             aria-label="old value"
             aria-describedby="button-addon2"
@@ -55,7 +52,7 @@
             id="button-addon2"
             :disabled="isButtonDisabled"
           >
-            Сохранить
+            {{ $t("label.save") }}
           </button>
         </div>
       </template>
@@ -80,7 +77,6 @@ export default {
       isModalOpen: false,
       fieldToChange: "",
       confirmInput: "",
-      editing: false,
     };
   },
 
@@ -106,14 +102,6 @@ export default {
       this.confirmInput = "";
       this.fieldToChange = "";
       this.isModalOpen = false;
-    },
-    editUser() {
-      this.editing = true;
-    },
-    stopEditing() {
-      this.editing = false;
-      this.isModalOpen = false;
-      this.confirmInput = "";
     },
   },
 };

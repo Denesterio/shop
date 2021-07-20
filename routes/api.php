@@ -82,7 +82,7 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::get('/tags', [TagController::class, 'list'])->name('tags');
 });
 
-Route::prefix('order')->middleware('auth:sanctum')->group(function () {
+Route::prefix('order')->middleware('auth')->group(function () {
     Route::get('get', [OrderController::class, 'get']);
     Route::post('addProduct', [OrderController::class, 'addProduct']);
     Route::post('deleteProduct', [OrderController::class, 'deleteProduct']);
@@ -92,7 +92,6 @@ Route::prefix('order')->middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/user/edit', [UserController::class, 'edit'])->name('user.edit');
 });
 

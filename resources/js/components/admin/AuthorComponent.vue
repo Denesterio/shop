@@ -1,14 +1,17 @@
 <template>
-  <div>
+  <div class="form-group">
     <input
       list="authorDatalist"
       v-model="currentAuthor"
       @keyup.enter="addAuthorToAuthors"
       class="form-control"
-      :class="{ 'is-invalid': validationError }"
+      :class="{ 'is-invalid': validationError || error }"
       placeholder="Автор"
       :disabled="processing"
     />
+    <p v-if="error.length > 0" class="invalid-feedback">
+      {{ error }}
+    </p>
     <datalist v-if="filteredAuthors.length" id="authorDatalist">
       <option
         v-for="author in filteredAuthors"
@@ -16,6 +19,17 @@
         :value="author.title"
       ></option>
     </datalist>
+    <p v-if="validationError.length" class="error-msg invalid-feedback">
+      {{ validationError }}
+      <a
+        @click.prevent="createNewAuthor"
+        href=""
+        noreferrer
+        nofollow
+        :disabled="processing"
+        >добавить</a
+      >
+    </p>
     <p class="font-weight-bolder m-1 p-1 font-italic">
       {{ formattedAuthors }}
       <a
@@ -28,28 +42,23 @@
         >очистить</a
       >
     </p>
-    <p v-if="validationError.startsWith('Поле ')" class="text-danger">
-      {{ validationError }}
-    </p>
-    <p v-else-if="validationError === 'нет в базе'" class="text-danger">
-      Такого автора нет в базе
-      <a
-        @click.prevent="createNewAuthor"
-        href=""
-        noreferrer
-        nofollow
-        :disabled="processing"
-        >добавить</a
-      >
-    </p>
   </div>
 </template>
 
 <script>
 import { getAuthors } from "../../api/get.js";
 import { createAuthor } from "../../api/create.js";
+import { onlyNameSchema } from "../../validate.js";
 
 export default {
+  props: {
+    error: {
+      type: String,
+      required: false,
+      default: "",
+    },
+  },
+
   data() {
     return {
       currentAuthor: "",
@@ -80,24 +89,24 @@ export default {
   },
 
   mounted() {
-    getAuthors().then(({ data }) => (this.authors = data));
+    getAuthors().then((data) => (this.authors = data));
   },
 
   methods: {
     createNewAuthor() {
-      if (this.currentAuthor.length === 0) {
-        this.validationError = "Поле не должно быть пустым";
-        return;
-      }
-
-      this.processing = true;
-      createAuthor(this.currentAuthor)
-        .then(({ data }) => {
-          this.authors = [data, ...this.authors];
-          this.validationError = "";
-          this.addAuthorToAuthors();
+      onlyNameSchema
+        .validate(this.currentAuthor)
+        .then(() => {
+          this.processing = true;
+          createAuthor(this.currentAuthor)
+            .then(({ data }) => {
+              this.authors = [data, ...this.authors];
+              this.validationError = "";
+              this.addAuthorToAuthors();
+            })
+            .finally(() => (this.processing = false));
         })
-        .finally(() => (this.processing = false));
+        .catch((error) => (this.validationError = error.message));
     },
 
     addAuthorToAuthors() {
@@ -106,7 +115,7 @@ export default {
         this.productAuthors.push(this.filteredAuthors[0]);
         this.currentAuthor = "";
       } else {
-        this.validationError = "нет в базе";
+        this.validationError = "Такого автора нет в базе";
       }
     },
 
@@ -123,3 +132,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.error-msg {
+  font-size: 0.8rem;
+}
+</style>

@@ -105,4 +105,10 @@ class OrderController extends Controller
         $order = Order::find($orderId);
         return $order->products;
     }
+
+    public function get()
+    {
+        $user = Auth::user();
+        return $user->orders;
+    }
 }

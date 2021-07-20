@@ -1,12 +1,12 @@
 const deleteSubcategory = (subcategoryId) => {
-  return axios.post('/admin/subcategories/delete', {
+  return axios.post('/api/admin/subcategories/delete', {
     id: subcategoryId,
     _method: 'DELETE',
   });
 };
 
 const deleteCategory = (categoryId) => {
-  return axios.post('/admin/categories/delete', {
+  return axios.post('/api/admin/categories/delete', {
     id: categoryId,
     _method: 'DELETE',
   });

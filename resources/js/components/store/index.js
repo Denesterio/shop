@@ -53,17 +53,15 @@ const store = new Vuex.Store({
 
         getCartProducts({ commit }) {
             getCart()
-                .then(({ data }) => {
-                    data.forEach((product) => product.quantity = product.pivot.quantity);
+                .then((data) => {
                     commit('setCartProducts', data)
                 })
         },
 
         changeCartProductQuantity({ commit }, params) {
-            const method = params.quantityChange > 0 ? 'addProduct' : 'deleteProduct';
+            const method = params.quantityChange === 'increase' ? 'addProduct' : 'deleteProduct';
             return changeOrderProductsQuantity(params, method)
-                .then(({ data }) => {
-                    data.forEach((product) => product.quantity = product.pivot.quantity);
+                .then((data) => {
                     commit('setCartProducts', data);
                 })
         },

@@ -1,11 +1,13 @@
 @font-face {
-  font-family: 'BERNIER';
-  src: url('../fonts/BERNIER.otf') format('truetype');
-  font-style: normal;
-  font-weight: normal;
+    font-family: "SFProRegular";
+    src: url("../fonts/SF-Pro-Display-Regular.otf");
+    src: url("../fonts/SF-Pro-Display-Regular.eot?#iefix")format("embedded-opentype"),
+    url("../fonts/SF-Pro-Display-Regular.woff") format("woff"),
+    url("../fonts/SF-Pro-Display-Regular.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
 }
 
-.logo-text {
-    font-size: 1.2rem;
-    font-family: 'BERNIER', 'Nunito', 'verdana', serif;
+html {
+  font-family: 'SFProRegular', 'Verdana', sans-serif;
 }

@@ -67,7 +67,7 @@ export default {
   },
   mounted() {
     getOrderProducts(this.orderId)
-      .then(({ data }) => {
+      .then((data) => {
         data.forEach((product) => {
           if (this.isConfirmed) {
             product.price = product.pivot.price;

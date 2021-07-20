@@ -18,7 +18,7 @@
           v-model.trim="subcategoryName"
           class="form-control"
           :class="{ 'is-invalid': validationErrors.name }"
-          placeholder="Имя новой подкатегории"
+          :placeholder="$t('label.subcatName')"
         />
 
         <p v-if="validationErrors.name" class="invalid-feedback fsw-italic">
@@ -28,22 +28,20 @@
 
       <div class="form-group">
         <input
-          v-if="slugStatus"
-          v-model="slug"
+          v-if="editingStatus"
+          v-model="editedSlug"
           v-focus
           class="form-control"
           :class="{ 'is-invalid': validationErrors.slug }"
-          placeholder="Заполнитель в строке адреса"
+          :placeholder="$t('label.slug')"
         />
-
         <div v-else @click="prepareForEditSlug" class="form-control text-muted">
           {{
-            subcategorySlug ||
-            "Заполнитель в строке адреса (кликните по полю для редактирования)"
+            subcategorySlug || `${$t("label.slug")} (${$t("label.clickEdit")})`
           }}
         </div>
 
-        <p v-if="validationErrors.slug" class="invalid-feedback">
+        <p v-if="validationErrors.slug.length" class="invalid-feedback">
           {{ validationErrors.slug }}
         </p>
       </div>
@@ -54,7 +52,7 @@
           class="form-control"
           :class="{ 'is-invalid': validationErrors.categoryId }"
         >
-          <option value="" selected>Все</option>
+          <option value="" selected>{{ $t("label.all") }}</option>
           <option
             v-for="category in categories"
             :key="category.id"
@@ -106,7 +104,7 @@ import { getCategories, getSubcategories } from "../../api/get.js";
 import { createSubcategory } from "../../api/create.js";
 import { deleteSubcategory } from "../../api/delete.js";
 import transliterate from "../../transliterate.js";
-import { isValid, fillErrors } from "../../validate.js";
+import { subcategorySchema } from "../../validate.js";
 
 export default {
   components: { CreateButtonComponent, SvgLoadingComponent },
@@ -116,8 +114,8 @@ export default {
       subcategories: [],
       subcategoryName: "",
       categoryId: "",
-      slug: "",
-      slugStatus: null,
+      editedSlug: "",
+      editingStatus: null,
 
       processing: false,
       loading: true,
@@ -131,17 +129,15 @@ export default {
 
   created() {
     const promises = [
-      getCategories().then(({ data }) => (this.categories = data.reverse())),
-      getSubcategories().then(
-        ({ data }) => (this.subcategories = data.reverse())
-      ),
+      getCategories().then((data) => (this.categories = data.reverse())),
+      getSubcategories().then((data) => (this.subcategories = data.reverse())),
     ];
     Promise.all(promises).finally(() => (this.loading = false));
   },
 
   computed: {
     subcategorySlug() {
-      if (!this.slugStatus) {
+      if (!this.editingStatus) {
         return transliterate.fromCyrillic(this.subcategoryName);
       }
     },
@@ -155,8 +151,8 @@ export default {
 
   methods: {
     prepareForEditSlug() {
-      this.slug = this.subcategorySlug;
-      this.slugStatus = "edited";
+      this.editedSlug = this.subcategorySlug;
+      this.editingStatus = "edited";
     },
 
     createNewSubcategory() {
@@ -164,18 +160,20 @@ export default {
       const params = {
         name: this.subcategoryName,
         categoryId: this.categoryId,
-        slug: this.slugStatus ? this.slug : this.subcategorySlug,
+        slug: this.editingStatus ? this.editedSlug : this.subcategorySlug,
       };
 
-      if (!isValid(params)) {
-        fillErrors(this.validationErrors, params);
-        this.processing = false;
-        return;
-      }
-
-      createSubcategory(params)
-        .then(({ data }) => {
-          this.subcategories = [data, ...this.subcategories];
+      subcategorySchema
+        .validate(params, { abortEarly: false })
+        .then(() => {
+          createSubcategory(params).then(({ data }) => {
+            this.subcategories = [data, ...this.subcategories];
+          });
+        })
+        .catch((error) => {
+          error.inner.forEach((err) => {
+            this.validationErrors[err.path] = err.message;
+          });
         })
         .finally(() => {
           this.processing = false;
@@ -197,6 +195,9 @@ export default {
     },
     categoryId() {
       this.validationErrors.categoryId = "";
+    },
+    editedSlug() {
+      this.validationErrors.slug = "";
     },
   },
 };

@@ -65,9 +65,9 @@ export default {
     },
   },
 
-  beforeRouteUpdate(to, from, next) {
+  beforeRouteUpdate(to, _from, next) {
     makeRequest(to)
-      .then(({ data }) => {
+      .then((data) => {
         this.fillData(this, data);
       })
       .finally(() => (this.loading = false));
@@ -76,7 +76,7 @@ export default {
 
   beforeRouteEnter(to, _from, next) {
     makeRequest(to)
-      .then(({ data }) =>
+      .then((data) =>
         next((vm) => {
           vm.fillData(vm, data);
           vm.loading = false;

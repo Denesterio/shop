@@ -20,10 +20,12 @@ class CategoryController extends Controller
 
     public function create(Request $request)
     {
-        Category::create([
+        $cat = Category::create([
             'title' => $request['name'],
             'description' => $request['desc']
         ]);
+
+        return $cat;
     }
 
     public function get()

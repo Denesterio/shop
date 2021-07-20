@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-5">
     <form class="container-xl mb-4">
-      <h2>Добавить тэг</h2>
+      <h2 v-t="'label.tagAdd'">Добавить тэг</h2>
       <p>
         <router-link :to="{ name: 'categories' }">{{
           $t("link.toCategories")
@@ -14,7 +14,7 @@
       </p>
       <p>
         <router-link :to="{ name: 'products' }">{{
-          $t("link.toAdminPage") + " " + $tc("message.product", 0)
+          `${$t("link.toAdminPage")} ${$tc("message.product", 0)}`
         }}</router-link>
       </p>
 
@@ -24,12 +24,12 @@
           v-focus
           @keydown.enter.prevent="createNewTag"
           class="form-control"
-          :class="{ 'is-invalid': validationErrors.name }"
+          :class="{ 'is-invalid': error }"
           placeholder="Название тэга"
         />
 
-        <p v-if="validationErrors.name" class="invalid-feedback fsw-italic">
-          {{ validationErrors.name }}
+        <p v-if="error.length" class="invalid-feedback fsw-italic">
+          {{ error }}
         </p>
       </div>
 
@@ -67,7 +67,7 @@ import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
 import { getTags } from "../../api/get.js";
 import { deleteTag } from "../../api/delete.js";
 import { createTag } from "../../api/create.js";
-import { isValid, fillErrors } from "../../validate.js";
+import { onlyNameSchema } from "../../validate.js";
 export default {
   components: { CreateButtonComponent, SvgLoadingComponent },
   data() {
@@ -76,15 +76,13 @@ export default {
       tags: [],
       loading: true,
       processing: false,
-      validationErrors: {
-        name: null,
-      },
+      error: "",
     };
   },
 
   mounted() {
     getTags()
-      .then(({ data }) => (this.tags = data))
+      .then((data) => (this.tags = data))
       .finally(() => (this.loading = false));
   },
 
@@ -94,21 +92,20 @@ export default {
         name: this.tagName,
       };
 
-      if (!isValid(params)) {
-        fillErrors(this.validationErrors, params);
-        this.processing = false;
-        return;
-      }
-
-      this.processing = true;
-      createTag(params)
-        .then(({ data }) => {
-          this.tags.push(data);
-          this.tagName = "";
+      onlyNameSchema
+        .validate(this.tagName)
+        .then(() => {
+          this.processing = true;
+          createTag(params)
+            .then(({ data }) => {
+              this.tags.push(data);
+              this.tagName = "";
+            })
+            .finally(() => {
+              this.processing = false;
+            });
         })
-        .finally(() => {
-          this.processing = false;
-        });
+        .catch((error) => (this.error = error.message));
     },
     removeTag(tagId) {
       deleteTag(tagId).then(() => {
@@ -118,7 +115,7 @@ export default {
   },
   watch: {
     tagName() {
-      this.validationErrors.name = null;
+      this.error = "";
     },
   },
 };

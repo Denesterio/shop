@@ -19,7 +19,8 @@
             <td>{{ product.price }} руб.</td>
             <td>
               <addto-cart-button-component
-                :productId="product.id"
+                :product-id="product.id"
+                :title="product.title"
                 :order-products="products"
                 size="md"
               />
@@ -103,36 +104,6 @@ export default {
           });
         });
     },
-
-    // deleteFromOrder(productId, orderId) {
-    //   this.processing = true;
-    //   deleteProductFromOrder(productId, orderId)
-    //     .then(({ data }) => {
-    //       if (data.quantity === 0) {
-    //         this.products = this.products.filter((product) => {
-    //           return product.id !== data["product_id"];
-    //         });
-    //       } else {
-    //         const product = this.products.find((product) => {
-    //           return product.id === data["product_id"];
-    //         });
-    //         product.quantity = data.quantity;
-    //       }
-    //     })
-    //     .finally(() => (this.processing = false));
-    // },
-
-    // addToOrder(productId, orderId) {
-    //   this.processing = true;
-    //   addProductToOrder(productId, orderId)
-    //     .then(({ data }) => {
-    //       const product = this.products.find((product) => {
-    //         return product.id === data["product_id"];
-    //       });
-    //       product.quantity = data.quantity;
-    //     })
-    //     .finally(() => (this.processing = false));
-    // },
   },
 };
 </script>

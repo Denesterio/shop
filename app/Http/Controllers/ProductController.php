@@ -4,16 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\Category;
-use App\Models\Subcategory;
-use App\Models\Author;
-use App\Models\Tag;
-use App\Models\Order;
-use App\Models\OrdersProduct;
 use App\Models\AuthorsProduct;
 use App\Models\TagsProduct;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {

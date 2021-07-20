@@ -3,7 +3,7 @@
     <slot name="start"></slot>
     <span class="" v-if="quantity">
       <button
-        @click="changeProductQuantity(productId, -1)"
+        @click="changeProductQuantity(productId, 'descrease')"
         :class="`btn btn-outline-dark btn-${size} ml-3 font-weight-bold`"
       >
         -
@@ -15,7 +15,7 @@
         {{ (size === "sm" ? "В корзине: " : "") + quantity }}
       </button>
       <button
-        @click="changeProductQuantity(productId, 1)"
+        @click="changeProductQuantity(productId, 'increase')"
         :class="`btn btn-outline-dark btn-${size} font-weight-bold`"
       >
         +
@@ -23,11 +23,16 @@
     </span>
     <button
       v-else
-      @click="changeProductQuantity(productId, 1)"
+      @click="changeProductQuantity(productId, 'increase')"
       :class="`btn btn-info btn-${size} ml-3`"
-    >
-      Добавить в корзину
-    </button>
+      v-t="'label.addToCart'"
+    ></button>
+    <template v-if="showAlert">
+      <div ref="alert" class="alert alert-info text-center" role="alert">
+        <strong>"{{ title }}"</strong> ({{ alertsCount }})
+        {{ $t(`message.${change}`) }}
+      </div>
+    </template>
   </p>
 </template>
 
@@ -36,6 +41,10 @@ export default {
   props: {
     productId: {
       type: Number,
+      required: true,
+    },
+    title: {
+      type: String,
       required: true,
     },
     size: {
@@ -48,6 +57,15 @@ export default {
       required: false,
       default: () => [],
     },
+  },
+
+  data() {
+    return {
+      change: null,
+      showAlert: false,
+      alertsCount: 0,
+      timer: null,
+    };
   },
 
   computed: {
@@ -69,13 +87,19 @@ export default {
       this.$store
         .dispatch("changeCartProductQuantity", params)
         .then(() => {
-          Vue.swal.fire({
-            position: "top-end",
-            icon: "success",
-            title: "Товар успешно добавлен",
-            showConfirmButton: false,
-            timer: 1100,
-          });
+          this.showAlert = true;
+          if (this.change !== quantityChange) {
+            this.alertsCount = 0;
+          }
+          this.alertsCount += 1;
+          this.change = quantityChange;
+          if (this.timer) {
+            clearTimeout(this.timer);
+          }
+          this.timer = setTimeout(() => {
+            this.showAlert = false;
+            this.alertsCount = 0;
+          }, 2000);
         })
         .catch((error) => {
           if (error.response.status === 401) {
@@ -98,6 +122,12 @@ export default {
                   this.$router.push({ name: "register" });
                 }
               });
+          } else {
+            Vue.swal.fire({
+              icon: "error",
+              title: "Товар не добавлен",
+              text: "Не удалось добавить товар, попробуйте снова",
+            });
           }
         });
     },
@@ -110,3 +140,15 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.alert {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 20;
+  font-size: 1.2rem;
+  margin: 0;
+}
+</style>

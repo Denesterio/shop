@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-5">
     <div class="container-xl mb-4">
-      <h2>Добавить категорию</h2>
+      <h2>{{ $t("label.categoryAdd") }}</h2>
       <p>
         <router-link :to="{ name: 'subcategories' }">{{
           $t("link.toSubcategories")
@@ -18,7 +18,7 @@
           v-model.trim="categoryName"
           class="form-control"
           :class="{ 'is-invalid': validationErrors.name }"
-          placeholder="Имя новой категории"
+          :placeholder="$t('label.newCategoryName')"
         />
 
         <p v-if="validationErrors.name" class="invalid-feedback fsw-italic">
@@ -31,7 +31,7 @@
           v-model="categoryDesc"
           class="form-control"
           :class="{ 'is-invalid': validationErrors.desc }"
-          placeholder="Описание новой категории"
+          :placeholder="$t('label.newCategoryDesc')"
         >
         </textarea>
         <div v-if="validationErrors.desc" class="invalid-feedback">
@@ -47,6 +47,7 @@
 
     <div class="container-xl">
       <svg-loading-component v-if="loading" />
+      <span v-else-if="error">{{ error }}</span>
       <ul v-else class="list-group">
         <li
           v-for="category in categories"
@@ -70,7 +71,7 @@
             class="btn btn-danger"
             aria-label="Close"
           >
-            Удалить
+            {{ $t("label.delete") }}
           </button>
         </li>
       </ul>
@@ -84,7 +85,7 @@ import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
 import { createCategory } from "../../api/create.js";
 import { getCategories } from "../../api/get.js";
 import { deleteCategory } from "../../api/delete.js";
-import { isValid, fillErrors } from "../../validate.js";
+import { categorySchema } from "../../validate.js";
 export default {
   components: { CreateButtonComponent, SvgLoadingComponent },
   data() {
@@ -93,6 +94,7 @@ export default {
       categoryDesc: "",
 
       categories: [],
+      error: "",
 
       loading: true,
       processing: false,
@@ -104,7 +106,8 @@ export default {
   },
   mounted() {
     getCategories()
-      .then(({ data }) => (this.categories = data))
+      .then((data) => (this.categories = data))
+      .catch((error) => (this.error = error.response.data.message))
       .finally(() => (this.loading = false));
   },
   methods: {
@@ -115,20 +118,23 @@ export default {
         desc: this.categoryDesc,
       };
 
-      if (!isValid(params)) {
-        fillErrors(this.validationErrors, params);
-        this.processing = false;
-        return;
-      }
-
-      createCategory(params)
-        .then(({ data }) => {
-          this.categories = [data, ...this.categories];
+      categorySchema
+        .validate(params, { abortEarly: false })
+        .then(() => {
+          createCategory(params).then(({ data }) => {
+            this.categories = [data, ...this.categories];
+          });
+        })
+        .catch((error) => {
+          error.inner.forEach((err) => {
+            this.validationErrors[err.path] = err.message;
+          });
         })
         .finally(() => {
           this.processing = false;
         });
     },
+
     removeCategory(categoryId) {
       deleteCategory(categoryId).then(() => {
         this.categories = this.categories.filter(

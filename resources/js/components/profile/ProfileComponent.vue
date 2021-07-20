@@ -71,7 +71,7 @@
 import ProfileOrderProductsComponent from "./ProfileOrderProductsComponent.vue";
 import ProfileInfoComponent from "./ProfileInfoComponent.vue";
 import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
-import { getProfile } from "../../api/get.js";
+import { getOrders } from "../../api/get.js";
 export default {
   components: {
     ProfileOrderProductsComponent,
@@ -88,8 +88,8 @@ export default {
   },
 
   mounted() {
-    getProfile()
-      .then(({ data }) => {
+    getOrders()
+      .then((data) => {
         this.orders = data.reverse();
       })
       .finally(() => (this.loading = false));

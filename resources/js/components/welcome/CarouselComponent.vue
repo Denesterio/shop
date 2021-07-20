@@ -1,7 +1,7 @@
 <template>
   <section class="mt-4">
     <svg-loading-component v-if="loading" />
-    <template v-else-if="newProducts.length >= settings.slidesToShow">
+    <template v-else-if="newProducts.length >= settings.slidesToShow && !error">
       <h4>Новинки:</h4>
       <VueSlickCarousel v-bind="settings" class="carousel border border-info">
         <template v-slot:prevArrow="arrowOption">
@@ -55,6 +55,7 @@ export default {
   data() {
     return {
       loading: true,
+      error: "",
 
       newProducts: [],
       authors: [],
@@ -99,9 +100,12 @@ export default {
 
   created() {
     getNewProducts()
-      .then(({ data }) => {
+      .then((data) => {
         this.newProducts = data.products;
         this.authors = data.authors;
+      })
+      .catch((err) => {
+        this.error = err.response.data.message;
       })
       .finally(() => (this.loading = false));
   },
@@ -135,7 +139,7 @@ export default {
 .card-body {
   margin: 5px;
   padding: 5px;
-  height: 80px;
+  height: 120px;
 }
 .card-body p {
   margin-bottom: 5px;
