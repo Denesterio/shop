@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: localhost
--- Время создания: Июл 06 2021 г., 13:41
+-- Время создания: Июл 20 2021 г., 14:37
 -- Версия сервера: 10.4.18-MariaDB
 -- Версия PHP: 7.4.16
 
@@ -43,7 +43,14 @@ INSERT INTO `authors` (`id`, `title`, `created_at`, `updated_at`) VALUES
 (3, 'Программист', '2021-07-01 09:18:50', '2021-07-01 09:18:50'),
 (4, 'Э. Хант', '2021-07-01 09:35:42', '2021-07-01 09:35:42'),
 (5, 'Batman', '2021-07-02 15:52:50', '2021-07-02 15:52:50'),
-(7, 'Hellbalzer', '2021-07-05 03:42:14', '2021-07-05 03:42:14');
+(7, 'Hellbalzer', '2021-07-05 03:42:14', '2021-07-05 03:42:14'),
+(8, 'Алан Мур', '2021-07-07 03:48:37', '2021-07-07 03:48:37'),
+(11, 'Нил Гейман', '2021-07-07 03:58:37', '2021-07-07 03:58:37'),
+(13, 'One', '2021-07-08 07:33:10', '2021-07-08 07:33:10'),
+(14, 'Юскэ Мурата', '2021-07-08 07:33:31', '2021-07-08 07:33:31'),
+(15, 'Сайто Такао', '2021-07-12 15:09:46', '2021-07-12 15:09:46'),
+(16, 'Эрик Фримен', '2021-07-12 16:04:41', '2021-07-12 16:04:41'),
+(17, 'Элизабет Робсон', '2021-07-12 16:04:54', '2021-07-12 16:04:54');
 
 -- --------------------------------------------------------
 
@@ -71,7 +78,26 @@ INSERT INTO `authors_products` (`id`, `author_id`, `product_id`, `created_at`, `
 (5, 5, 4, '2021-07-02 16:01:36', '2021-07-02 16:01:36'),
 (6, 3, 5, '2021-07-03 09:14:05', '2021-07-03 09:14:05'),
 (7, 4, 5, '2021-07-03 09:14:05', '2021-07-03 09:14:05'),
-(8, 7, 6, '2021-07-05 03:42:32', '2021-07-05 03:42:32');
+(8, 7, 6, '2021-07-05 03:42:32', '2021-07-05 03:42:32'),
+(9, 13, 7, '2021-07-08 07:34:01', '2021-07-08 07:34:01'),
+(10, 14, 7, '2021-07-08 07:34:01', '2021-07-08 07:34:01'),
+(11, 13, 8, '2021-07-08 08:51:50', '2021-07-08 08:51:50'),
+(12, 14, 8, '2021-07-08 08:51:50', '2021-07-08 08:51:50'),
+(13, 15, 9, '2021-07-12 16:00:10', '2021-07-12 16:00:10'),
+(14, 16, 10, '2021-07-12 16:09:33', '2021-07-12 16:09:33'),
+(15, 17, 10, '2021-07-12 16:09:33', '2021-07-12 16:09:33');
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `cache`
+--
+
+CREATE TABLE `cache` (
+  `key` varchar(255) NOT NULL,
+  `value` mediumtext NOT NULL,
+  `expiration` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -142,7 +168,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (55, '2021_06_20_084143_create_authors_products_table', 1),
 (56, '2021_06_23_070625_alter_users_table', 1),
 (57, '2021_06_27_064058_create_tags_table', 1),
-(58, '2021_06_27_065124_create_tags_products_table', 1);
+(58, '2021_06_27_065124_create_tags_products_table', 1),
+(59, '2019_12_14_000001_create_personal_access_tokens_table', 2),
+(60, '2021_07_14_174016_create_cache_table', 3);
 
 -- --------------------------------------------------------
 
@@ -163,9 +191,8 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id`, `user_id`, `status`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, '2021-07-02 04:57:33', '2021-07-02 04:59:31'),
-(2, 1, 1, '2021-07-02 05:02:17', '2021-07-02 05:02:27'),
-(3, 1, 0, '2021-07-02 05:02:44', '2021-07-02 05:02:44');
+(12, 1, 1, '2021-07-16 04:02:36', '2021-07-16 04:03:46'),
+(13, 1, 0, '2021-07-16 04:04:27', '2021-07-16 04:04:27');
 
 -- --------------------------------------------------------
 
@@ -188,13 +215,11 @@ CREATE TABLE `orders_products` (
 --
 
 INSERT INTO `orders_products` (`id`, `order_id`, `product_id`, `quantity`, `price`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 2, 900.00, '2021-07-02 04:57:33', '2021-07-02 04:57:36'),
-(2, 1, 2, 1, 950.00, '2021-07-02 04:57:35', '2021-07-02 04:57:35'),
-(3, 2, 3, 1, 1220.00, '2021-07-02 05:02:17', '2021-07-02 05:02:17'),
-(4, 2, 2, 1, 950.00, '2021-07-02 05:02:19', '2021-07-02 05:02:19'),
-(6, 3, 5, 1, 1240.00, '2021-07-03 09:15:01', '2021-07-04 10:28:12'),
-(17, 3, 2, 1, 950.00, '2021-07-06 08:33:49', '2021-07-06 08:33:49'),
-(18, 3, 1, 1, 900.00, '2021-07-06 08:33:51', '2021-07-06 08:33:51');
+(48, 12, 1, 1, 999.00, '2021-07-16 04:02:36', '2021-07-16 04:03:46'),
+(49, 12, 5, 1, 1099.00, '2021-07-16 04:02:39', '2021-07-16 04:03:46'),
+(50, 12, 8, 1, 550.00, '2021-07-16 04:02:44', '2021-07-16 04:03:46'),
+(51, 13, 1, 1, 999.00, '2021-07-16 04:04:27', '2021-07-20 07:46:00'),
+(62, 13, 5, 1, 1099.00, '2021-07-19 03:26:16', '2021-07-20 07:44:42');
 
 -- --------------------------------------------------------
 
@@ -206,6 +231,24 @@ CREATE TABLE `password_resets` (
   `email` varchar(255) NOT NULL,
   `token` varchar(255) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `personal_access_tokens`
+--
+
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `tokenable_type` varchar(255) NOT NULL,
+  `tokenable_id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `token` varchar(64) NOT NULL,
+  `abilities` text DEFAULT NULL,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -230,12 +273,16 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `title`, `price`, `description`, `subcategory_slug`, `picture`, `created_at`, `updated_at`) VALUES
-(1, 'Совершенный код', 900.00, 'Практическое руководство по разработке программного обеспечения', 'arhitektura', 'img/LT39sAHy1UxC5CEBWX35wceWksqkT1xEmgyL6Ijg.jpg', '2021-07-01 09:34:28', '2021-07-01 09:34:28'),
-(2, 'Программист-прагматик', 950.00, 'От подмастерья к мастеру', 'arhitektura', 'img/wVAmTcSjungtJ1j0web1HktVMMzG4mxoNNpWwBa7.jpg', '2021-07-01 09:36:17', '2021-07-01 09:36:17'),
-(3, 'Структура и интерпретация компьютерных программ', 1220.00, 'Структура и интерпретация компьютерных программ', 'arhitektura', 'img/uQztiDF7ilnzgO2Ornrwnfrip5fbAlylzmxYpxnG.jpg', '2021-07-01 09:41:41', '2021-07-01 09:41:41'),
-(4, 'Batman', 120.00, 'Batman bats', 'dc-comics', 'img/xKBMaWqW7d1gsG25HQ2UETk1qMVdYErLr1PIGNcv.jpg', '2021-07-02 16:01:36', '2021-07-02 16:01:36'),
-(5, 'Хорошая книга', 1240.00, 'Хорошая книга', 'web', 'img/61PkmmgVwoHnlXpEtI5CrDyDNj50yBnx2yAHe66M.jpg', '2021-07-03 09:14:05', '2021-07-03 09:14:05'),
-(6, 'Hellbalzer', 150.00, 'Джон Константин против ада', 'dc-comics', 'img/4QY23dipaq8LqewHiOYAUvssXHTOwoZbCLKCS7kv.jpg', '2021-07-05 03:42:32', '2021-07-05 03:42:32');
+(1, 'Совершенный код', 999.00, 'Практическое руководство по разработке программного обеспечения', 'arhitektura', 'LT39sAHy1UxC5CEBWX35wceWksqkT1xEmgyL6Ijg.jpg', '2021-07-01 09:34:28', '2021-07-01 09:34:28'),
+(2, 'Программист-прагматик', 950.00, 'От подмастерья к мастеру', 'arhitektura', 'wVAmTcSjungtJ1j0web1HktVMMzG4mxoNNpWwBa7.jpg', '2021-07-01 09:36:17', '2021-07-01 09:36:17'),
+(3, 'Структура и интерпретация компьютерных программ', 1220.00, 'Структура и интерпретация компьютерных программ', 'arhitektura', 'uQztiDF7ilnzgO2Ornrwnfrip5fbAlylzmxYpxnG.jpg', '2021-07-01 09:41:41', '2021-07-01 09:41:41'),
+(4, 'Batman', 120.00, 'Batman bats', 'dc-comics', 'xKBMaWqW7d1gsG25HQ2UETk1qMVdYErLr1PIGNcv.jpg', '2021-07-02 16:01:36', '2021-07-02 16:01:36'),
+(5, 'Хорошая книга', 1099.00, 'Хорошая книга', 'web', '61PkmmgVwoHnlXpEtI5CrDyDNj50yBnx2yAHe66M.jpg', '2021-07-03 09:14:05', '2021-07-03 09:14:05'),
+(6, 'Hellbalzer', 150.00, 'Джон Константин против ада', 'dc-comics', '4QY23dipaq8LqewHiOYAUvssXHTOwoZbCLKCS7kv.jpg', '2021-07-05 03:42:32', '2021-07-05 03:42:32'),
+(7, 'One-Punch Man 1 Книги 1-2', 550.00, 'Главный герой — Cайтама — обрел настолько невероятную силу, что ему трудно найти достойного соперника. Ведь любого врага он может одолеть одним ударом. Удастся ли сильнейшему человеку на свете вновь ощутить накал страстей в сражении?', 'manga', 'A8YZNmuuVACq8IgVpK2gNvrMkRveU0RZblbqs3mP.jpg', '2021-07-08 07:34:01', '2021-07-08 07:34:01'),
+(8, 'One-Punch Man 3. Книги 5-6', 550.00, 'Настоящие герои никогда не отступают перед лицом опасности! Вот и на этот раз Сайтама и Дженос спешат дать отпор Повелителю Морских Глубин, который с легкостью одолел даже героя класса S. Но совсем скоро сражение с чудовищем, чей уровень угрозы – «Демон», покажется им детской сказкой, ведь герои еще ничего не знают о страшном пророчестве, согласно которому нашей Земле кранты!', 'manga', 'dJRx1CWZBLzO9aebtUzVecbOX8ovMVw6yQMVT5no.jpg', '2021-07-08 08:51:50', '2021-07-08 08:51:50'),
+(9, 'Голго 13', 850.00, 'Голго-13 не жмёт руку при знакомстве. Не позволяет никому заходить себе за спину. И никогда не улыбается. Способный совершать невозможное, этот «одинокий волк» берётся за самые трудные заказы – и выполняет их, невзирая на случайности и вопреки любым обстоятельствам.', 'manga', '1626116410golgo.jpg', '2021-07-12 16:00:10', '2021-07-12 16:00:10'),
+(10, 'Изучаем программирование на JavaScript', 1999.00, 'Вы готовы сделать шаг вперед в веб-программировании и перейти от верстки в HTML и CSS к созданию полноценных динамических страниц? Тогда пришло время познакомиться с самым \"горячим\" языком программирования - JavaScript!\nС помощью этой книги вы узнаете все о языке JavaScript - от переменных до циклов. Вы поймете, почему разные браузеры по-разному реагируют на код и как написать универсальный код, поддерживаемый всеми браузерами. Вам станет ясно, почему с кодом JavaScript никогда не придется беспокоиться о перегруженности страниц и ошибках передачи данных. Не пугайтесь, даже если ранее вы не написали ни одной строчки кода, - благодаря уникальному формату подачи материала эта книга с легкостью проведет вас по всему пути обучения: от написания простейшего скрипта до создания сложных веб-проектов, которые будут работать во всех современных браузерах.\nОсобенностью этого издания является уникальный способ подачи материала, выделяющий серию \"Head First\" издательства O\'Reilly в ряду множества скучных книг, посвященных программированию.', 'web', '1626116972js.jpg', '2021-07-12 16:09:32', '2021-07-12 16:09:32');
 
 -- --------------------------------------------------------
 
@@ -261,7 +308,8 @@ INSERT INTO `subcategories` (`id`, `title`, `slug`, `category_id`, `created_at`,
 (2, 'Архитектура', 'arhitektura', 1, '2021-07-01 09:15:50', '2021-07-01 09:15:50'),
 (3, 'Марвел', 'marvel', 2, '2021-07-01 09:15:57', '2021-07-01 09:15:57'),
 (4, 'DC comics', 'dc-comics', 2, '2021-07-01 09:16:13', '2021-07-01 09:16:13'),
-(5, 'Машинное обучение', 'mashinnoe-obuchenie', 1, '2021-07-05 15:02:43', '2021-07-05 15:02:43');
+(5, 'Машинное обучение', 'mashinnoe-obuchenie', 1, '2021-07-05 15:02:43', '2021-07-05 15:02:43'),
+(8, 'Манга', 'manga', 3, '2021-07-08 07:23:37', '2021-07-08 07:23:37');
 
 -- --------------------------------------------------------
 
@@ -285,8 +333,20 @@ INSERT INTO `tags` (`id`, `title`, `created_at`, `updated_at`) VALUES
 (2, 'clean code', '2021-07-01 09:16:36', '2021-07-01 09:16:36'),
 (3, 'html', '2021-07-01 09:16:40', '2021-07-01 09:16:40'),
 (4, 'css', '2021-07-01 09:16:43', '2021-07-01 09:16:43'),
-(5, 'java', '2021-07-01 09:16:48', '2021-07-01 09:16:48'),
-(6, 'rust', '2021-07-01 09:16:52', '2021-07-01 09:16:52');
+(6, 'rust', '2021-07-01 09:16:52', '2021-07-01 09:16:52'),
+(7, 'супергерой', '2021-07-08 08:49:35', '2021-07-08 08:49:35'),
+(8, 'фантастика', '2021-07-08 08:49:42', '2021-07-08 08:49:42'),
+(9, 'Пародия', '2021-07-08 08:50:02', '2021-07-08 08:50:02'),
+(16, 'детектив', '2021-07-12 15:29:41', '2021-07-12 15:29:41'),
+(17, 'C++', '2021-07-12 15:32:01', '2021-07-12 15:32:01'),
+(18, 'javascript', '2021-07-12 15:32:54', '2021-07-12 15:32:54'),
+(19, 'vue', '2021-07-12 15:33:01', '2021-07-12 15:33:01'),
+(20, 'bootstrap', '2021-07-12 15:33:09', '2021-07-12 15:33:09'),
+(21, 'R', '2021-07-12 15:33:17', '2021-07-12 15:33:17'),
+(22, 'Lisp', '2021-07-12 15:33:22', '2021-07-12 15:33:22'),
+(23, 'Python', '2021-07-12 15:33:30', '2021-07-12 15:33:30'),
+(24, 'React', '2021-07-20 05:05:00', '2021-07-20 05:05:00'),
+(25, 'Суперагент', '2021-07-20 05:05:40', '2021-07-20 05:05:40');
 
 -- --------------------------------------------------------
 
@@ -316,7 +376,17 @@ INSERT INTO `tags_products` (`id`, `tag_id`, `product_id`, `created_at`, `update
 (7, 3, 5, '2021-07-03 09:14:05', '2021-07-03 09:14:05'),
 (8, 4, 5, '2021-07-03 09:14:05', '2021-07-03 09:14:05'),
 (9, 3, 6, '2021-07-05 03:42:32', '2021-07-05 03:42:32'),
-(10, 4, 6, '2021-07-05 03:42:32', '2021-07-05 03:42:32');
+(10, 4, 6, '2021-07-05 03:42:32', '2021-07-05 03:42:32'),
+(11, 3, 7, '2021-07-08 07:34:01', '2021-07-08 07:34:01'),
+(12, 4, 7, '2021-07-08 07:34:01', '2021-07-08 07:34:01'),
+(13, 7, 8, '2021-07-08 08:51:50', '2021-07-08 08:51:50'),
+(14, 8, 8, '2021-07-08 08:51:50', '2021-07-08 08:51:50'),
+(15, 9, 8, '2021-07-08 08:51:50', '2021-07-08 08:51:50'),
+(16, 7, 9, '2021-07-12 16:00:10', '2021-07-12 16:00:10'),
+(17, 16, 9, '2021-07-12 16:00:10', '2021-07-12 16:00:10'),
+(18, 3, 10, '2021-07-12 16:09:32', '2021-07-12 16:09:32'),
+(19, 4, 10, '2021-07-12 16:09:32', '2021-07-12 16:09:32'),
+(20, 18, 10, '2021-07-12 16:09:32', '2021-07-12 16:09:32');
 
 -- --------------------------------------------------------
 
@@ -341,8 +411,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `admin`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'admin', 1, 'mail@mail.ru', NULL, '$2y$10$WPmoA/yxzgF6fPFaEFnkD.Iw6oEsWVZNawpnhOOR3v2sDThg9oASi', NULL, '2021-07-01 09:12:25', '2021-07-01 09:12:25'),
-(2, 'notadmin', 0, 'd@ya.ru', NULL, '$2y$10$I.qXQ1cSHdUuxMSIALX7ee6kk/QNJKvP2y5NSx70qgoAVrc3fjDA.', NULL, '2021-07-05 04:57:33', '2021-07-05 04:57:33');
+(1, 'admin', 1, 'mail@mail.ru', NULL, '$2y$10$WPmoA/yxzgF6fPFaEFnkD.Iw6oEsWVZNawpnhOOR3v2sDThg9oASi', NULL, '2021-07-01 09:12:25', '2021-07-18 07:20:17'),
+(2, 'notadmin', 0, 'd@ya.ru', NULL, '$2y$10$I.qXQ1cSHdUuxMSIALX7ee6kk/QNJKvP2y5NSx70qgoAVrc3fjDA.', NULL, '2021-07-05 04:57:33', '2021-07-05 04:57:33'),
+(4, 'qwerty', 0, 'user@mail.ru', NULL, '$2y$10$5PVO1mKw6VYbC1oCvEqNTuU7.VoaGvygXeoR/UkpuWd/.o0Au1sVy', NULL, '2021-07-08 03:59:47', '2021-07-08 03:59:47');
 
 --
 -- Индексы сохранённых таблиц
@@ -362,6 +433,12 @@ ALTER TABLE `authors_products`
   ADD PRIMARY KEY (`id`),
   ADD KEY `authors_products_author_id_foreign` (`author_id`),
   ADD KEY `authors_products_product_id_foreign` (`product_id`);
+
+--
+-- Индексы таблицы `cache`
+--
+ALTER TABLE `cache`
+  ADD UNIQUE KEY `cache_key_unique` (`key`);
 
 --
 -- Индексы таблицы `categories`
@@ -403,6 +480,14 @@ ALTER TABLE `orders_products`
 --
 ALTER TABLE `password_resets`
   ADD KEY `password_resets_email_index` (`email`);
+
+--
+-- Индексы таблицы `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
 
 --
 -- Индексы таблицы `products`
@@ -450,19 +535,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT для таблицы `authors`
 --
 ALTER TABLE `authors`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT для таблицы `authors_products`
 --
 ALTER TABLE `authors_products`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT для таблицы `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT для таблицы `failed_jobs`
@@ -474,49 +559,55 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT для таблицы `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT для таблицы `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT для таблицы `orders_products`
 --
 ALTER TABLE `orders_products`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
+
+--
+-- AUTO_INCREMENT для таблицы `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT для таблицы `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT для таблицы `subcategories`
 --
 ALTER TABLE `subcategories`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT для таблицы `tags`
 --
 ALTER TABLE `tags`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT для таблицы `tags_products`
 --
 ALTER TABLE `tags_products`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц
