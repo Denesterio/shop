@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-5">
-    <form class="container-xl mb-4">
+    <form class="container mb-4">
       <h2 v-t="'label.tagAdd'">Добавить тэг</h2>
       <p>
         <router-link :to="{ name: 'categories' }">{{
@@ -14,7 +14,7 @@
       </p>
       <p>
         <router-link :to="{ name: 'products' }">{{
-          `${$t("link.toAdminPage")} ${$tc("message.product", 0)}`
+          $t("link.toProducts")
         }}</router-link>
       </p>
 
@@ -24,17 +24,17 @@
           v-focus
           @keydown.enter.prevent="createNewTag"
           class="form-control"
-          :class="{ 'is-invalid': error }"
+          :class="{ 'is-invalid': validationErrors.title.length }"
           placeholder="Название тэга"
         />
 
-        <p v-if="error.length" class="invalid-feedback fsw-italic">
-          {{ error }}
+        <p v-if="validationErrors.title.length" class="invalid-feedback">
+          {{ validationErrors.title }}
         </p>
       </div>
 
       <create-button-component
-        @click.native="createNewTag"
+        @click.native.prevent="createNewTag"
         :processing="processing"
       />
     </form>
@@ -67,7 +67,11 @@ import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
 import { getTags } from "../../api/get.js";
 import { deleteTag } from "../../api/delete.js";
 import { createTag } from "../../api/create.js";
-import { onlyNameSchema } from "../../validate.js";
+import {
+  onlyTitleSchema,
+  handleServerErrors,
+  fillErrorsObject,
+} from "../../validate.js";
 export default {
   components: { CreateButtonComponent, SvgLoadingComponent },
   data() {
@@ -76,7 +80,9 @@ export default {
       tags: [],
       loading: true,
       processing: false,
-      error: "",
+      validationErrors: {
+        title: "",
+      },
     };
   },
 
@@ -89,24 +95,28 @@ export default {
   methods: {
     createNewTag() {
       const params = {
-        name: this.tagName,
+        title: this.tagName,
       };
 
-      onlyNameSchema
-        .validate(this.tagName)
+      onlyTitleSchema
+        .validate(params, { abortEarly: false })
         .then(() => {
           this.processing = true;
           createTag(params)
             .then(({ data }) => {
-              this.tags.push(data);
+              this.tags = [data, ...this.tags];
               this.tagName = "";
+            })
+            .catch((error) => {
+              handleServerErrors(this, error, "тэг");
             })
             .finally(() => {
               this.processing = false;
             });
         })
-        .catch((error) => (this.error = error.message));
+        .catch((error) => fillErrorsObject(this.validationErrors, error));
     },
+
     removeTag(tagId) {
       deleteTag(tagId).then(() => {
         this.tags = this.tags.filter((tag) => tag.id !== tagId);
@@ -115,7 +125,7 @@ export default {
   },
   watch: {
     tagName() {
-      this.error = "";
+      this.validationErrors.title = "";
     },
   },
 };

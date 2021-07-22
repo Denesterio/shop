@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-5">
-    <div class="container-xl mb-4">
-      <h2>{{ $t("label.categoryAdd") }}</h2>
+    <form class="container mb-4">
+      <h2 v-t="'label.categoryAdd'"></h2>
       <p>
         <router-link :to="{ name: 'subcategories' }">{{
           $t("link.toSubcategories")
@@ -9,7 +9,7 @@
       </p>
       <p>
         <router-link :to="{ name: 'products' }">{{
-          $t("link.toAdminPage") + " " + $tc("message.product", 0)
+          $t("link.toProducts")
         }}</router-link>
       </p>
 
@@ -17,12 +17,12 @@
         <input
           v-model.trim="categoryName"
           class="form-control"
-          :class="{ 'is-invalid': validationErrors.name }"
+          :class="{ 'is-invalid': validationErrors.title }"
           :placeholder="$t('label.newCategoryName')"
         />
 
-        <p v-if="validationErrors.name" class="invalid-feedback fsw-italic">
-          {{ validationErrors.name }}
+        <p v-if="validationErrors.title" class="invalid-feedback fsw-italic">
+          {{ validationErrors.title }}
         </p>
       </div>
 
@@ -30,52 +30,45 @@
         <textarea
           v-model="categoryDesc"
           class="form-control"
-          :class="{ 'is-invalid': validationErrors.desc }"
+          :class="{ 'is-invalid': validationErrors.description }"
           :placeholder="$t('label.newCategoryDesc')"
         >
         </textarea>
-        <div v-if="validationErrors.desc" class="invalid-feedback">
-          {{ validationErrors.desc }}
+        <div v-if="validationErrors.description" class="invalid-feedback">
+          {{ validationErrors.description }}
         </div>
       </div>
 
       <create-button-component
-        @click.native="createNewCategory"
+        @click.native.prevent="createNewCategory"
         :processing="processing"
       />
-    </div>
+    </form>
 
-    <div class="container-xl">
-      <svg-loading-component v-if="loading" />
-      <span v-else-if="error">{{ error }}</span>
-      <ul v-else class="list-group">
-        <li
-          v-for="category in categories"
-          :key="category.id"
-          class="
-            list-group-item
-            d-flex
-            justify-content-between
-            align-items-start
-          "
-        >
-          <div class="ms-2 me-auto font-weight-light">
-            <div class="font-weight-bold">
-              {{ category.title }}
-            </div>
-            {{ category.description }}
+    <svg-loading-component v-if="loading" />
+    <span v-else-if="error">{{ error }}</span>
+    <ul v-else class="list-group">
+      <li
+        v-for="category in categories"
+        :key="category.id"
+        class="list-group-item d-flex justify-content-between align-items-start"
+      >
+        <div class="ms-2 me-auto font-weight-light">
+          <div class="font-weight-bold">
+            {{ category.title }}
           </div>
-          <button
-            @click="removeCategory(category.id)"
-            type="button"
-            class="btn btn-danger"
-            aria-label="Close"
-          >
-            {{ $t("label.delete") }}
-          </button>
-        </li>
-      </ul>
-    </div>
+          {{ category.description }}
+        </div>
+        <button
+          @click="removeCategory(category.id)"
+          type="button"
+          class="btn btn-danger"
+          aria-label="Close"
+        >
+          {{ $t("label.delete") }}
+        </button>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -85,7 +78,12 @@ import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
 import { createCategory } from "../../api/create.js";
 import { getCategories } from "../../api/get.js";
 import { deleteCategory } from "../../api/delete.js";
-import { categorySchema } from "../../validate.js";
+import {
+  categorySchema,
+  handleServerErrors,
+  fillErrorsObject,
+} from "../../validate.js";
+
 export default {
   components: { CreateButtonComponent, SvgLoadingComponent },
   data() {
@@ -99,8 +97,8 @@ export default {
       loading: true,
       processing: false,
       validationErrors: {
-        name: null,
-        desc: null,
+        title: "",
+        description: "",
       },
     };
   },
@@ -112,26 +110,30 @@ export default {
   },
   methods: {
     createNewCategory() {
-      this.processing = true;
       const params = {
-        name: this.categoryName,
-        desc: this.categoryDesc,
+        title: this.categoryName,
+        description: this.categoryDesc,
       };
 
       categorySchema
         .validate(params, { abortEarly: false })
         .then(() => {
-          createCategory(params).then(({ data }) => {
-            this.categories = [data, ...this.categories];
-          });
+          this.processing = true;
+          createCategory(params)
+            .then(({ data }) => {
+              this.categories = [data, ...this.categories];
+              this.categoryName = "";
+              this.categoryDesc = "";
+            })
+            .catch((error) => {
+              handleServerErrors(this, error, "категорию");
+            })
+            .finally(() => {
+              this.processing = false;
+            });
         })
         .catch((error) => {
-          error.inner.forEach((err) => {
-            this.validationErrors[err.path] = err.message;
-          });
-        })
-        .finally(() => {
-          this.processing = false;
+          fillErrorsObject(this.validationErrors, error);
         });
     },
 
@@ -145,10 +147,10 @@ export default {
   },
   watch: {
     categoryName() {
-      this.validationErrors.name = null;
+      this.validationErrors.title = null;
     },
     categoryDesc() {
-      this.validationErrors.desc = null;
+      this.validationErrors.description = null;
     },
   },
 };

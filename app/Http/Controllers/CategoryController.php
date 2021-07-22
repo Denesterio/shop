@@ -20,9 +20,14 @@ class CategoryController extends Controller
 
     public function create(Request $request)
     {
+        $request->validate([
+            'title' => ['required', 'string', 'max:255', 'unique:categories'],
+            'description' => ['required', 'string'],
+        ]);
+
         $cat = Category::create([
-            'title' => $request['name'],
-            'description' => $request['desc']
+            'title' => $request['title'],
+            'description' => $request['description']
         ]);
 
         return $cat;

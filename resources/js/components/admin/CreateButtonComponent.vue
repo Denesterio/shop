@@ -1,5 +1,5 @@
 <template>
-  <button :disabled="processing" class="btn btn-success">
+  <button :disabled="processing" class="btn btn-success" type="submit">
     <div
       v-if="processing"
       class="spinner-border text-light spinner-border-sm"

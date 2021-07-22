@@ -9,8 +9,12 @@ class TagController extends Controller
 {
     public function create(Request $request)
     {
+        $request->validate([
+            'title' => ['required', 'string', 'max:255', 'unique:tags'],
+        ]);
+
         $tag = Tag::create([
-            'title' => $request['name'],
+            'title' => $request['title'],
         ]);
 
         return $tag;

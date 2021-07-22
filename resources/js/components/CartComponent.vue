@@ -1,14 +1,14 @@
 <template>
   <div class="container mt-4">
     <template v-if="products.length">
-      <h4>Заказ №{{ orderId }}</h4>
+      <h4>{{ $t("label.orderNum", { num: orderId }) }}</h4>
       <table class="table mt-4 text-center align-middle">
         <thead class="table-light">
           <tr>
-            <th>Наименование товара</th>
-            <th>Цена</th>
-            <th>Количество</th>
-            <th>Сумма</th>
+            <th v-t="'table.title'"></th>
+            <th v-t="'table.price'"></th>
+            <th v-t="'table.quantity'"></th>
+            <th v-t="'table.sum'"></th>
           </tr>
         </thead>
         <tbody>
@@ -30,20 +30,29 @@
         </tbody>
       </table>
       <section class="text-right mt-4 p-2">
-        <p>
-          {{ $t("message.inCart") }}
-          <strong>
-            {{ commonQuantity + " " + $tc("message.product", commonQuantity) }}
-          </strong>
-        </p>
-        <p>
-          на сумму <strong>{{ commonPrice }} руб.</strong>
-        </p>
-        <button @click="confirm" class="btn btn-success">Оформить заказ</button>
+        <i18n path="message.inCart" tag="p">
+          <template v-slot:quantity>
+            <strong>
+              {{
+                `${commonQuantity} ${$tc("message.product", commonQuantity)}`
+              }}
+            </strong>
+          </template>
+        </i18n>
+        <i18n path="message.sumProducts" tag="p">
+          <template v-slot:sum>
+            <strong>{{ commonPrice }}</strong>
+          </template>
+        </i18n>
+        <button
+          @click="confirm"
+          class="btn btn-success"
+          v-t="'label.orderConfirm'"
+        ></button>
       </section>
     </template>
     <span v-else>
-      <em>В корзине отсутствуют продукты</em>
+      <em v-t="'message.noProdCart'"></em>
     </span>
   </div>
 </template>

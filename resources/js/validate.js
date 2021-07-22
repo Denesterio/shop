@@ -7,6 +7,7 @@ yup.setLocale({
   },
   string: {
     min: i18n.t('error.min') + ' ${min} ' + i18n.tc('error.symbol', '${min}'),
+    email: i18n.t('error.email'),
   },
   number: {
     positive: i18n.t('error.positive'),
@@ -14,17 +15,23 @@ yup.setLocale({
   array: {
     min: i18n.t('error.minAuthor'),
   }
-})
+});
+
+const registrationSchema = yup.object().shape({
+  name: yup.string().required(),
+  email: yup.string().required().email(),
+  password: yup.string().required(),
+});
 
 const subcategorySchema = yup.object().shape({
-  name: yup.string().required().min(3),
+  title: yup.string().required(),
   categoryId: yup.string().required(),
   slug: yup.string().required(),
 });
 
 const categorySchema = yup.object().shape({
-  name: yup.string().required(),
-  desc: yup.string().required(),
+  title: yup.string().required(),
+  description: yup.string().required(),
 });
 
 const productSchema = yup.object().shape({
@@ -35,6 +42,41 @@ const productSchema = yup.object().shape({
   productAuthors: yup.array().required().min(1),
 });
 
-const onlyNameSchema = yup.string().required();
+const onlyTitleSchema = yup.object().shape({
+  title: yup.string().required(),
+});
 
-export { subcategorySchema, categorySchema, productSchema, onlyNameSchema };
+const handleServerErrors = (context, error, entity) => {
+  const validationErrors = error.response.data?.errors;
+  if (validationErrors) {
+    Object.entries(validationErrors).forEach(([key, [value]]) => {
+      context.validationErrors[key] = value;
+    });
+  } else {
+    Vue.swal.fire({
+      icon: "error",
+      title: "Ошибка",
+      text: context.$t('error.сreateError', { msg: entity }),
+    });
+  }
+};
+
+const fillErrorsObject = (obj, error) => {
+  if (error.inner.length > 0) {
+    error.inner.forEach((err) => {
+      obj[err.path] = err.message;
+    });
+  } else {
+    obj[error.path] = error.message
+  }
+};
+
+export {
+  subcategorySchema,
+  categorySchema,
+  productSchema,
+  onlyTitleSchema,
+  registrationSchema,
+  handleServerErrors,
+  fillErrorsObject,
+};

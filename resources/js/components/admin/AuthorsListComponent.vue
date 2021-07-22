@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-5">
-    <form class="container-xl mb-4">
-      <h2>Добавить автора:</h2>
+    <form class="container mb-4">
+      <h2>Добавить автора</h2>
       <p>
         <router-link :to="{ name: 'categories' }">{{
           $t("link.toCategories")
@@ -14,7 +14,7 @@
       </p>
       <p>
         <router-link :to="{ name: 'products' }">{{
-          $t("link.toAdminPage") + " " + $tc("message.product", 0)
+          $t("link.toProducts")
         }}</router-link>
       </p>
 
@@ -23,45 +23,44 @@
           v-model.trim="currentAuthor"
           v-focus
           class="form-control"
-          :class="{ 'is-invalid': error }"
+          :class="{ 'is-invalid': validationErrors.title.length }"
           placeholder="Имя и фамилия автора полностью"
         />
 
-        <p v-if="error" class="invalid-feedback fsw-italic">
-          {{ error }}
+        <p v-if="validationErrors.title.length" class="invalid-feedback">
+          {{ validationErrors.title }}
         </p>
       </div>
 
       <create-button-component
-        @click.native="createNewAuthor"
+        @click.native.prevent="createNewAuthor"
         :processing="processing"
       />
     </form>
-    <svg-loading-component v-if="processing" />
-    <div v-else class="container-xl">
-      <ul class="list-group">
-        <li
-          v-for="author in authors"
-          :key="author.id"
-          class="row justify-content-between mb-2 p-2"
-        >
-          <div class="col-11 p-2 border-bottom">
-            <router-link
-              :to="{ name: 'authorProducts', params: { id: author.id } }"
-              >{{ author.title }}</router-link
-            >
-          </div>
-          <button
-            @click="removeAuthor(author.id)"
-            type="button"
-            class="btn btn-outline-danger btn-sm col-1"
-            aria-label="Close"
+    <svg-loading-component v-if="loading" />
+
+    <ul v-else class="list-group">
+      <li
+        v-for="author in authors"
+        :key="author.id"
+        class="row justify-content-between mb-2 p-2"
+      >
+        <div class="col-11 p-2 border-bottom">
+          <router-link
+            :to="{ name: 'authorProducts', params: { id: author.id } }"
+            >{{ author.title }}</router-link
           >
-            Удалить
-          </button>
-        </li>
-      </ul>
-    </div>
+        </div>
+        <button
+          @click="removeAuthor(author.id)"
+          type="button"
+          class="btn btn-outline-danger btn-sm col-1"
+          aria-label="Close"
+        >
+          Удалить
+        </button>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -69,7 +68,11 @@
 import { createAuthor } from "../../api/create.js";
 import { getAuthors } from "../../api/get.js";
 import { deleteAuthor } from "../../api/delete.js";
-import { onlyNameSchema } from "../../validate.js";
+import {
+  onlyTitleSchema,
+  handleServerErrors,
+  fillErrorsObject,
+} from "../../validate.js";
 import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
 import CreateButtonComponent from "./CreateButtonComponent.vue";
 export default {
@@ -79,35 +82,53 @@ export default {
     return {
       authors: [],
       currentAuthor: "",
-      error: "",
+      loading: true,
       processing: false,
+      validationErrors: {
+        title: "",
+      },
     };
   },
 
   mounted() {
-    getAuthors().then(({ data }) => (this.authors = data.reverse()));
+    getAuthors()
+      .then((data) => (this.authors = data))
+      .catch((error) => {})
+      .finally(() => (this.loading = false));
   },
 
   methods: {
     createNewAuthor() {
-      onlyNameSchema
-        .validate(this.currentAuthor)
+      const params = {
+        title: this.currentAuthor,
+      };
+
+      onlyTitleSchema
+        .validate(params, { abortEarly: false })
         .then(() => {
           this.processing = true;
-          createAuthor(this.currentAuthor)
+          createAuthor(params)
             .then(({ data }) => {
               this.authors = [data, ...this.authors];
-              this.validationError = "";
               this.currentAuthor = "";
+            })
+            .catch(() => {
+              handleServerErrors(this, error, "автора");
             })
             .finally(() => (this.processing = false));
         })
-        .catch((error) => (this.error = error.message));
+        .catch((error) => {
+          fillErrorsObject(this.validationErrors, error);
+        });
     },
 
     removeAuthor(authorId) {
       deleteAuthor(authorId)
-        .then(() => this.authors.filter((a) => a.id !== authorId))
+        .then(() => {
+          this.authors = this.authors.filter((a) => {
+            return a.id !== authorId;
+          });
+        })
         .catch((error) => {
           if (
             error.response.data.message.includes(
@@ -127,7 +148,7 @@ export default {
 
   watch: {
     currentAuthor() {
-      this.error = "";
+      this.validationErrors.title = "";
     },
   },
 };

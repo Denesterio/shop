@@ -171,4 +171,8 @@ export default {
 .logo-text:hover {
   color: #3490dc;
 }
+
+.invalid-feedback {
+  font-size: 0.8rem;
+}
 </style>

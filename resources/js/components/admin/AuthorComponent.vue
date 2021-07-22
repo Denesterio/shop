@@ -5,11 +5,11 @@
       v-model="currentAuthor"
       @keyup.enter="addAuthorToAuthors"
       class="form-control"
-      :class="{ 'is-invalid': validationError || error }"
+      :class="{ 'is-invalid': validationErrors.title || error }"
       placeholder="Автор"
       :disabled="processing"
     />
-    <p v-if="error.length > 0" class="invalid-feedback">
+    <p v-if="error.length" class="invalid-feedback">
       {{ error }}
     </p>
     <datalist v-if="filteredAuthors.length" id="authorDatalist">
@@ -19,11 +19,12 @@
         :value="author.title"
       ></option>
     </datalist>
-    <p v-if="validationError.length" class="error-msg invalid-feedback">
-      {{ validationError }}
+    <p v-if="validationErrors.title.length" class="error-msg invalid-feedback">
+      {{ validationErrors.title }}
       <a
         @click.prevent="createNewAuthor"
         href=""
+        :class="{ 'text-decoration-line-through': processing }"
         noreferrer
         nofollow
         :disabled="processing"
@@ -48,7 +49,11 @@
 <script>
 import { getAuthors } from "../../api/get.js";
 import { createAuthor } from "../../api/create.js";
-import { onlyNameSchema } from "../../validate.js";
+import {
+  onlyTitleSchema,
+  handleServerErrors,
+  fillErrorsObject,
+} from "../../validate.js";
 
 export default {
   props: {
@@ -63,9 +68,11 @@ export default {
     return {
       currentAuthor: "",
       productAuthors: [],
-      validationError: "",
       authors: [],
       processing: false,
+      validationErrors: {
+        title: "",
+      },
     };
   },
 
@@ -94,19 +101,21 @@ export default {
 
   methods: {
     createNewAuthor() {
-      onlyNameSchema
-        .validate(this.currentAuthor)
-        .then(() => {
+      onlyTitleSchema
+        .validate({ title: this.currentAuthor })
+        .then((params) => {
           this.processing = true;
-          createAuthor(this.currentAuthor)
+          createAuthor(params)
             .then(({ data }) => {
               this.authors = [data, ...this.authors];
-              this.validationError = "";
               this.addAuthorToAuthors();
+            })
+            .catch(() => {
+              handleServerErrors(this, error, "автора");
             })
             .finally(() => (this.processing = false));
         })
-        .catch((error) => (this.validationError = error.message));
+        .catch((error) => fillErrorsObject(this.validationErrors, error));
     },
 
     addAuthorToAuthors() {
@@ -115,7 +124,7 @@ export default {
         this.productAuthors.push(this.filteredAuthors[0]);
         this.currentAuthor = "";
       } else {
-        this.validationError = "Такого автора нет в базе";
+        this.validationErrors.title = "Такого автора нет в базе";
       }
     },
 
@@ -127,7 +136,7 @@ export default {
 
   watch: {
     currentAuthor() {
-      this.validationError = "";
+      this.validationErrors.title = "";
     },
   },
 };

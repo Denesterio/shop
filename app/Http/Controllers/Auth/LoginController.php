@@ -47,14 +47,22 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            // $user = Auth::user();
+            $user = Auth::user();
+            // Auth::login($user);
 
-            return back();
-            // return redirect()->intended();
+            return $user;
         }
 
-        return 'none';
+        $error = [
+            'errors' => [
+                'user' => [
+                    'Неверные имя или пароль'
+                ]
+            ]
+        ];
+        return response($error, 422);
     }
+
     public function logout(Request $request)
     {
         Auth::logout();

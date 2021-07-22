@@ -128,16 +128,21 @@ const router = new VueRouter({
 
 router.beforeEach((to, _from, next) => {
     if (to.matched.some((route) => route.meta?.requiresAuth)) {
-        if (store.state.isAuthenticated) {
-            next();
-        } else {
-            next({ name: 'login' });
+        if (store.state.isAuthenticated) next();
+        else {
+            store.dispatch('getUser')
+                .then(() => next())
+                .catch(() => next({ name: 'login' }));
         }
     } else if (to.matched.some((route) => route.meta?.adminOnly)) {
-        if (store.state.user?.admin) {
-            next();
-        } else {
-            next({ name: 'welcome' });
+        if (store.state.user?.admin) next();
+        else {
+            store.dispatch('getUser')
+                .then(() => {
+                    if (store.state.user?.admin) next();
+                    else next({ name: 'welcome' });
+                })
+                .catch(() => next({ name: 'welcome' }));
         }
     } else {
         next();

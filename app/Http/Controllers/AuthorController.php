@@ -9,8 +9,11 @@ class AuthorController extends Controller
 {
     public function create(Request $request)
     {
+        $request->validate([
+            'title' => ['required', 'string', 'max:255', 'unique:authors'],
+        ]);
         $author = Author::create([
-            'title' => $request['name'],
+            'title' => $request['title'],
         ]);
 
         return $author;
@@ -18,7 +21,7 @@ class AuthorController extends Controller
 
     public function get()
     {
-        return Author::get();
+        return Author::OrderBy('id', 'desc')->get();
     }
 
     public function delete(Request $request)

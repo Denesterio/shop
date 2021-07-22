@@ -10,6 +10,7 @@ const store = new Vuex.Store({
     state: {
         isAuthenticated: false,
         user: null,
+        isUserLoading: false,
         loginErrors: [],
         cartProducts: [],
     },
@@ -21,24 +22,33 @@ const store = new Vuex.Store({
         }
     },
     actions: {
-        getUser({ commit, dispatch }) {
-            return getUser()
-                .then(response => {
-                    return new Promise((resolve) => {
-                        dispatch('getCartProducts');
-                        commit('setUser', response.data);
-                        resolve();
+        getUser({ commit, dispatch, state }) {
+            if (!state.user && state.isUserLoading === false) {
+                state.isUserLoading = true;
+                return getUser()
+                    .then(response => {
+                        return new Promise((resolve) => {
+                            dispatch('getCartProducts');
+                            commit('setUser', response.data);
+                            resolve();
+                        })
                     })
-                })
+                    .finally(() => state.isUserLoading = false);
+            }
+        },
+
+        setUser({ commit }, data) {
+            commit('setUser', data);
         },
 
         login({ commit, dispatch }, params) {
             commit('clearLoginErrors');
 
             return authLogin(params)
-                .then(() => {
+                .then((response) => {
                     return new Promise((resolve) => {
-                        dispatch('getUser');
+                        dispatch('getCartProducts');
+                        commit('setUser', response.data);
                         resolve();
                     });
                 })

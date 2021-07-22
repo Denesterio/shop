@@ -10,11 +10,19 @@ class SubcategoryController extends Controller
 {
     public function create(Request $request)
     {
-        Subcategory::create([
-            'title' => $request['name'],
+        $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'slug' => ['required', 'string', 'max:255', 'unique:subcategories'],
+            'categoryId' => ['required', 'integer'],
+        ]);
+
+        $subcat = Subcategory::create([
+            'title' => $request['title'],
             'category_id' => $request['categoryId'],
             'slug' => $request['slug'],
         ]);
+
+        return $subcat;
     }
 
     public function get()

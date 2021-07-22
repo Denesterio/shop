@@ -1,5 +1,5 @@
-const createAuthor = (name) => {
-  return axios.post('/api/admin/authors/create', { name });
+const createAuthor = (params) => {
+  return axios.post('/api/admin/authors/create', params);
 };
 
 const confirmOrder = () => {
