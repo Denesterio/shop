@@ -16,12 +16,12 @@ class UserController extends Controller
 
         if ($field === 'name') {
             $validated = $request->validate([
-                'name' => 'required',
+                'name' => ['required', 'string', 'max:255', 'unique:users'],
             ]);
             $user->name = $validated['name'];
         } else if ($field === 'email') {
             $validated = $request->validate([
-                'email' => ['required', 'email']
+                'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             ]);
             $user->email = $validated['email'];
         }

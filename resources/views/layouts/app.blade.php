@@ -9,7 +9,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'BOOKSHOP') }}</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -17,7 +17,6 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
 
     <style>
         .router-link-active:hover {
@@ -29,11 +28,9 @@
 
 <body>
     <div id="app">
-        <navbar-component app-name="{{ config('app.name', 'Laravel') }}"></navbar-component>
+        <navbar-component app-name="{{ config('app.name', 'BOOKSHOP') }}"></navbar-component>
 
-        <div class="container-xl">
-            <router-view></router-view>
-        </div>
+        <router-view></router-view>
 
     </div>
 </body>

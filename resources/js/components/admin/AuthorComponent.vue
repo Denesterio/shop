@@ -1,13 +1,19 @@
 <template>
   <div class="form-group">
+    <label for="authors">Автор:</label>
+    <p>
+      <router-link :to="{ name: 'authors' }">{{
+        $t("link.toAuthors")
+      }}</router-link>
+    </p>
     <input
       list="authorDatalist"
       v-model="currentAuthor"
       @keyup.enter="addAuthorToAuthors"
       class="form-control"
       :class="{ 'is-invalid': validationErrors.title || error }"
-      placeholder="Автор"
       :disabled="processing"
+      name="authors"
     />
     <p v-if="error.length" class="invalid-feedback">
       {{ error }}
@@ -145,5 +151,9 @@ export default {
 <style scoped>
 .error-msg {
   font-size: 0.8rem;
+}
+label {
+  font-weight: bold;
+  font-size: 1rem;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="container mt-5">
-    <div class="container-xl mb-5">
+    <form class="container mb-5">
       <h2>{{ $t("label.productAdd") }}</h2>
 
       <div class="form-group">
@@ -10,7 +10,7 @@
           :class="{ 'is-invalid': validationErrors.name }"
           placeholder="Имя нового продукта"
         />
-        <p v-if="validationErrors.name.length > 0" class="invalid-feedback">
+        <p v-if="validationErrors.name.length" class="invalid-feedback">
           {{ validationErrors.name }}
         </p>
       </div>
@@ -83,7 +83,7 @@
       </div>
 
       <div class="form-group">
-        <label for="picture">{{ $t("label.pictureUpload") }}:</label>
+        <label for="picture" v-t="'label.pictureUpload'"></label>
         <input
           @change="getPicture"
           class="form-control-file"
@@ -112,7 +112,7 @@
       </div>
 
       <div class="form-group">
-        <label for="subcategory">Подкатегория:</label>
+        <label for="subcategory">Раздел:</label>
         <p>
           <router-link :to="{ name: 'subcategories' }">{{
             $t("link.toSubcategories")
@@ -139,32 +139,30 @@
       </div>
 
       <create-button-component
-        @click.native="createNewProduct"
+        @click.native.prevent="createNewProduct"
         :processing="processing"
       />
-    </div>
-    <div class="container-xl">
-      <svg-loading-component v-if="loading" />
-      <ul v-else-if="filteredProducts.length > 0">
-        <li
-          v-for="product in filteredProducts"
-          :key="product.id"
-          class="row justify-content-between mb-2 p-2"
-        >
-          <div class="col-11 p-2 border-bottom">
-            {{ product.title }} / {{ product.subcategory_slug }}
-          </div>
-          <button
-            @click="removeProduct(product.id)"
-            type="button"
-            class="btn btn-outline-danger btn-sm col-1"
-            aria-label="Close"
-          >
-            {{ $t("label.delete") }}
-          </button>
-        </li>
-      </ul>
-    </div>
+    </form>
+
+    <svg-loading-component v-if="loading" />
+    <ul v-else-if="filteredProducts.length">
+      <li
+        v-for="product in filteredProducts"
+        :key="product.id"
+        class="row justify-content-between mb-2 p-2"
+      >
+        <div class="col-11 p-2 border-bottom">
+          {{ product.title }} / {{ product.subcategory_slug }}
+        </div>
+        <button
+          @click="removeProduct(product.id)"
+          type="button"
+          class="btn btn-outline-danger btn-sm col-1"
+          aria-label="Close"
+          v-t="'label.delete'"
+        ></button>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -254,7 +252,6 @@ export default {
     },
 
     async createNewProduct() {
-      // this.processing = true;
       let fData = new FormData();
       const params = {
         name: this.productName,
@@ -267,7 +264,7 @@ export default {
       };
 
       try {
-        const result = await productSchema.validate(params, {
+        await productSchema.validate(params, {
           abortEarly: false,
         });
       } catch (error) {
@@ -281,6 +278,7 @@ export default {
         fData.append(param, params[param]);
       }
 
+      this.processing = true;
       createProduct(fData)
         .then(({ data }) => {
           this.products = [data, ...this.products];
