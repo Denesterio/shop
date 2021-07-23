@@ -41,16 +41,7 @@ class SubcategoryController extends Controller
         $products = Product::with('authors')
             ->where('subcategory_slug', '=', $id)
             ->get();
-        $authors = collect();
 
-        $products->each(function ($item) use ($authors) {
-            $id = $item->id;
-            $authors[$id] = $item->authors;
-        });
-
-        return [
-            'products' => $products,
-            'authors' => $authors,
-        ];
+        return $products;
     }
 }

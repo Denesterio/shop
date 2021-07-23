@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\AuthorsProduct;
 use App\Models\TagsProduct;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -68,18 +69,14 @@ class ProductController extends Controller
 
     public static function carousel()
     {
+        // DB::listen(function ($query) {
+        //     var_dump($query->sql, $query->bindings);
+        // });
         $products = Product::with('authors')
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
 
-        $authors = collect();
-        $products->each(function ($item) use ($authors) {
-            $key = $item->id;
-            $authors[$key] = $item->authors()->get();
-        });
-
-        return
-            ['products' => $products, 'authors' => $authors];
+        return $products;
     }
 }

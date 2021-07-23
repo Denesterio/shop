@@ -29,7 +29,7 @@
                 product.title
               }}</a>
             </p>
-            <p v-html="formattedAuthorsHtml(product.id)"></p>
+            <p v-html="formattedAuthorsHtml(product.authors)"></p>
           </div>
         </div>
         <template v-slot:nextArrow="arrowOption">
@@ -101,8 +101,7 @@ export default {
   created() {
     getNewProducts()
       .then((data) => {
-        this.newProducts = data.products;
-        this.authors = data.authors;
+        this.newProducts = data;
       })
       .catch((err) => {
         this.error = err.response.data.message;
@@ -111,8 +110,8 @@ export default {
   },
 
   methods: {
-    formattedAuthorsHtml(id) {
-      return this.authors[id]
+    formattedAuthorsHtml(authors) {
+      return authors
         .map(
           (author) =>
             `<a class="text-muted text-small" href="/authors/${author.id}"><em>${author.title}</em></a>`

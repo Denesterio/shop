@@ -7,11 +7,6 @@
           <div class="card-header">Авторизация</div>
 
           <div class="card-body">
-            <div v-for="(error, idx) in errors" :key="idx">
-              <div class="alert alert-danger" role="alert">
-                {{ error[0] }}
-              </div>
-            </div>
             <div class="form-group row">
               <label
                 v-t="'label.email'"
@@ -34,9 +29,9 @@
             </div>
             <div class="form-group row">
               <label
+                v-t="'label.password'"
                 for="password"
                 class="col-md-4 col-form-label text-md-right"
-                v-t="'label.password'"
               ></label>
 
               <div class="col-md-6">
@@ -56,6 +51,11 @@
                 <button @click="login" class="btn btn-primary">Войти</button>
               </div>
             </div>
+          </div>
+        </div>
+        <div v-for="(error, idx) in errors" :key="idx">
+          <div class="alert alert-danger" role="alert">
+            {{ error[0] }}
           </div>
         </div>
       </div>
@@ -82,11 +82,25 @@ export default {
         email: this.email,
         password: this.password,
       };
-      this.$store.dispatch("login", params).then(() => {
-        this.processing = false;
-        this.$router.push(this.$route.query.redirect || "/");
-      });
+      this.$store
+        .dispatch("login", params)
+        .then(() => {
+          this.$router.push(this.$route.query.redirect || "/");
+        })
+        .catch((error) => {
+          this.errors = error.response.data.errors;
+        })
+        .finally(() => {
+          this.processing = false;
+        });
     },
   },
 };
 </script>
+
+<style scoped>
+.alert-danger {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+</style>

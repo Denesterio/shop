@@ -11,7 +11,6 @@ const store = new Vuex.Store({
         isAuthenticated: false,
         user: null,
         isUserLoading: false,
-        loginErrors: [],
         cartProducts: [],
     },
     getters: {
@@ -42,8 +41,6 @@ const store = new Vuex.Store({
         },
 
         login({ commit, dispatch }, params) {
-            commit('clearLoginErrors');
-
             return authLogin(params)
                 .then((response) => {
                     return new Promise((resolve) => {
@@ -51,9 +48,6 @@ const store = new Vuex.Store({
                         commit('setUser', response.data);
                         resolve();
                     });
-                })
-                .catch(error => {
-                    commit('setLoginErrors', error.response.data.errors)
                 })
         },
 
@@ -90,12 +84,6 @@ const store = new Vuex.Store({
             state.isAuthenticated = false;
             state.cartProducts = [];
         },
-        setLoginErrors(state, errors) {
-            state.loginErrors = errors
-        },
-        clearLoginErrors(state) {
-            state.loginErrors = []
-        },
         setCartProducts(state, products) {
             state.cartProducts = products;
         },
@@ -105,4 +93,4 @@ const store = new Vuex.Store({
     }
 })
 
-export default store
+export default store;

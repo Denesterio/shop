@@ -126,7 +126,7 @@ export default {
               this.categoryDesc = "";
             })
             .catch((error) => {
-              handleServerErrors(this, error, "категорию");
+              handleServerErrors(this, error, "добавить категорию");
             })
             .finally(() => {
               this.processing = false;

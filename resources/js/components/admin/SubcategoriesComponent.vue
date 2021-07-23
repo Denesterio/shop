@@ -179,7 +179,7 @@ export default {
               this.editedSlug = "";
             })
             .catch((error) => {
-              handleServerErrors(this, error, "раздел");
+              handleServerErrors(this, error, "добавить раздел");
             })
             .finally(() => {
               this.processing = false;

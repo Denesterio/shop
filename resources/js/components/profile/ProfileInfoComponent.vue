@@ -31,6 +31,7 @@
       v-if="isModalOpen"
       :field="fieldToChange"
       :user="user"
+      :elemsUnderModal="elemsUnderModal"
       @close-modal-window="closeModal"
     >
       <template v-slot:footer="{ editUser }">
@@ -41,19 +42,19 @@
           <input
             v-model="confirmInput"
             :type="typeInput"
+            id="confirmationInput"
             class="form-control form-control-sm"
             aria-label="old value"
-            aria-describedby="button-addon2"
+            aria-describedby="confirmationButton"
           />
           <button
             @click="editUser"
             class="btn btn-success ml-2 btn-sm"
             type="button"
-            id="button-addon2"
+            id="confirmationButton"
             :disabled="isButtonDisabled"
-          >
-            {{ $t("label.save") }}
-          </button>
+            v-t="'label.save'"
+          ></button>
         </div>
       </template>
     </modal-profile-component>
@@ -90,6 +91,15 @@ export default {
     },
     isButtonDisabled() {
       return this.confirmInput !== this.user[this.fieldToChange];
+    },
+    elemsUnderModal() {
+      const elems = [];
+      document.body.getElementsByTagName("*").forEach((elem) => {
+        if (elem.tabIndex > -1) {
+          elems.push(elem);
+        }
+      });
+      return elems;
     },
   },
 

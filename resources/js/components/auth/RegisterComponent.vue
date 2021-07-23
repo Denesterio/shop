@@ -112,7 +112,7 @@
                     type="submit"
                     class="btn btn-primary"
                     v-t="'label.register'"
-                    :disabled="!passwordsMatch"
+                    :disabled="!passwordsMatch || processing"
                   ></button>
                 </div>
               </div>
@@ -131,7 +131,7 @@
 
 <script>
 import { authRegister } from "../../api/auth.js";
-import { registrationSchema } from "../../validate.js";
+import { registrationSchema, fillErrorsObject } from "../../validate.js";
 export default {
   data() {
     return {
@@ -140,6 +140,7 @@ export default {
       password: "",
       confirmPassword: "",
       errors: [],
+      processing: false,
       validationErrors: {
         name: "",
         email: "",
@@ -172,20 +173,42 @@ export default {
       registrationSchema
         .validate(params, { abortEarly: false })
         .then(() => {
+          this.processing = true;
           authRegister(params)
             .then(({ data }) => {
               this.$store.dispatch("setUser", data);
               this.$router.push("/");
             })
             .catch((error) => {
-              this.errors = error.response.data.errors;
-            });
+              if (error.response.data.errors) {
+                this.errors = error.response.data.errors;
+              } else {
+                Vue.swal.fire({
+                  icon: "error",
+                  title: "Ошибка",
+                  text: this.$t("error.сreateError", {
+                    msg: "зарегистрироваться",
+                  }),
+                });
+              }
+            })
+            .finally(() => (this.processing = false));
         })
         .catch((error) => {
-          error.inner.forEach((err) => {
-            this.validationErrors[err.path] = err.message;
-          });
+          fillErrorsObject(this.validationErrors, error);
         });
+    },
+  },
+
+  watch: {
+    name() {
+      this.validationErrors.name = "";
+    },
+    email() {
+      this.validationErrors.email = "";
+    },
+    password() {
+      this.validationErrors.password = "";
     },
   },
 };

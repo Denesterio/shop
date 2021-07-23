@@ -20,7 +20,7 @@
           :product="product"
           :order-products="orderProducts"
           :key="product.id"
-          :authors="authors[product.id]"
+          :authors="product.authors"
         >
         </product-card-component>
       </li>
@@ -34,12 +34,14 @@
 <script>
 import ProductCardComponent from "./ProductCardComponent.vue";
 import { getProductsByType } from "../api/get";
+
 const makeRequest = (to) => {
   const id = to.params.id;
   const types = ["categories", "subcategories", "authors"];
   const type = to.path.split("/").find((type) => types.includes(type));
   return getProductsByType(type, id);
 };
+
 export default {
   components: { ProductCardComponent },
   data() {
@@ -68,7 +70,7 @@ export default {
   beforeRouteUpdate(to, _from, next) {
     makeRequest(to)
       .then((data) => {
-        this.fillData(this, data);
+        this.products = data;
       })
       .finally(() => (this.loading = false));
     next();
@@ -78,20 +80,13 @@ export default {
     makeRequest(to)
       .then((data) =>
         next((vm) => {
-          vm.fillData(vm, data);
+          vm.products = data;
           vm.loading = false;
         })
       )
       .catch((err) => {
         alert(err);
       });
-  },
-
-  methods: {
-    fillData(target, source) {
-      target.products = source.products;
-      target.authors = source.authors;
-    },
   },
 };
 </script>

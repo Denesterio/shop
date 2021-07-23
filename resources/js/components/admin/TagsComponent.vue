@@ -108,7 +108,7 @@ export default {
               this.tagName = "";
             })
             .catch((error) => {
-              handleServerErrors(this, error, "тэг");
+              handleServerErrors(this, error, "добавить тэг");
             })
             .finally(() => {
               this.processing = false;

@@ -1,34 +1,60 @@
 <template>
-  <div
-    @click.self="closeModal"
-    class="
-      modal
-      position-fixed
-      w-100
-      h-100
-      d-flex
-      align-items-center
-      justify-content-center
-    "
-    tabindex="-1"
-  >
-    <div class="modal-dialog modal-md modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header p-2">
-          <h4 class="modal-title mx-2 px-2">
-            {{ title }}
-          </h4>
-          <b-button-close @click="closeModal" class="closeButton" />
-        </div>
-        <div class="modal-body">
-          <input type="text" v-model="currentValue" class="form-control" />
-        </div>
-        <div class="modal-footer">
-          <slot name="footer" :editUser="editUser"></slot>
+  <transition name="modal-fade">
+    <div
+      @click.self="closeModal"
+      id="modal"
+      class="
+        modal
+        position-fixed
+        w-100
+        h-100
+        d-flex
+        align-items-center
+        justify-content-center
+      "
+      role="dialog"
+      aria-labelledby="modalTitle"
+      aria-describedby=""
+    >
+      <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header p-2">
+            <h5
+              id="modalTitle"
+              class="modal-title mx-2 px-2"
+              aria-label="Close modal"
+            >
+              {{ title }}
+            </h5>
+            <span
+              ref="tabCatcher1"
+              id="catcher1"
+              tabindex="0"
+              aria-hidden="true"
+            ></span>
+            <b-button-close
+              ref="closeButton"
+              id="closeButton"
+              @click="closeModal"
+              class="closeButton"
+            />
+          </div>
+          <section class="modal-body">
+            <input type="text" v-model="currentValue" class="form-control" />
+          </section>
+          <div class="modal-footer">
+            <slot name="footer" :editUser="editUser"></slot>
+          </div>
+          <span
+            ref="tabCatcher2"
+            id="catcher2"
+            tabindex="0"
+            aria-hidden="true"
+          ></span>
         </div>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
@@ -42,6 +68,11 @@ export default {
     user: {
       type: Object,
       required: true,
+    },
+    elemsUnderModal: {
+      type: Array,
+      required: false,
+      default: () => [],
     },
   },
 
@@ -59,7 +90,47 @@ export default {
     },
   },
 
+  button: null,
+  input: null,
+
+  mounted() {
+    this.$options.input = document.getElementById("confirmationInput");
+    this.$options.button = document.getElementById("confirmationButton");
+    if (window.innerWidth - document.documentElement.clientWidth !== 0) {
+      document.body.classList.add("mr-3");
+    }
+    document.body.classList.add("overflow-hidden");
+    this.elemsUnderModal.forEach((elem) => {
+      elem.tabIndex = -1;
+    });
+    [this.$refs.tabCatcher1, this.$refs.tabCatcher2].forEach((span) => {
+      span.addEventListener("focus", this.tabHandler);
+    });
+  },
+
+  beforeDestroy() {
+    this.elemsUnderModal.forEach((elem) => {
+      elem.tabIndex = 0;
+    });
+    document.body.classList.remove("mr-3");
+    document.body.classList.remove("overflow-hidden");
+    [(this.$refs.tabCatcher1, this.$refs.tabCatcher2)].forEach((span) => {
+      span.removeEventListener("focus", this.tabHandler);
+    });
+  },
+
   methods: {
+    tabHandler(event) {
+      if (event.relatedTarget?.id === "closeButton") {
+        const targetNext = this.$options.button.disabled
+          ? this.$options.input
+          : this.$options.button;
+        targetNext.focus();
+      } else {
+        this.$refs.closeButton.focus();
+      }
+    },
+
     closeModal() {
       this.$emit("close-modal-window");
     },
@@ -80,10 +151,16 @@ export default {
 <style scoped>
 .modal {
   background-color: rgba(25, 25, 25, 0.5);
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  transition: opacity 0.5s ease;
 }
 .modal-header {
   text-align: center;
   padding: 0.5rem;
+  justify-content: space-around;
+  justify-items: center;
 }
 .closeButton {
   width: 4rem;
@@ -96,8 +173,13 @@ export default {
 .text-danger {
   font-size: 0.8rem;
 }
-.modal-header {
-  justify-content: space-around;
-  justify-items: center;
+.modal-fade-enter,
+.modal-fade-leave-active {
+  opacity: 0;
+}
+
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.5s ease;
 }
 </style>

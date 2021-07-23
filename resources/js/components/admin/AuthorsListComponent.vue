@@ -113,7 +113,7 @@ export default {
               this.currentAuthor = "";
             })
             .catch(() => {
-              handleServerErrors(this, error, "автора");
+              handleServerErrors(this, error, "добавить автора");
             })
             .finally(() => (this.processing = false));
         })

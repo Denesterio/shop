@@ -46,17 +46,8 @@ class CategoryController extends Controller
 
     public function showProducts($id)
     {
-        $products = Category::find($id)->products()->get();
-        $authors = collect();
+        $products = Category::find($id)->products()->with('authors')->get();
 
-        $products->each(function ($item) use ($authors) {
-            $id = $item->id;
-            $authors[$id] = $item->authors;
-        });
-
-        return [
-            'products' => $products,
-            'authors' => $authors,
-        ];
+        return $products;
     }
 }

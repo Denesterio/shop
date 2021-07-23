@@ -33,17 +33,8 @@ class AuthorController extends Controller
     public function showProducts($id)
     {
         $author = Author::where('id', $id)->first();
-        $products = $author->products()->get();
-        $authors = collect();
+        $products = $author->products()->with('authors')->get();
 
-        $products->each(function ($item) use ($authors) {
-            $id = $item->id;
-            $authors[$id] = $item->authors;
-        });
-
-        return [
-            'products' => $products,
-            'authors' => $authors,
-        ];
+        return $products;
     }
 }
