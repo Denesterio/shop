@@ -1,109 +1,33 @@
 <template>
-  <article class="item m-3 border-right-0" :class="{ card: type === 'card' }">
-    <div v-if="type === 'card'" class="row">
-      <div
-        class="
-          col-lg-3 col-md-12
-          d-flex
-          align-items-center
-          justify-content-center
-        "
-      >
-        <img
-          :src="picturePath"
-          :alt="product.title"
-          class="my-auto card-image"
-        /><img />
-      </div>
-      <div class="col-lg-9 col-md-12">
-        <div class="card border-0" style="height: 100%">
-          <div
-            class="authors mt-1 p-1 font-italic"
-            v-html="formattedAuthorsHtml.join(' / ')"
-          ></div>
-          <div class="mx-2 p-2 mb-2">
-            <h3>
-              <a class="text-reset" :href="`/products/${product.id}`">{{
-                product.title
-              }}</a>
-            </h3>
-            <!-- <p>{{ formattedDescription }}</p> -->
-          </div>
-          <div class="card-footer bg-white">
-            <addto-cart-button-component
-              :title="product.title"
-              :order-products="orderProducts"
-              :product-id="product.id"
-              size="sm"
-              class="mt-2"
-              :class="{ 'text-right': type === 'card' }"
-            >
-              <template v-slot:start>
-                <span class="text-secondary"> {{ product.price }} руб. </span>
-              </template>
-            </addto-cart-button-component>
-          </div>
-        </div>
-      </div>
+  <article class="card m-1 p-2 col-lg-3 col-sm-6 product-card">
+    <div>
+      <img
+        :src="picturePath"
+        class="card-img-top card-image"
+        :alt="product.title"
+      />
+    </div>
+    <div class="card-body p-2">
+      <h5 class="card-title my-2">{{ product.title }}</h5>
+      <p
+        class="card-text authors font-italic"
+        v-html="formattedAuthorsHtml.join(' / ')"
+      ></p>
     </div>
 
-    <div v-else class="row">
-      <div class="ms-2 me-auto">
-        <p class="font-weight-bold mb-1 mt-3">
-          <a class="text-reset" :href="`/products/${product.id}`">{{
-            product.title
-          }}</a>
-          |
-          <span
-            class="font-italic font-weight-light"
-            v-html="formattedAuthorsHtml.join(' / ')"
-          ></span>
-          |
-          <span class="text-secondary"> {{ product.price }}&nbsp;руб. </span>
-        </p>
-        <addto-cart-button-component
-          :title="product.title"
-          :product-id="product.id"
-          :order-products="orderProducts"
-          class="mt-2"
-        >
-          <template v-slot:start>
-            <button
-              @click="isModalOpen = true"
-              class="btn btn-outline-primary btn-sm ml-3"
-            >
-              Быстрый просмотр
-            </button>
-          </template>
-        </addto-cart-button-component>
-      </div>
-    </div>
-
-    <b-modal
-      v-model="isModalOpen"
-      centered
-      id="modal-lg"
-      size="lg"
+    <addto-cart-button-component
       :title="product.title"
-      hide-backdrop
-      content-class="shadow"
+      :order-products="orderProducts"
+      :product-id="product.id"
+      size="sm"
+      class="card-footer justify-content-between"
     >
-      <img :src="picturePath" :alt="product.title" class="modal-image" />
-      {{ product.description }}
-      <template v-slot:modal-footer>
-        <addto-cart-button-component
-          :title="product.title"
-          :product-id="product.id"
-          :order-products="orderProducts"
-          class="mt-2"
-          :class="{ 'text-right': type === 'card' }"
-        >
-          <template v-slot:start>
-            <span class="text-secondary"> {{ product.price }} руб. </span>
-          </template>
-        </addto-cart-button-component>
+      <template v-slot:start>
+        <div class="text-secondary product-price">
+          {{ product.price }}&nbsp;&#8381;
+        </div>
       </template>
-    </b-modal>
+    </addto-cart-button-component>
   </article>
 </template>
 
@@ -120,10 +44,6 @@ export default {
       required: false,
       default: () => [],
     },
-    type: {
-      type: String,
-      required: true,
-    },
     orderProducts: {
       type: Array,
       required: false,
@@ -133,21 +53,7 @@ export default {
 
   components: { AddtoCartButtonComponent },
 
-  data() {
-    return {
-      isModalOpen: false,
-      showAlert: false,
-    };
-  },
-
   computed: {
-    formattedDescription() {
-      if (this.product.description.length > 140) {
-        return this.product.description.slice(0, 140) + "\u2026";
-      }
-      return this.product.description;
-    },
-
     formattedAuthorsHtml() {
       return this.authors.map(
         (author) =>
@@ -165,20 +71,18 @@ export default {
 </script>
 
 <style scoped>
-.item {
-  min-width: 350px;
-  font-size: 1rem;
-}
-.image-bg {
-  background-color: #eef5fc;
+.product-card {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  max-width: 205px;
 }
 .card-image {
-  width: 90%;
-  max-width: 300px;
+  max-width: 200px;
   aspect-ratio: auto;
 }
-.font-size-point {
-  font-size: 1.1rem;
+.card-title,
+.product-price {
+  font-size: 1rem;
 }
 .modal-image {
   width: 25%;
@@ -186,6 +90,16 @@ export default {
   margin-right: 20px;
 }
 .authors {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+}
+.authors::before {
+  content: "";
+  display: block;
+  height: 1px;
+  background: #ccc;
+  margin: 5px 10px;
+}
+.product-price {
+  font-weight: bold;
 }
 </style>

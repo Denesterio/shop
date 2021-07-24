@@ -33,7 +33,7 @@ export default {
         productAdd: '@.capitalize:label.add товар',
         tagAdd: '@.capitalize:label.add тэг',
         subacategoryAdd: '@.capitalize:label.add раздел',
-        addToCart: '@.capitalize:label.add в корзину',
+        addToCart: 'купить',
         pictureUpload: 'Загрузить изображение товара',
         subcatName: 'Имя нового раздела',
         newCategoryName: 'Имя новой категории',

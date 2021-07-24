@@ -23,6 +23,7 @@
                 :title="product.title"
                 :order-products="products"
                 size="md"
+                class="justify-content-center"
               />
             </td>
             <td>{{ product.quantity * product.price }} руб.</td>

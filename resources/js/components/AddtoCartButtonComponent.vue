@@ -1,30 +1,30 @@
 <template>
-  <p class="card-text">
+  <div class="px-1 py-2 d-flex">
     <slot name="start"></slot>
-    <span class="" v-if="quantity">
+    <div v-if="quantity">
       <button
         @click="changeProductQuantity(productId, 'descrease')"
-        :class="`btn btn-outline-dark btn-${size} ml-3 font-weight-bold`"
+        :class="`btn btn-outline-dark btn-${size} in-cart-buttons`"
       >
         -
       </button>
       <button
-        :class="`btn btn-outline-dark btn-${size} font-weight-bold`"
+        :class="`btn btn-outline-dark btn-${size} in-cart-buttons`"
         disabled
       >
-        {{ (size === "sm" ? "В корзине: " : "") + quantity }}
+        {{ quantity }}
       </button>
       <button
         @click="changeProductQuantity(productId, 'increase')"
-        :class="`btn btn-outline-dark btn-${size} font-weight-bold`"
+        :class="`btn btn-outline-dark btn-${size} in-cart-buttons`"
       >
         +
       </button>
-    </span>
+    </div>
     <button
       v-else
       @click="changeProductQuantity(productId, 'increase')"
-      :class="`btn btn-info btn-${size} ml-3`"
+      :class="`btn btn-primary btn-${size} in-cart-buttons`"
       v-t="'label.addToCart'"
     ></button>
     <template v-if="showAlert">
@@ -33,7 +33,7 @@
         {{ $t(`message.${change}`) }}
       </div>
     </template>
-  </p>
+  </div>
 </template>
 
 <script>
@@ -150,5 +150,9 @@ export default {
   z-index: 20;
   font-size: 1.2rem;
   margin: 0;
+}
+.in-cart-buttons {
+  font-weight: 700;
+  line-height: 1rem;
 }
 </style>

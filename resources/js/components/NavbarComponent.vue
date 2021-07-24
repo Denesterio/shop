@@ -244,4 +244,8 @@ export default {
   font-weight: bold;
   color: #3490dc;
 }
+
+.container-xl {
+  max-width: 1200px;
+}
 </style>

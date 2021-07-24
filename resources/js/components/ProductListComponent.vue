@@ -12,17 +12,20 @@
         size="sm"
       ></b-form-radio-group>
     </b-form-group>
-    <ul class="product-list" v-if="products.length">
-      <li>
-        <product-card-component
+    <ul class="container" v-if="products.length">
+      <li class="row">
+        <component
+          v-bind:is="currentComponent"
           v-for="product in products"
-          :type="selectedView"
           :product="product"
           :order-products="orderProducts"
           :key="product.id"
           :authors="product.authors"
+          :class="{
+            'col-lg-3 col-sm-6': currentComponent === 'ProductCardComponent',
+          }"
         >
-        </product-card-component>
+        </component>
       </li>
     </ul>
     <div v-else class="text-center p-3">
@@ -33,6 +36,7 @@
 
 <script>
 import ProductCardComponent from "./ProductCardComponent.vue";
+import ProductPointComponent from "./ProductPointComponent.vue";
 import { getProductsByType } from "../api/get";
 
 const makeRequest = (to) => {
@@ -43,13 +47,13 @@ const makeRequest = (to) => {
 };
 
 export default {
-  components: { ProductCardComponent },
+  components: { ProductCardComponent, ProductPointComponent },
   data() {
     return {
-      selectedView: "card",
+      selectedView: "Card",
       optionsView: [
-        { text: "Карточками", value: "card" },
-        { text: "Списком", value: "point" },
+        { text: "Карточками", value: "Card" },
+        { text: "Списком", value: "Point" },
       ],
 
       products: [],
@@ -64,6 +68,9 @@ export default {
     },
     orderProducts() {
       return this.$store.state.cartProducts;
+    },
+    currentComponent() {
+      return `Product${this.selectedView}Component`;
     },
   },
 
