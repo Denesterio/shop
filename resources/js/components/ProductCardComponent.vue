@@ -27,7 +27,7 @@
                 product.title
               }}</a>
             </h3>
-            <p>{{ formattedDescription }}</p>
+            <!-- <p>{{ formattedDescription }}</p> -->
           </div>
           <div class="card-footer bg-white">
             <addto-cart-button-component
@@ -173,10 +173,9 @@ export default {
   background-color: #eef5fc;
 }
 .card-image {
-  width: 95%;
+  width: 90%;
   max-width: 300px;
-  height: 96%;
-  outline: 2px solid #000;
+  aspect-ratio: auto;
 }
 .font-size-point {
   font-size: 1.1rem;
