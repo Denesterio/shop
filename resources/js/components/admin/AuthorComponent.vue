@@ -9,7 +9,7 @@
     <input
       list="authorDatalist"
       v-model="currentAuthor"
-      @keyup.enter="addAuthorToAuthors"
+      @keydown.enter.prevent="addAuthorToAuthors"
       class="form-control"
       :class="{ 'is-invalid': validationErrors.title || error }"
       :disabled="processing"
@@ -150,10 +150,13 @@ export default {
 
 <style scoped>
 .error-msg {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
 }
 label {
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 1.1rem;
+}
+a {
+  font-size: 0.9rem;
 }
 </style>

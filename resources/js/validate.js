@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import i18n from './lang';
+import CreateError from './createError.js';
 
 yup.setLocale({
   mixed: {
@@ -35,7 +36,7 @@ const categorySchema = yup.object().shape({
 });
 
 const productSchema = yup.object().shape({
-  name: yup.string().required(),
+  title: yup.string().required(),
   description: yup.string().required(),
   price: yup.number().positive().required(),
   subcategorySlug: yup.string().required(),
@@ -71,6 +72,25 @@ const fillErrorsObject = (obj, error) => {
   }
 };
 
+const getErrors = (error) => {
+  const validationErrors = error.response?.data?.errors;
+  if (validationErrors) {
+    return Object.entries(validationErrors).map(([path, [message]]) => {
+      const splittedPath = path.split('.')[0];
+      return new CreateError(splittedPath, message);
+    });
+  }
+  if (error?.inner.length > 0) {
+    return error.inner.map((err) => {
+      return new CreateError(err.path, err.message);
+    });
+  }
+  if (error?.inner) {
+    return [new CreateError(error.path, error.message)];
+  }
+  throw new Error(error.message);
+}
+
 export {
   subcategorySchema,
   categorySchema,
@@ -79,4 +99,5 @@ export {
   registrationSchema,
   handleServerErrors,
   fillErrorsObject,
+  getErrors,
 };

@@ -9,6 +9,7 @@ export default {
         descrease: 'удалена из корзины',
         noProdCart: 'В корзине отсутствуют продукты',
         sumProducts: 'на сумму {sum} руб.',
+        noPriductsInCategory: 'В данной категории товаров пока нет, но они обязательно появятся',
     },
     link: {
         profile: 'Личный кабинет',

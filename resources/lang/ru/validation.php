@@ -16,6 +16,7 @@ return [
     'active_url' => ':attribute должен быть валидным URL',
     'alpha' => ':attribute должен содержать только буквы',
     'alpha_num' => ':attribute должен содержать только символы букв и цифр',
+    'distinct' => ':attribute содержит дубликаты',
     'email' => ':attribute должен быть правильным e-mail адресом',
     'integer' => ':attribute должен быть числом',
     'max' => [
@@ -36,4 +37,14 @@ return [
     'string' => ':attribute должен быть строкой',
     'unique' => ':attribute уже используется',
     'url' => ':attribute содержит неправильный URL',
+
+    'attributes' => [
+        'email' => 'Электронный адрес',
+        'title' => 'Название',
+        'name' => 'Имя',
+        'slug' => 'Заполнитель',
+        'price' => 'Цена',
+        'password' => 'Пароль',
+        'authors.*' => 'Поле авторов',
+    ],
 ];

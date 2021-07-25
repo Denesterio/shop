@@ -56,8 +56,9 @@
                 href=""
                 noreferrer
                 nofollow
-                @mouseover="makeItemActive"
-                @mouseout="makeItemInactive"
+                @mouseover="showUsernameTooltip = true"
+                @mouseout="showUsernameTooltip = false"
+                @click="showUsernameTooltip = false"
               >
                 <svg
                   id="user"
@@ -73,10 +74,7 @@
                   />
                 </svg>
               </a>
-              <div
-                v-if="activeItem && activeItem.id === 'navbarDropdown'"
-                class="navbar-tooltip"
-              >
+              <div v-if="showUsernameTooltip" class="navbar-tooltip">
                 {{ user.name }}
               </div>
               <div
@@ -135,7 +133,7 @@ export default {
 
   data() {
     return {
-      activeItem: null,
+      showUsernameTooltip: false,
     };
   },
 
@@ -181,6 +179,13 @@ export default {
 </script>
 
 <style>
+@font-face {
+  font-family: "BERNIER";
+  src: url("../../fonts/BERNIER.otf") format("truetype");
+  font-style: normal;
+  font-weight: normal;
+}
+
 .navbar {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -199,13 +204,6 @@ export default {
   color: rgba(0, 0, 0, 0.7);
 }
 
-@font-face {
-  font-family: "BERNIER";
-  src: url("../../fonts/BERNIER.otf") format("truetype");
-  font-style: normal;
-  font-weight: normal;
-}
-
 .logo-text {
   font-size: 1.8rem;
   font-family: "BERNIER", "Nunito", "verdana", serif;
@@ -215,10 +213,6 @@ export default {
 
 .logo-text:hover {
   color: #3490dc;
-}
-
-.invalid-feedback {
-  font-size: 0.8rem;
 }
 
 .label {
@@ -245,7 +239,7 @@ export default {
   color: #3490dc;
 }
 
-.container-xl {
-  max-width: 1200px;
+.nav-link {
+  color: #5c5c5c;
 }
 </style>

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\AuthorsProduct;
 use App\Models\TagsProduct;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -18,13 +18,32 @@ class ProductController extends Controller
     public function create(Request $request)
     {
         [
-            'name' => $name,
+            'title' => $title,
             'subcategorySlug' => $subcategorySlug,
             'description' => $description,
             'price' => $price,
             'productAuthors' => $authors,
             'tags' => $tags,
         ] = $request;
+
+        $authors = json_decode($authors);
+        $tags = json_decode($tags);
+
+        $request->validate([
+            'title' => ['required', 'string', 'max:255', 'unique:products,title'],
+            'subcategorySlug' => ['required', 'string', 'max:255', 'exists:subcategories,slug'],
+            'description' => ['required', 'string'],
+            'price' => ['required', 'integer'],
+            'productAuthors' => ['required', 'json'],
+            'tags' => ['required', 'json'],
+        ]);
+
+        Validator::make(['authors' => $authors, 'tags' => $tags], [
+            'authors' => ['required', 'array'],
+            'authors.*' => ['required', 'distinct'],
+            'tags' => ['required', 'array'],
+            'tags.*' => ['required', 'distinct'],
+        ])->validate();
 
         $filename = '';
         if ($request->hasFile('picture')) {
@@ -34,7 +53,7 @@ class ProductController extends Controller
         }
 
         $product = Product::create([
-            'title' => $name,
+            'title' => $title,
             'subcategory_slug' => $subcategorySlug,
             'picture' => $filename,
             'price' => $price,
@@ -42,14 +61,14 @@ class ProductController extends Controller
         ]);
 
 
-        foreach (json_decode($tags) as $tagId) {
+        foreach ($tags as $tagId) {
             TagsProduct::create([
                 'tag_id' => $tagId,
                 'product_id' => $product->id,
             ]);
         };
 
-        foreach (json_decode($authors) as $authorId) {
+        foreach ($authors as $authorId) {
             AuthorsProduct::create([
                 'product_id' => $product->id,
                 'author_id' => $authorId,

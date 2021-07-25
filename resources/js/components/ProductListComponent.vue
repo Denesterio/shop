@@ -21,15 +21,12 @@
           :order-products="orderProducts"
           :key="product.id"
           :authors="product.authors"
-          :class="{
-            'col-lg-3 col-sm-6': currentComponent === 'ProductCardComponent',
-          }"
         >
         </component>
       </li>
     </ul>
     <div v-else class="text-center p-3">
-      <h5>В данной категории товаров пока нет, но они обязательно появятся</h5>
+      <h5 v-t="'message.noProductsInCategory'"></h5>
     </div>
   </div>
 </template>

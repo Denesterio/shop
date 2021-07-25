@@ -7,11 +7,13 @@
         <input
           v-model="productName"
           class="form-control"
-          :class="{ 'is-invalid': validationErrors.name }"
+          :class="{
+            'is-invalid': isFieldInvalid('title'),
+          }"
           placeholder="Имя нового продукта"
         />
-        <p v-if="validationErrors.name.length" class="invalid-feedback">
-          {{ validationErrors.name }}
+        <p class="invalid-feedback">
+          {{ getErrorMessage("title") }}
         </p>
       </div>
 
@@ -20,29 +22,26 @@
           v-model="productDescription"
           rows="5"
           class="form-control"
-          :class="{ 'is-invalid': validationErrors.description }"
+          :class="{ 'is-invalid': isFieldInvalid('description') }"
           placeholder="Описание товара"
         >
         </textarea>
-        <p
-          v-if="validationErrors.description.length > 0"
-          class="invalid-feedback"
-        >
-          {{ validationErrors.description }}
+        <p class="invalid-feedback">
+          {{ getErrorMessage("description") }}
         </p>
       </div>
 
       <author-component
         @add-author="addAuthorToAuthors"
         @clear-authors="clearProductAuthors"
-        :error="validationErrors.productAuthors"
+        :error="getErrorMessage('productAuthors')"
       />
 
       <div class="form-group">
         <b-button
           v-b-toggle="'collapse-tags'"
           class="m-1 btn-primary"
-          :class="{ 'is-invalid': validationErrors.tags }"
+          :class="{ 'is-invalid': false }"
           >Выбрать тэги</b-button
         >
         <router-link :to="{ name: 'tags' }">{{
@@ -52,7 +51,7 @@
           <b-form-group v-slot="{ ariaDescribedby }">
             <b-form-checkbox-group
               id="checkbox-group-tags"
-              v-model="selected"
+              v-model="selectedTags"
               :aria-describedby="ariaDescribedby"
               name="productTags"
             >
@@ -65,20 +64,18 @@
             </b-form-checkbox-group>
           </b-form-group>
         </b-collapse>
-        <p v-if="validationErrors.tags" class="invalid-feedback">
-          {{ validationErrors.tags }}
-        </p>
+        <p class="invalid-feedback">{{}}</p>
       </div>
 
       <div class="form-group">
         <input
           v-model="productPrice"
           class="form-control"
-          :class="{ 'is-invalid': validationErrors.price }"
+          :class="{ 'is-invalid': isFieldInvalid('price') }"
           placeholder="Цена"
         />
-        <p v-if="validationErrors.price.length > 0" class="invalid-feedback">
-          {{ validationErrors.price }}
+        <p class="invalid-feedback">
+          {{ getErrorMessage("price") }}
         </p>
       </div>
 
@@ -121,7 +118,7 @@
         <select
           v-model="subcategorySlug"
           class="form-control"
-          :class="{ 'is-invalid': validationErrors.subcategorySlug }"
+          :class="{ 'is-invalid': isFieldInvalid('subcategorySlug') }"
           name="subcategory"
         >
           <option value="" selected>Все</option>
@@ -133,8 +130,8 @@
             {{ subcategory.title }}
           </option>
         </select>
-        <p v-if="validationErrors.subcategorySlug" class="invalid-feedback">
-          {{ validationErrors.subcategorySlug }}
+        <p class="invalid-feedback">
+          {{ getErrorMessage("subcategorySlug") }}
         </p>
       </div>
 
@@ -175,7 +172,7 @@ import {
 } from "../../api/get.js";
 import { createProduct } from "../../api/create.js";
 import { deleteProduct } from "../../api/delete.js";
-import { productSchema } from "../../validate.js";
+import { productSchema, getErrors } from "../../validate.js";
 import CreateButtonComponent from "./CreateButtonComponent.vue";
 import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
 import AuthorComponent from "./AuthorComponent.vue";
@@ -190,7 +187,7 @@ export default {
       picture: [],
       subcategorySlug: "",
       productAuthors: [], // массив авторов - объектов, связан с параграфом
-      selected: [], // массив тэгов
+      selectedTags: [], // массив тэгов
 
       authors: [],
       products: [],
@@ -201,14 +198,7 @@ export default {
 
       loading: true,
       processing: false,
-      validationErrors: {
-        name: "",
-        description: "",
-        price: "",
-        subcategorySlug: "",
-        productAuthors: "", // если массив авторов пустой
-        tags: "",
-      },
+      errors: [],
     };
   },
   computed: {
@@ -240,7 +230,6 @@ export default {
   methods: {
     addAuthorToAuthors(author) {
       this.productAuthors.push(author);
-      this.validationErrors.productAuthors = "";
     },
 
     clearProductAuthors() {
@@ -252,15 +241,16 @@ export default {
     },
 
     async createNewProduct() {
-      let fData = new FormData();
+      this.errors = [];
+      const fData = new FormData();
       const params = {
-        name: this.productName,
+        title: this.productName,
         description: this.productDescription,
         price: Number(this.productPrice),
         subcategorySlug: this.subcategorySlug,
         picture: this.picture,
-        productAuthors: this.productAuthors.map((a) => a.id),
-        tags: this.selected.length > 0 ? JSON.stringify(this.selected) : [],
+        productAuthors: JSON.stringify(this.productAuthors.map((a) => a.id)),
+        tags: JSON.stringify(this.selectedTags),
       };
 
       try {
@@ -268,9 +258,7 @@ export default {
           abortEarly: false,
         });
       } catch (error) {
-        error.inner.forEach((err) => {
-          this.validationErrors[err.path] = err.message;
-        });
+        this.errors = getErrors(error);
         return;
       }
 
@@ -282,6 +270,17 @@ export default {
       createProduct(fData)
         .then(({ data }) => {
           this.products = [data, ...this.products];
+        })
+        .catch((error) => {
+          try {
+            this.errors = getErrors(error);
+          } catch (err) {
+            Vue.swal.fire({
+              icon: "error",
+              title: "Ошибка",
+              text: this.$t("error.сreateError", { msg: "добавить продукт" }),
+            });
+          }
         })
         .finally(() => {
           this.processing = false;
@@ -296,20 +295,15 @@ export default {
           ))
       );
     },
-  },
 
-  watch: {
-    productName() {
-      this.validationErrors.name = "";
+    isFieldInvalid(field) {
+      return this.errors.some((error) => error.isFieldInvalid(field));
     },
-    subcategorySlug() {
-      this.validationErrors.subcategorySlug = "";
-    },
-    productDescription() {
-      this.validationErrors.description = "";
-    },
-    productPrice() {
-      this.validationErrors.price = "";
+
+    getErrorMessage(field) {
+      return this.errors
+        .find((error) => error.getField() === field)
+        ?.getMessage();
     },
   },
 };
@@ -318,6 +312,9 @@ export default {
 <style scoped>
 label {
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 1.1rem;
+}
+a {
+  font-size: 0.9rem;
 }
 </style>

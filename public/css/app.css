@@ -10938,3 +10938,14 @@ h3 {
     border-color: #dee2e6;
   }
 }
+body {
+  color: #5c5c5c;
+}
+
+.container-xl {
+  max-width: 1200px;
+}
+
+.invalid-feedback {
+  font-size: 0.8rem;
+}
