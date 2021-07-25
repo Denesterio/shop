@@ -68,6 +68,8 @@ export default {
     };
   },
 
+  ALERT_TIMEOUT: 2000,
+
   computed: {
     quantity() {
       return (
@@ -99,7 +101,7 @@ export default {
           this.timer = setTimeout(() => {
             this.showAlert = false;
             this.alertsCount = 0;
-          }, 2000);
+          }, this.$options.ALERT_TIMEOUT);
         })
         .catch((error) => {
           if (error.response.status === 401) {

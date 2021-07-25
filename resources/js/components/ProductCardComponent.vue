@@ -1,5 +1,5 @@
 <template>
-  <article class="card m-1 p-2 col-lg-3 col-sm-6 product-card">
+  <li class="card m-1 p-2 col-lg-3 col-sm-6 product-card">
     <div>
       <img
         :src="picturePath"
@@ -28,7 +28,7 @@
         </div>
       </template>
     </addto-cart-button-component>
-  </article>
+  </li>
 </template>
 
 <script>
@@ -75,6 +75,7 @@ export default {
   display: grid;
   grid-template-rows: auto 1fr auto;
   max-width: 205px;
+  min-width: 190px;
 }
 .card-image {
   max-width: 200px;

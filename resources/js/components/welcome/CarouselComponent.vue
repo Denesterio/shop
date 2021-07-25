@@ -62,20 +62,27 @@ export default {
 
       settings: {
         infinite: true,
-        slidesToShow: 4,
-        slidesToScroll: 1,
+        slidesToShow: 5,
+        slidesToScroll: 2,
         autoplay: true,
-        autoplaySpeed: 3000,
-        pauseOnDotsHover: true,
+        autoplaySpeed: 4000,
+        pauseOnDotsHover: false,
         pauseOnFocus: true,
         pauseOnHover: true,
-        speed: 1000,
+        speed: 1500,
         responsive: [
           {
-            breakpoint: 1024,
+            breakpoint: 1150,
+            settings: {
+              slidesToShow: 4,
+              slidesToScroll: 2,
+            },
+          },
+          {
+            breakpoint: 920,
             settings: {
               slidesToShow: 3,
-              slidesToScroll: 3,
+              slidesToScroll: 1,
             },
           },
           {
@@ -124,7 +131,8 @@ export default {
 
 <style scoped>
 .image {
-  width: 55%;
+  width: 65%;
+  max-width: 150px;
   height: 200px;
   margin: 5px auto;
 }
@@ -138,14 +146,14 @@ export default {
 .card-body {
   margin: 5px;
   padding: 5px;
-  height: 120px;
+  height: 105px;
 }
 .card-body p {
   margin-bottom: 5px;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 .title a {
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 .title a:hover {
   cursor: pointer;

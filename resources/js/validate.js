@@ -72,6 +72,7 @@ const fillErrorsObject = (obj, error) => {
   }
 };
 
+// Альтернативная обработка ошибок
 const getErrors = (error) => {
   const validationErrors = error.response?.data?.errors;
   if (validationErrors) {

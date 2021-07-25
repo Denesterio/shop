@@ -26,7 +26,6 @@
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
-        "@fontsource/montserrat": "^4.5.0",
         "bootstrap-vue": "^2.21.2",
         "vue-router": "^3.5.2",
         "vue-slick-carousel": "^1.0.6",

@@ -12,18 +12,16 @@
         size="sm"
       ></b-form-radio-group>
     </b-form-group>
-    <ul class="container" v-if="products.length">
-      <li class="row">
-        <component
-          v-bind:is="currentComponent"
-          v-for="product in products"
-          :product="product"
-          :order-products="orderProducts"
-          :key="product.id"
-          :authors="product.authors"
-        >
-        </component>
-      </li>
+    <ul class="row" v-if="products.length">
+      <component
+        v-bind:is="currentComponent"
+        v-for="product in products"
+        :product="product"
+        :order-products="orderProducts"
+        :key="product.id"
+        :authors="product.authors"
+      >
+      </component>
     </ul>
     <div v-else class="text-center p-3">
       <h5 v-t="'message.noProductsInCategory'"></h5>
@@ -100,5 +98,9 @@ export default {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+ul {
+  list-style: none;
+  padding: 0;
 }
 </style>

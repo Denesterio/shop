@@ -1,5 +1,5 @@
 <template>
-  <div class="col-sm-12">
+  <li class="col-sm-12">
     <p class="point font-weight-bold mb-1 mt-3">
       <a class="text-reset" :href="`/products/${product.id}`">{{
         product.title
@@ -54,7 +54,7 @@
         </addto-cart-button-component>
       </template>
     </b-modal>
-  </div>
+  </li>
 </template>
 
 <script>
