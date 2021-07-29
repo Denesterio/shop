@@ -1,6 +1,6 @@
 @font-face {
     font-family: "BERNIER";
-    src: url("../fonts/BERNIER.otf") format("truetype");
+    src: url(/fonts/BERNIER.otf?c9456200bf11a1525da2bf85955a3461) format("truetype");
     font-style: normal;
     font-weight: normal;
 }
@@ -8,7 +8,6 @@
 .navbar {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
-    -khtml-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -50,3 +49,4 @@
     font-weight: bold;
     color: #3490dc;
 }
+

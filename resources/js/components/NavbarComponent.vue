@@ -178,65 +178,13 @@ export default {
 };
 </script>
 
-<style>
-@font-face {
-  font-family: "BERNIER";
-  src: url("../../fonts/BERNIER.otf") format("truetype");
-  font-style: normal;
-  font-weight: normal;
-}
-
-.navbar {
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  padding: 4px;
-  height: 60px;
-}
+<style scoped>
 .dropdown-item {
   color: rgba(0, 0, 0, 0.5);
 }
 
 .dropdown-item:hover {
   color: rgba(0, 0, 0, 0.7);
-}
-
-.logo-text {
-  font-size: 1.8rem;
-  font-family: "BERNIER", "Nunito", "verdana", serif;
-  color: #3490dc;
-  letter-spacing: 1px;
-}
-
-.logo-text:hover {
-  color: #3490dc;
-}
-
-.label {
-  text-align: center;
-  padding: 1px 6px;
-  font-size: 1rem;
-  border-radius: 4px;
-  font-weight: bold;
-  color: #3490dc;
-  margin-left: -7px;
-  margin-top: -5px;
-  box-shadow: 2px -2px 3px rgba(0, 0, 0, 0.3);
-}
-
-.navbar-tooltip {
-  position: fixed;
-  border-radius: 4px;
-  background-color: #fff;
-  box-shadow: -2px 2px 3px rgba(0, 0, 0, 0.3);
-  text-align: center;
-  padding: 3px 6px;
-  font-size: 1rem;
-  font-weight: bold;
-  color: #3490dc;
 }
 
 .nav-link {
