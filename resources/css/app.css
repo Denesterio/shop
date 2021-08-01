@@ -50,3 +50,12 @@
     font-weight: bold;
     color: #3490dc;
 }
+
+.router-link-active:hover {
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.75);
+}
+
+.invalid-feedback {
+  font-size: 0.8rem;
+}

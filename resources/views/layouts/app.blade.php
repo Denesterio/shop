@@ -13,18 +13,17 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
-    <script src="https://unpkg.com/vue-i18n@8"></script>
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
 
-    <style>
+    <!-- <style>
         .router-link-active:hover {
             text-decoration: none;
             color: rgba(0, 0, 0, 0.75)
         }
-    </style>
+    </style> -->
 </head>
 
 <body>

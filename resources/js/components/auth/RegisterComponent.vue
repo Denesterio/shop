@@ -20,7 +20,7 @@
                     id="name"
                     type="text"
                     class="form-control"
-                    :class="{ 'is-invalid': validationErrors.name }"
+                    :class="{ 'is-invalid': isFieldInvalid('name') }"
                     name="name"
                     value=""
                     required
@@ -28,8 +28,12 @@
                     autofocus
                   />
 
-                  <p class="invalid-feedback" role="alert">
-                    {{ validationErrors.name }}
+                  <p
+                    id="nameFeedback"
+                    class="invalid-feedback"
+                    role="alert"
+                  >
+                    {{ getErrorMessage("name") }}
                   </p>
                 </div>
               </div>
@@ -47,14 +51,18 @@
                     id="email"
                     type="email"
                     class="form-control"
-                    :class="{ 'is-invalid': validationErrors.email }"
+                    :class="{ 'is-invalid': isFieldInvalid('email') }"
                     name="email"
                     required
                     autocomplete="email"
                   />
 
-                  <p class="invalid-feedback" role="alert">
-                    {{ validationErrors.email }}
+                  <p
+                    class="invalid-feedback"
+                    role="alert"
+                    id="emailFeedback"
+                  >
+                    {{ getErrorMessage("email") }}
                   </p>
                 </div>
               </div>
@@ -69,17 +77,18 @@
                 <div class="col-md-6">
                   <input
                     v-model="password"
+                    @input="checkPasswordsMatch"
                     id="password"
                     type="password"
                     class="form-control"
-                    :class="{ 'is-invalid': validationErrors.password }"
+                    :class="{ 'is-invalid': isFieldInvalid('password') }"
                     name="password"
                     required
                     autocomplete="new-password"
                   />
 
-                  <p class="invalid-feedback" role="alert">
-                    {{ validationErrors.password }}
+                  <p class="invalid-feedback" role="alert" id="passwordFeedback">
+                    {{ getErrorMessage("password") }}
                   </p>
                 </div>
               </div>
@@ -95,13 +104,21 @@
                   <input
                     v-model="confirmPassword"
                     @input="checkPasswordsMatch"
-                    id="password-confirm"
+                    id="confirmPassword"
                     type="password"
                     class="form-control"
+                    :class="{ 'is-invalid': isFieldInvalid('confirmPassword') }"
                     name="password_confirmation"
                     required
                     autocomplete="new-password"
                   />
+                  <p
+                    class="invalid-feedback"
+                    role="alert"
+                    id="confirmPasswordFeedback"
+                  >
+                    {{ getErrorMessage("confirmPassword") }}
+                  </p>
                 </div>
               </div>
 
@@ -110,18 +127,15 @@
                   <button
                     @click.prevent="register"
                     type="submit"
+                    id="submitButton"
+                    data-testid="submitButton"
                     class="btn btn-primary"
                     v-t="'label.register'"
-                    :disabled="!passwordsMatch || processing"
+                    :disabled="isButtonDisabled"
                   ></button>
                 </div>
               </div>
             </form>
-          </div>
-        </div>
-        <div v-for="(error, idx) in errors" :key="idx">
-          <div class="alert alert-danger" role="alert">
-            {{ error[0] }}
           </div>
         </div>
       </div>
@@ -131,7 +145,8 @@
 
 <script>
 import { authRegister } from "../../api/auth.js";
-import { registrationSchema, fillErrorsObject } from "../../validate.js";
+import { registrationSchema, getErrors } from "../../validate.js";
+import CreateError from "../../createError.js";
 export default {
   data() {
     return {
@@ -141,74 +156,95 @@ export default {
       confirmPassword: "",
       errors: [],
       processing: false,
-      validationErrors: {
-        name: "",
-        email: "",
-        password: "",
-      },
     };
   },
   computed: {
     passwordsMatch() {
       return this.password === this.confirmPassword;
     },
+
+    isButtonDisabled() {
+      return (
+        this.errors.length ||
+        this.processing ||
+        [this.name, this.email, this.password].some(
+          (field) => field.length === 0
+        )
+      );
+    },
   },
 
   methods: {
     checkPasswordsMatch() {
       if (!this.passwordsMatch) {
-        this.errors = [["Пароли не совпадают"]];
+        this.errors.push(
+          new CreateError("confirmPassword", "Пароли не совпадают")
+        );
       } else {
-        this.errors = [];
+        this.deleteError("confirmPassword");
       }
     },
 
-    register() {
+    async register() {
       const params = {
         name: this.name,
         email: this.email,
         password: this.password,
         password_confirmation: this.confirmPassword,
       };
-      registrationSchema
-        .validate(params, { abortEarly: false })
-        .then(() => {
-          this.processing = true;
-          authRegister(params)
-            .then(({ data }) => {
-              this.$store.dispatch("setUser", data);
-              this.$router.push("/");
-            })
-            .catch((error) => {
-              if (error.response.data.errors) {
-                this.errors = error.response.data.errors;
-              } else {
-                Vue.swal.fire({
-                  icon: "error",
-                  title: "Ошибка",
-                  text: this.$t("error.сreateError", {
-                    msg: "зарегистрироваться",
-                  }),
-                });
-              }
-            })
-            .finally(() => (this.processing = false));
+
+      try {
+        await registrationSchema.validate(params, { abortEarly: false });
+      } catch (error) {
+        this.errors = getErrors(error);
+        return;
+      }
+
+      this.processing = true;
+      authRegister(params)
+        .then(({ data }) => {
+          this.$store.dispatch("setUser", data);
+          this.$router.push("/");
         })
         .catch((error) => {
-          fillErrorsObject(this.validationErrors, error);
-        });
+          try {
+            this.errors = getErrors(error);
+          } catch (err) {
+            Vue.swal.fire({
+              icon: "error",
+              title: "Ошибка",
+              text: this.$t("error.сreateError", { msg: "зарегистрироваться" }),
+            });
+          }
+        })
+        .finally(() => {
+          this.processing = false});
+    },
+
+    isFieldInvalid(field) {
+      return this.errors.some((error) => error.isFieldInvalid(field));
+    },
+
+    getErrorMessage(field) {
+      return this.errors
+        .find((error) => error.getField() === field)
+        ?.getMessage();
+    },
+
+    deleteError(field) {
+      this.errors = this.errors.filter((err) => err.getField() !== field);
     },
   },
 
   watch: {
     name() {
-      this.validationErrors.name = "";
+      this.deleteError("name");
     },
     email() {
-      this.validationErrors.email = "";
+      this.deleteError("email");
     },
     password() {
-      this.validationErrors.password = "";
+      this.deleteError("password");
     },
   },
 };

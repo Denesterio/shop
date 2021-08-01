@@ -1,14 +1,14 @@
-import Vue from 'vue';
-// import VueI18n from 'vue-i18n';
+import Vue from "vue";
+import VueI18n from "vue-i18n";
 Vue.use(VueI18n);
-import ru from './ru.js';
+import ru from "./ru.js";
 
 const messages = {
-    ru,
+    ru
 };
 
 const pluralizationRules = {
-    'ru': function (choice, choicesLength) {
+    ru: function(choice, choicesLength) {
         // this === VueI18n экземпляра, так что свойство locale также существует здесь
 
         if (choice === 0) {
@@ -19,7 +19,7 @@ const pluralizationRules = {
         const endsWithOne = choice % 10 === 1;
 
         if (choicesLength < 4) {
-            return (!teen && endsWithOne) ? 1 : 2;
+            return !teen && endsWithOne ? 1 : 2;
         }
         if (!teen && endsWithOne) {
             return 1;
@@ -28,14 +28,14 @@ const pluralizationRules = {
             return 2;
         }
 
-        return (choicesLength < 4) ? 2 : 3;
+        return choicesLength < 4 ? 2 : 3;
     }
-}
+};
 
 const i18n = new VueI18n({
-    locale: 'ru', // установка локализации по умолчанию
+    locale: "ru", // установка локализации по умолчанию
     messages, // установка сообщений локализаций
-    pluralizationRules,
+    pluralizationRules
 });
 
 export default i18n;
