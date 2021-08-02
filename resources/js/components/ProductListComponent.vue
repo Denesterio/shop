@@ -17,7 +17,6 @@
         v-bind:is="currentComponent"
         v-for="product in products"
         :product="product"
-        :order-products="orderProducts"
         :key="product.id"
         :authors="product.authors"
       >
@@ -61,9 +60,9 @@ export default {
     user() {
       return this.$store.state.user;
     },
-    orderProducts() {
-      return this.$store.state.cartProducts;
-    },
+    // orderProducts() {
+    //   return this.$store.state.cartProducts;
+    // },
     currentComponent() {
       return `Product${this.selectedView}Component`;
     },

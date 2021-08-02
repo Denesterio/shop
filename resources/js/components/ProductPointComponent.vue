@@ -14,7 +14,6 @@
     <addto-cart-button-component
       :title="product.title"
       :product-id="product.id"
-      :order-products="orderProducts"
       class="align-items-start"
     >
       <template v-slot:start>
@@ -41,7 +40,6 @@
         <addto-cart-button-component
           :title="product.title"
           :product-id="product.id"
-          :order-products="orderProducts"
           :size="'md'"
           style="width: 240px"
           class="justify-content-between mr-3"
@@ -70,11 +68,11 @@ export default {
       required: false,
       default: () => [],
     },
-    orderProducts: {
-      type: Array,
-      required: false,
-      default: () => [],
-    },
+    // orderProducts: {
+    //   type: Array,
+    //   required: false,
+    //   default: () => [],
+    // },
   },
 
   components: { AddtoCartButtonComponent },

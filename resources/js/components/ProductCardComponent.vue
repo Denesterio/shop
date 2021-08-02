@@ -17,7 +17,6 @@
 
     <addto-cart-button-component
       :title="product.title"
-      :order-products="orderProducts"
       :product-id="product.id"
       size="sm"
       class="card-footer justify-content-between"
@@ -44,11 +43,11 @@ export default {
       required: false,
       default: () => [],
     },
-    orderProducts: {
-      type: Array,
-      required: false,
-      default: () => [],
-    },
+    // orderProducts: {
+    //   type: Array,
+    //   required: false,
+    //   default: () => [],
+    // },
   },
 
   components: { AddtoCartButtonComponent },

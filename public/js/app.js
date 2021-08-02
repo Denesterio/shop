@@ -1894,6 +1894,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     productId: {
@@ -1908,13 +1911,6 @@ __webpack_require__.r(__webpack_exports__);
       type: String,
       required: false,
       "default": "sm"
-    },
-    orderProducts: {
-      type: Array,
-      required: false,
-      "default": function _default() {
-        return [];
-      }
     }
   },
   data: function data() {
@@ -1935,6 +1931,9 @@ __webpack_require__.r(__webpack_exports__);
       return (_this$orderProducts$f = (_this$orderProducts$f2 = this.orderProducts.find(function (op) {
         return op.id === _this.productId;
       })) === null || _this$orderProducts$f2 === void 0 ? void 0 : _this$orderProducts$f2.quantity) !== null && _this$orderProducts$f !== void 0 ? _this$orderProducts$f : 0;
+    },
+    orderProducts: function orderProducts() {
+      return this.$store.state.cartProducts;
     }
   },
   methods: {
@@ -1965,7 +1964,7 @@ __webpack_require__.r(__webpack_exports__);
         }, _this2.$options.ALERT_TIMEOUT);
       })["catch"](function (error) {
         if (error.response.status === 401) {
-          Vue.swal.fire({
+          _this2.$swal.fire({
             icon: "error",
             title: "Товар не добавлен",
             text: "Пожалуйста, авторизуйтесь, чтобы совершать заказы",
@@ -2384,7 +2383,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
@@ -2398,14 +2396,12 @@ __webpack_require__.r(__webpack_exports__);
       "default": function _default() {
         return [];
       }
-    },
-    orderProducts: {
-      type: Array,
-      required: false,
-      "default": function _default() {
-        return [];
-      }
-    }
+    } // orderProducts: {
+    //   type: Array,
+    //   required: false,
+    //   default: () => [],
+    // },
+
   },
   components: {
     AddtoCartButtonComponent: _AddtoCartButtonComponent_vue__WEBPACK_IMPORTED_MODULE_0__.default
@@ -2438,7 +2434,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ProductCardComponent_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ProductCardComponent.vue */ "./resources/js/components/ProductCardComponent.vue");
 /* harmony import */ var _ProductPointComponent_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ProductPointComponent.vue */ "./resources/js/components/ProductPointComponent.vue");
 /* harmony import */ var _api_get__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../api/get */ "./resources/js/api/get.js");
-//
 //
 //
 //
@@ -2506,9 +2501,9 @@ var makeRequest = function makeRequest(to) {
     user: function user() {
       return this.$store.state.user;
     },
-    orderProducts: function orderProducts() {
-      return this.$store.state.cartProducts;
-    },
+    // orderProducts() {
+    //   return this.$store.state.cartProducts;
+    // },
     currentComponent: function currentComponent() {
       return "Product".concat(this.selectedView, "Component");
     }
@@ -2606,8 +2601,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
@@ -2621,14 +2614,12 @@ __webpack_require__.r(__webpack_exports__);
       "default": function _default() {
         return [];
       }
-    },
-    orderProducts: {
-      type: Array,
-      required: false,
-      "default": function _default() {
-        return [];
-      }
-    }
+    } // orderProducts: {
+    //   type: Array,
+    //   required: false,
+    //   default: () => [],
+    // },
+
   },
   components: {
     AddtoCartButtonComponent: _AddtoCartButtonComponent_vue__WEBPACK_IMPORTED_MODULE_0__.default
@@ -5770,27 +5761,27 @@ Vue.use(vue_sweetalert2__WEBPACK_IMPORTED_MODULE_0__.default);
 
 
 
-Vue.component('b-button-close', bootstrap_vue__WEBPACK_IMPORTED_MODULE_2__.BButtonClose);
-Vue.component('b-button', bootstrap_vue__WEBPACK_IMPORTED_MODULE_3__.BButton);
-Vue.component('b-collapse', bootstrap_vue__WEBPACK_IMPORTED_MODULE_4__.BCollapse);
-Vue.component('b-form-group', bootstrap_vue__WEBPACK_IMPORTED_MODULE_5__.BFormGroup);
-Vue.component('b-form-checkbox-group', bootstrap_vue__WEBPACK_IMPORTED_MODULE_6__.BFormCheckboxGroup);
-Vue.component('b-form-checkbox', bootstrap_vue__WEBPACK_IMPORTED_MODULE_7__.BFormCheckbox);
-Vue.component('b-modal', bootstrap_vue__WEBPACK_IMPORTED_MODULE_8__.BModal);
-Vue.component('b-form-radio-group', bootstrap_vue__WEBPACK_IMPORTED_MODULE_9__.BFormRadioGroup);
-Vue.component('b-card', bootstrap_vue__WEBPACK_IMPORTED_MODULE_10__.BCard);
-Vue.component('b-card-header', bootstrap_vue__WEBPACK_IMPORTED_MODULE_11__.BCardHeader);
-Vue.component('b-card-body', bootstrap_vue__WEBPACK_IMPORTED_MODULE_12__.BCardBody); // const files = require.context('./', true, /\.vue$/i)
+Vue.component("b-button-close", bootstrap_vue__WEBPACK_IMPORTED_MODULE_2__.BButtonClose);
+Vue.component("b-button", bootstrap_vue__WEBPACK_IMPORTED_MODULE_3__.BButton);
+Vue.component("b-collapse", bootstrap_vue__WEBPACK_IMPORTED_MODULE_4__.BCollapse);
+Vue.component("b-form-group", bootstrap_vue__WEBPACK_IMPORTED_MODULE_5__.BFormGroup);
+Vue.component("b-form-checkbox-group", bootstrap_vue__WEBPACK_IMPORTED_MODULE_6__.BFormCheckboxGroup);
+Vue.component("b-form-checkbox", bootstrap_vue__WEBPACK_IMPORTED_MODULE_7__.BFormCheckbox);
+Vue.component("b-modal", bootstrap_vue__WEBPACK_IMPORTED_MODULE_8__.BModal);
+Vue.component("b-form-radio-group", bootstrap_vue__WEBPACK_IMPORTED_MODULE_9__.BFormRadioGroup);
+Vue.component("b-card", bootstrap_vue__WEBPACK_IMPORTED_MODULE_10__.BCard);
+Vue.component("b-card-header", bootstrap_vue__WEBPACK_IMPORTED_MODULE_11__.BCardHeader);
+Vue.component("b-card-body", bootstrap_vue__WEBPACK_IMPORTED_MODULE_12__.BCardBody); // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('navbar-component', __webpack_require__(/*! ./components/NavbarComponent.vue */ "./resources/js/components/NavbarComponent.vue").default);
-Vue.component('page-not-found-component', __webpack_require__(/*! ./components/PageNotFoundComponent.vue */ "./resources/js/components/PageNotFoundComponent.vue").default);
-Vue.directive('focus', {
+Vue.component("navbar-component", __webpack_require__(/*! ./components/NavbarComponent.vue */ "./resources/js/components/NavbarComponent.vue").default);
+Vue.component("page-not-found-component", __webpack_require__(/*! ./components/PageNotFoundComponent.vue */ "./resources/js/components/PageNotFoundComponent.vue").default);
+Vue.directive("focus", {
   inserted: function inserted(el) {
     el.focus();
   }
 });
-Vue.directive('b-toggle', bootstrap_vue__WEBPACK_IMPORTED_MODULE_13__.VBToggle);
+Vue.directive("b-toggle", bootstrap_vue__WEBPACK_IMPORTED_MODULE_13__.VBToggle);
 
 
 
@@ -6088,8 +6079,8 @@ __webpack_require__.r(__webpack_exports__);
         state.isUserLoading = true;
         return (0,_api_get_js__WEBPACK_IMPORTED_MODULE_1__.getUser)().then(function (response) {
           return new Promise(function (resolve) {
-            dispatch("getCartProducts");
-            commit("setUser", response.data);
+            dispatch('getCartProducts');
+            commit('setUser', response.data);
             resolve();
           });
         })["finally"](function () {
@@ -6099,39 +6090,39 @@ __webpack_require__.r(__webpack_exports__);
     },
     setUser: function setUser(_ref2, data) {
       var commit = _ref2.commit;
-      commit("setUser", data);
+      commit('setUser', data);
     },
     login: function login(_ref3, params) {
       var commit = _ref3.commit,
           dispatch = _ref3.dispatch;
       return (0,_api_auth_js__WEBPACK_IMPORTED_MODULE_0__.authLogin)(params).then(function (response) {
         return new Promise(function (resolve) {
-          dispatch("getCartProducts");
-          commit("setUser", response.data);
+          dispatch('getCartProducts');
+          commit('setUser', response.data);
           resolve();
         });
       });
     },
     logout: function logout(_ref4) {
       var commit = _ref4.commit;
-      commit("clearUser");
+      commit('clearUser');
     },
     getCartProducts: function getCartProducts(_ref5) {
       var commit = _ref5.commit;
       (0,_api_get_js__WEBPACK_IMPORTED_MODULE_1__.getCart)().then(function (data) {
-        commit("setCartProducts", data);
+        commit('setCartProducts', data);
       });
     },
     changeCartProductQuantity: function changeCartProductQuantity(_ref6, params) {
       var commit = _ref6.commit;
-      var method = params.quantityChange === "increase" ? "addProduct" : "deleteProduct";
+      var method = params.quantityChange === 'increase' ? 'addProduct' : 'deleteProduct';
       return (0,_api_edit_js__WEBPACK_IMPORTED_MODULE_2__.changeOrderProductsQuantity)(params, method).then(function (data) {
-        commit("setCartProducts", data);
+        commit('setCartProducts', data);
       });
     },
     confirmOrder: function confirmOrder(_ref7) {
       var commit = _ref7.commit;
-      commit("clearCart");
+      commit('clearCart');
     }
   },
   mutations: {
@@ -65986,6 +65977,7 @@ var render = function() {
               {
                 class:
                   "btn btn-outline-dark btn-" + _vm.size + " in-cart-buttons",
+                attrs: { id: "descreaseQuantityButton" },
                 on: {
                   click: function($event) {
                     return _vm.changeProductQuantity(_vm.productId, "descrease")
@@ -66000,7 +65992,7 @@ var render = function() {
               {
                 class:
                   "btn btn-outline-dark btn-" + _vm.size + " in-cart-buttons",
-                attrs: { disabled: "" }
+                attrs: { disabled: "", id: "quantityButton" }
               },
               [_vm._v("\n      " + _vm._s(_vm.quantity) + "\n    ")]
             ),
@@ -66029,6 +66021,7 @@ var render = function() {
               }
             ],
             class: "btn btn-primary btn-" + _vm.size + " in-cart-buttons",
+            attrs: { id: "addToCartButton" },
             on: {
               click: function($event) {
                 return _vm.changeProductQuantity(_vm.productId, "increase")
@@ -66043,7 +66036,7 @@ var render = function() {
               {
                 ref: "alert",
                 staticClass: "alert alert-info text-center",
-                attrs: { role: "alert" }
+                attrs: { id: "alert", role: "alert" }
               },
               [
                 _c("strong", [_vm._v('"' + _vm._s(_vm.title) + '"')]),
@@ -66642,7 +66635,6 @@ var render = function() {
         staticClass: "card-footer justify-content-between",
         attrs: {
           title: _vm.product.title,
-          "order-products": _vm.orderProducts,
           "product-id": _vm.product.id,
           size: "sm"
         },
@@ -66732,11 +66724,7 @@ var render = function() {
               return _c(_vm.currentComponent, {
                 key: product.id,
                 tag: "component",
-                attrs: {
-                  product: product,
-                  "order-products": _vm.orderProducts,
-                  authors: product.authors
-                }
+                attrs: { product: product, authors: product.authors }
               })
             }),
             1
@@ -66806,11 +66794,7 @@ var render = function() {
       _vm._v(" "),
       _c("addto-cart-button-component", {
         staticClass: "align-items-start",
-        attrs: {
-          title: _vm.product.title,
-          "product-id": _vm.product.id,
-          "order-products": _vm.orderProducts
-        },
+        attrs: { title: _vm.product.title, "product-id": _vm.product.id },
         scopedSlots: _vm._u([
           {
             key: "start",
@@ -66858,7 +66842,6 @@ var render = function() {
                     attrs: {
                       title: _vm.product.title,
                       "product-id": _vm.product.id,
-                      "order-products": _vm.orderProducts,
                       size: "md"
                     },
                     scopedSlots: _vm._u([

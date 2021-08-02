@@ -4,6 +4,7 @@
     <div v-if="quantity">
       <button
         @click="changeProductQuantity(productId, 'descrease')"
+        id="descreaseQuantityButton"
         :class="`btn btn-outline-dark btn-${size} in-cart-buttons`"
       >
         -
@@ -11,6 +12,7 @@
       <button
         :class="`btn btn-outline-dark btn-${size} in-cart-buttons`"
         disabled
+        id="quantityButton"
       >
         {{ quantity }}
       </button>
@@ -24,13 +26,13 @@
     <button
       v-else
       @click="changeProductQuantity(productId, 'increase')"
+      id="addToCartButton"
       :class="`btn btn-primary btn-${size} in-cart-buttons`"
       v-t="'label.addToCart'"
     ></button>
     <template v-if="showAlert">
-      <div ref="alert" class="alert alert-info text-center" role="alert">
-        <strong>"{{ title }}"</strong> ({{ alertsCount }})
-        {{ $t(`message.${change}`) }}
+      <div ref="alert" id="alert" class="alert alert-info text-center" role="alert">
+        <strong>"{{ title }}"</strong> ({{ alertsCount }}) {{ $t(`message.${change}`) }}
       </div>
     </template>
   </div>
@@ -52,11 +54,6 @@ export default {
       required: false,
       default: "sm",
     },
-    orderProducts: {
-      type: Array,
-      required: false,
-      default: () => [],
-    },
   },
 
   data() {
@@ -77,6 +74,9 @@ export default {
           return op.id === this.productId;
         })?.quantity ?? 0
       );
+    },
+    orderProducts() {
+      return this.$store.state.cartProducts;
     },
   },
 
@@ -105,7 +105,7 @@ export default {
         })
         .catch((error) => {
           if (error.response.status === 401) {
-            Vue.swal
+            this.$swal
               .fire({
                 icon: "error",
                 title: "Товар не добавлен",

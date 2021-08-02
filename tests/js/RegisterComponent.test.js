@@ -7,9 +7,9 @@ import flushPromises from "flush-promises";
 import axios from "axios";
 import Vuex from "vuex";
 
-const Vue = createLocalVue();
-Vue.use(Vuex);
-Vue.use(VueI18n);
+const localVue = createLocalVue();
+localVue.use(Vuex);
+localVue.use(VueI18n);
 
 const messages = {
   ru
@@ -21,20 +21,16 @@ const i18n = new VueI18n({
 
 const mockStore = { dispatch: jest.fn() };
 const mockRouter = { push: jest.fn() };
-// const actions = {
-//   setUser: jest.fn()
-// };
-const store = new Vuex.Store();
-// store.dispatch = jest.fn();
 
 const wrapper = shallowMount(RegisterComponent, {
-  Vue,
+  localVue,
   i18n,
   mocks: {
     $store: mockStore,
     $router: mockRouter
   }
 });
+
 const button = wrapper.find("#submitButton");
 const inputName = wrapper.find("#name");
 const inputEmail = wrapper.find("#email");
