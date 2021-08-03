@@ -124,4 +124,7 @@ strong {
 .list-group-item a:hover {
   cursor: pointer;
 }
+.text-danger {
+  font-size: 0.8rem;
+}
 </style>

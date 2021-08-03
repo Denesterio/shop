@@ -35,7 +35,7 @@
           <template v-slot:quantity>
             <strong>
               {{
-                `${commonQuantity} ${$tc("message.product", commonQuantity)}`
+                `${$tc("message.product", commonQuantity)}`
               }}
             </strong>
           </template>

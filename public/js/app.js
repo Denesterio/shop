@@ -1896,7 +1896,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     productId: {
@@ -4419,6 +4418,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _api_edit_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../api/edit.js */ "./resources/js/api/edit.js");
+/* harmony import */ var _validate_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../validate.js */ "./resources/js/validate.js");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -4479,6 +4491,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     field: {
@@ -4499,7 +4512,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      currentValue: this.user[this.field]
+      currentValue: this.user[this.field],
+      errors: []
     };
   },
   computed: {
@@ -4554,19 +4568,41 @@ __webpack_require__.r(__webpack_exports__);
       this.$emit("close-modal-window");
     },
     editUser: function editUser() {
-      var _this3 = this;
+      var _params,
+          _this3 = this;
 
-      var params = {
-        name: this.currentValue,
-        field: this.field
-      };
+      var params = (_params = {}, _defineProperty(_params, this.field, this.currentValue), _defineProperty(_params, "field", this.field), _params);
       (0,_api_edit_js__WEBPACK_IMPORTED_MODULE_0__.editUserField)(params).then(function (_ref) {
         var data = _ref.data;
 
         _this3.$store.commit("setUser", data);
 
         _this3.closeModal();
+      })["catch"](function (error) {
+        try {
+          _this3.errors = (0,_validate_js__WEBPACK_IMPORTED_MODULE_1__.getErrors)(error);
+        } catch (err) {
+          Vue.swal.fire({
+            icon: "error",
+            title: "Ошибка",
+            text: _this3.$t("error.сreateError", {
+              msg: "изменить данные"
+            })
+          });
+        }
       });
+    },
+    isFieldInvalid: function isFieldInvalid(field) {
+      return this.errors.some(function (error) {
+        return error.isFieldInvalid(field);
+      });
+    },
+    getErrorMessage: function getErrorMessage(field) {
+      var _this$errors$find;
+
+      return (_this$errors$find = this.errors.find(function (error) {
+        return error.getField() === field;
+      })) === null || _this$errors$find === void 0 ? void 0 : _this$errors$find.getMessage();
     }
   }
 });
@@ -4880,6 +4916,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _api_get_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../api/get.js */ "./resources/js/api/get.js");
 /* harmony import */ var _svg_SvgLoadingComponent_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../svg/SvgLoadingComponent.vue */ "./resources/js/components/svg/SvgLoadingComponent.vue");
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5585,8 +5628,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "changeOrderProductsQuantity": () => (/* binding */ changeOrderProductsQuantity),
 /* harmony export */   "editUserField": () => (/* binding */ editUserField)
 /* harmony export */ });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+
+
 var changeOrderProductsQuantity = function changeOrderProductsQuantity(params, method) {
-  return axios.post("/api/order/".concat(method), params).then(function (_ref) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default().post("/api/order/".concat(method), params).then(function (_ref) {
     var data = _ref.data;
     data.forEach(function (product) {
       product.quantity = product.pivot.quantity;
@@ -5597,7 +5644,7 @@ var changeOrderProductsQuantity = function changeOrderProductsQuantity(params, m
 };
 
 var editUserField = function editUserField(params) {
-  return axios.post("/api/user/edit", params);
+  return axios__WEBPACK_IMPORTED_MODULE_0___default().post('/api/user/edit', params);
 };
 
 
@@ -5626,78 +5673,82 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "getCart": () => (/* binding */ getCart),
 /* harmony export */   "getUser": () => (/* binding */ getUser)
 /* harmony export */ });
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+
+
 var getCategories = function getCategories() {
-  return axios.get("/api/categories/get").then(function (_ref) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/categories/get').then(function (_ref) {
     var data = _ref.data;
     return data;
   });
 };
 
 var getSubcategories = function getSubcategories() {
-  return axios.get("/api/subcategories/get").then(function (_ref2) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/subcategories/get').then(function (_ref2) {
     var data = _ref2.data;
     return data;
   });
 };
 
 var getMenu = function getMenu() {
-  return axios.get("/api/categories/menu").then(function (_ref3) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/categories/menu').then(function (_ref3) {
     var data = _ref3.data;
     return data;
   });
 };
 
 var getAuthors = function getAuthors() {
-  return axios.get("/api/authors/get").then(function (_ref4) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/authors/get').then(function (_ref4) {
     var data = _ref4.data;
     return data;
   });
 };
 
 var getTags = function getTags() {
-  return axios.get("/api/tags/get").then(function (_ref5) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/tags/get').then(function (_ref5) {
     var data = _ref5.data;
     return data;
   });
 };
 
 var getProducts = function getProducts() {
-  return axios.get("/api/products/get").then(function (_ref6) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/products/get').then(function (_ref6) {
     var data = _ref6.data;
     return data;
   });
 };
 
 var getOrders = function getOrders() {
-  return axios.get("/api/order/get").then(function (_ref7) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/order/get').then(function (_ref7) {
     var data = _ref7.data;
     return data;
   });
 };
 
 var getProductsByType = function getProductsByType(type, id) {
-  return axios.get("/api/".concat(type, "/").concat(id, "/products")).then(function (_ref8) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/".concat(type, "/").concat(id, "/products")).then(function (_ref8) {
     var data = _ref8.data;
     return data;
   });
 };
 
 var getNewProducts = function getNewProducts() {
-  return axios.get("/api/products/carousel").then(function (_ref9) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/products/carousel').then(function (_ref9) {
     var data = _ref9.data;
     return data;
   });
 };
 
 var getOrderProducts = function getOrderProducts(orderId) {
-  return axios.get("/api/order/".concat(orderId, "/products")).then(function (_ref10) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/order/".concat(orderId, "/products")).then(function (_ref10) {
     var data = _ref10.data;
     return data;
   });
 };
 
 var getCart = function getCart() {
-  return axios.get("/api/order/cart").then(function (_ref11) {
+  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/order/cart').then(function (_ref11) {
     var data = _ref11.data;
     data.forEach(function (product) {
       product.quantity = product.pivot.quantity;
@@ -5708,7 +5759,7 @@ var getCart = function getCart() {
 };
 
 var getUser = function getUser() {
-  return axios.get('/api/auth/getUser');
+  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/auth/getUser');
 };
 
 
@@ -6248,70 +6299,70 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   message: {
-    inCart: "Всего в корзине {quantity}",
-    inOrder: "Всего в заказе",
-    product: "{n} товаров | {n} товар | {n} товара | {n} товаров",
-    profileLink: "Личный кабинет",
-    noComfirmOrders: "у вас нет завершенных заказов",
-    increase: "добавлена в корзину",
-    descrease: "удалена из корзины",
-    noProdCart: "В корзине отсутствуют продукты",
-    sumProducts: "на сумму {sum} руб.",
-    noProductsInCategory: "В данной категории товаров пока нет, но они обязательно появятся"
+    inCart: 'Всего в корзине {quantity}',
+    inOrder: 'Всего в заказе {quantity}',
+    sumProducts: 'на сумму {sum} руб.',
+    product: '{n} товаров | {n} товар | {n} товара | {n} товаров',
+    profileLink: 'Личный кабинет',
+    noComfirmOrders: 'у вас нет завершенных заказов',
+    increase: 'добавлена в корзину',
+    descrease: 'удалена из корзины',
+    noProdCart: 'В корзине отсутствуют продукты',
+    noProductsInCategory: 'В данной категории товаров пока нет, но они обязательно появятся'
   },
   link: {
-    profile: "Личный кабинет",
-    toCategories: "на страницу добаления категорий",
-    toSubcategories: "на страницу добаления разделов",
-    toProducts: "на страницу добавления товаров",
-    toTags: "на страницу добаления тэгов",
-    toAuthors: "на страницу добаления авторов"
+    profile: 'Личный кабинет',
+    toCategories: 'на страницу добаления категорий',
+    toSubcategories: 'на страницу добаления разделов',
+    toProducts: 'на страницу добавления товаров',
+    toTags: 'на страницу добаления тэгов',
+    toAuthors: 'на страницу добаления авторов'
   },
   label: {
-    save: "Сохранить",
-    "delete": "Удалить",
-    change: "Изменить",
-    all: "все",
-    category: "категория",
-    subcategory: "раздел",
-    tag: "тэг",
-    author: "автор",
-    add: "добавить",
-    categoryAdd: "@.capitalize:label.add категорию",
-    productAdd: "@.capitalize:label.add товар",
-    tagAdd: "@.capitalize:label.add тэг",
-    subacategoryAdd: "@.capitalize:label.add раздел",
-    addToCart: "купить",
-    pictureUpload: "Загрузить изображение товара",
-    subcatName: "Имя нового раздела",
-    newCategoryName: "Имя новой категории",
-    newCategoryDesc: "Описание новой категории",
-    slug: "Заполнитель в строке алреса",
-    clickEdit: "кликните по полю для редактирования",
-    login: "Имя",
-    email: "Электронный адрес",
-    password: "Пароль",
-    passwordConfirm: "Подтвердите @.lower:label.password",
-    registerDate: "Дата регистрации",
-    register: "Регистрация",
-    auth: "Авторизация",
-    orderConfirm: "Оформить заказ",
-    orderNum: "Заказ №{num}"
+    save: 'Сохранить',
+    "delete": 'Удалить',
+    change: 'Изменить',
+    all: 'все',
+    category: 'категория',
+    subcategory: 'раздел',
+    tag: 'тэг',
+    author: 'автор',
+    add: 'добавить',
+    categoryAdd: '@.capitalize:label.add категорию',
+    productAdd: '@.capitalize:label.add товар',
+    tagAdd: '@.capitalize:label.add тэг',
+    subacategoryAdd: '@.capitalize:label.add раздел',
+    addToCart: 'купить',
+    pictureUpload: 'Загрузить изображение товара',
+    subcatName: 'Имя нового раздела',
+    newCategoryName: 'Имя новой категории',
+    newCategoryDesc: 'Описание новой категории',
+    slug: 'Заполнитель в строке алреса',
+    clickEdit: 'кликните по полю для редактирования',
+    login: 'Имя',
+    email: 'Электронный адрес',
+    password: 'Пароль',
+    passwordConfirm: 'Подтвердите @.lower:label.password',
+    registerDate: 'Дата регистрации',
+    register: 'Регистрация',
+    auth: 'Авторизация',
+    orderConfirm: 'Оформить заказ',
+    orderNum: 'Заказ №{num}'
   },
   error: {
-    symbol: "{n} символов | {n} символа | {n} символов | {n} символов",
-    required: "Поле не должно быть пустым",
-    min: "Значение должно быть не менее",
-    positive: "Значение должно быть положительным числом больше 0",
-    minAuthor: "Должен быть хотя бы один автор",
-    email: "Поле должно содержать правильный электронный адрес",
-    сreateError: "Не удалось {msg} из-за проблем с соединением или на сервере"
+    symbol: '{n} символов | {n} символа | {n} символов | {n} символов',
+    required: 'Поле не должно быть пустым',
+    min: 'Значение должно быть не менее',
+    positive: 'Значение должно быть положительным числом больше 0',
+    minAuthor: 'Должен быть хотя бы один автор',
+    email: 'Поле должно содержать правильный электронный адрес',
+    сreateError: 'Не удалось {msg} из-за проблем с соединением или на сервере'
   },
   table: {
-    title: "Наименование товара",
-    quantity: "Количество",
-    sum: "Сумма",
-    price: "Цена"
+    title: 'Наименование товара',
+    quantity: 'Количество',
+    sum: 'Сумма',
+    price: 'Цена'
   }
 });
 
@@ -20400,7 +20451,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\nstrong[data-v-82ba1d52] {\n  font-size: 1rem;\n}\n.list-group-item a[data-v-82ba1d52]:hover {\n  cursor: pointer;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\nstrong[data-v-82ba1d52] {\n  font-size: 1rem;\n}\n.list-group-item a[data-v-82ba1d52]:hover {\n  cursor: pointer;\n}\n.text-danger[data-v-82ba1d52] {\n  font-size: 0.8rem;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -66043,7 +66094,7 @@ var render = function() {
                 _vm._v(
                   " (" +
                     _vm._s(_vm.alertsCount) +
-                    ")\n      " +
+                    ") " +
                     _vm._s(_vm.$t("message." + _vm.change)) +
                     "\n    "
                 )
@@ -66198,8 +66249,7 @@ var render = function() {
                               _vm._v(
                                 "\n            " +
                                   _vm._s(
-                                    _vm.commonQuantity +
-                                      " " +
+                                    "" +
                                       _vm.$tc(
                                         "message.product",
                                         _vm.commonQuantity
@@ -66215,7 +66265,7 @@ var render = function() {
                     ],
                     null,
                     false,
-                    2373181279
+                    2346093227
                   )
                 }),
                 _vm._v(" "),
@@ -68913,27 +68963,38 @@ var render = function() {
               ),
               _vm._v(" "),
               _c("section", { staticClass: "modal-body" }, [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.currentValue,
-                      expression: "currentValue"
-                    }
-                  ],
-                  staticClass: "form-control",
-                  attrs: { type: "text" },
-                  domProps: { value: _vm.currentValue },
-                  on: {
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
+                _c("div", { staticClass: "form-group" }, [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.currentValue,
+                        expression: "currentValue"
                       }
-                      _vm.currentValue = $event.target.value
+                    ],
+                    staticClass: "form-control",
+                    class: { "is-invalid": _vm.isFieldInvalid(_vm.field) },
+                    attrs: { type: "text" },
+                    domProps: { value: _vm.currentValue },
+                    on: {
+                      input: function($event) {
+                        if ($event.target.composing) {
+                          return
+                        }
+                        _vm.currentValue = $event.target.value
+                      }
                     }
-                  }
-                })
+                  }),
+                  _vm._v(" "),
+                  _c("p", { staticClass: "invalid-feedback" }, [
+                    _vm._v(
+                      "\n              " +
+                        _vm._s(_vm.getErrorMessage(_vm.field)) +
+                        "\n            "
+                    )
+                  ])
+                ])
               ]),
               _vm._v(" "),
               _c(
@@ -69460,27 +69521,50 @@ var render = function() {
               ]
             ),
             _vm._v(" "),
-            _c("p", [
-              _vm._v(
-                "\n      " + _vm._s(_vm.$t("message.inOrder")) + "\n      "
-              ),
-              _c("strong", [
-                _vm._v(
-                  "\n        " +
-                    _vm._s(
-                      _vm.commonQuantity +
-                        " " +
-                        _vm.$tc("message.product", _vm.commonQuantity)
-                    ) +
-                    "\n      "
-                )
+            _c("i18n", {
+              attrs: { path: "message.inOrder", tag: "p" },
+              scopedSlots: _vm._u([
+                {
+                  key: "quantity",
+                  fn: function() {
+                    return [
+                      _c("strong", [
+                        _vm._v(
+                          "\n            " +
+                            _vm._s(
+                              "" +
+                                _vm.$tc("message.product", _vm.commonQuantity)
+                            ) +
+                            "\n          "
+                        )
+                      ])
+                    ]
+                  },
+                  proxy: true
+                }
               ])
-            ]),
+            }),
             _vm._v(" "),
-            _c("p", [
-              _vm._v("\n      на сумму: "),
-              _c("strong", [_vm._v(_vm._s(_vm.commonPrice) + " руб.")])
-            ])
+            _c("i18n", {
+              attrs: { path: "message.sumProducts", tag: "p" },
+              scopedSlots: _vm._u([
+                {
+                  key: "sum",
+                  fn: function() {
+                    return [
+                      _c("strong", [
+                        _vm._v(
+                          "\n            " +
+                            _vm._s(_vm.commonPrice) +
+                            "\n          "
+                        )
+                      ])
+                    ]
+                  },
+                  proxy: true
+                }
+              ])
+            })
           ]
     ],
     2

@@ -23,15 +23,22 @@
           </tr>
         </tbody>
       </table>
-      <p>
-        {{ $t("message.inOrder") }}
-        <strong>
-          {{ commonQuantity + " " + $tc("message.product", commonQuantity) }}
-        </strong>
-      </p>
-      <p>
-        на сумму: <strong>{{ commonPrice }} руб.</strong>
-      </p>
+        <i18n path="message.inOrder" tag="p">
+          <template v-slot:quantity>
+            <strong>
+              {{
+                `${$tc("message.product", commonQuantity)}`
+              }}
+            </strong>
+          </template>
+        </i18n>
+        <i18n path="message.sumProducts" tag="p">
+          <template v-slot:sum>
+            <strong>
+              {{ commonPrice }}
+            </strong>
+          </template>
+        </i18n>
     </template>
   </div>
 </template>

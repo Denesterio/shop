@@ -40,7 +40,17 @@
             />
           </div>
           <section class="modal-body">
-            <input type="text" v-model="currentValue" class="form-control" />
+            <div class="form-group">
+              <input
+                type="text"
+                v-model="currentValue"
+                class="form-control"
+                :class="{ 'is-invalid': isFieldInvalid(field) }"
+              />
+              <p class="invalid-feedback">
+                {{ getErrorMessage(field) }}
+              </p>
+            </div>
           </section>
           <div class="modal-footer">
             <slot name="footer" :editUser="editUser"></slot>
@@ -59,6 +69,7 @@
 
 <script>
 import { editUserField } from "../../api/edit.js";
+import { getErrors } from "../../validate.js";
 export default {
   props: {
     field: {
@@ -79,6 +90,7 @@ export default {
   data() {
     return {
       currentValue: this.user[this.field],
+      errors: [],
     };
   },
 
@@ -134,15 +146,38 @@ export default {
     closeModal() {
       this.$emit("close-modal-window");
     },
+
     editUser() {
       const params = {
-        name: this.currentValue,
+        [this.field]: this.currentValue,
         field: this.field,
       };
-      editUserField(params).then(({ data }) => {
-        this.$store.commit("setUser", data);
-        this.closeModal();
-      });
+      editUserField(params)
+        .then(({ data }) => {
+          this.$store.commit("setUser", data);
+          this.closeModal();
+        })
+        .catch((error) => {
+          try {
+            this.errors = getErrors(error);
+          } catch (err) {
+            Vue.swal.fire({
+              icon: "error",
+              title: "Ошибка",
+              text: this.$t("error.сreateError", { msg: "изменить данные" }),
+            });
+          }
+        });
+    },
+
+    isFieldInvalid(field) {
+      return this.errors.some((error) => error.isFieldInvalid(field));
+    },
+
+    getErrorMessage(field) {
+      return this.errors
+        .find((error) => error.getField() === field)
+        ?.getMessage();
     },
   },
 };
