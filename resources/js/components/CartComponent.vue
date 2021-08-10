@@ -34,9 +34,7 @@
         <i18n path="message.inCart" tag="p">
           <template v-slot:quantity>
             <strong>
-              {{
-                `${$tc("message.product", commonQuantity)}`
-              }}
+              {{ `${$tc("message.product", commonQuantity)}` }}
             </strong>
           </template>
         </i18n>
@@ -117,3 +115,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+td {
+  min-width: 170px;
+}
+</style>
