@@ -44,6 +44,7 @@ Route::prefix('categories')->group(function () {
 Route::prefix('products')->group(function () {
     Route::get('/get', [ProductController::class, 'get']);
     Route::get('/carousel', [ProductController::class, 'carousel'])->name('carousel');
+    Route::get('/{productId}', [ProductController::class, 'getProduct']);
 });
 
 Route::prefix('subcategories')->group(function () {

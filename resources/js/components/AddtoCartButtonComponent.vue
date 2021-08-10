@@ -31,8 +31,14 @@
       v-t="'label.addToCart'"
     ></button>
     <template v-if="showAlert">
-      <div ref="alert" id="alert" class="alert alert-info text-center" role="alert">
-        <strong>"{{ title }}"</strong> ({{ alertsCount }}) {{ $t(`message.${change}`) }}
+      <div
+        ref="alert"
+        id="alert"
+        class="alert alert-info text-center"
+        role="alert"
+      >
+        <strong>"{{ title }}"</strong> ({{ alertsCount }})
+        {{ $t(`message.${change}`) }}
       </div>
     </template>
   </div>

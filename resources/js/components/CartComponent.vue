@@ -16,7 +16,7 @@
             <td>
               {{ product.title }}
             </td>
-            <td>{{ product.price }} руб.</td>
+            <td>{{ product.price }}&nbsp;руб.</td>
             <td>
               <addto-cart-button-component
                 :product-id="product.id"
@@ -26,7 +26,7 @@
                 class="justify-content-center"
               />
             </td>
-            <td>{{ product.quantity * product.price }} руб.</td>
+            <td>{{ product.quantity * product.price }}&nbsp;руб.</td>
           </tr>
         </tbody>
       </table>
@@ -34,9 +34,7 @@
         <i18n path="message.inCart" tag="p">
           <template v-slot:quantity>
             <strong>
-              {{
-                `${$tc("message.product", commonQuantity)}`
-              }}
+              {{ `${$tc("message.product", commonQuantity)}` }}
             </strong>
           </template>
         </i18n>
@@ -117,3 +115,9 @@ export default {
   },
 };
 </script>
+
+<style>
+td {
+  min-width: 170px;
+}
+</style>

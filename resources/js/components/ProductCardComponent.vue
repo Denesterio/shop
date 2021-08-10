@@ -8,7 +8,13 @@
       />
     </div>
     <div class="card-body p-2">
-      <h5 class="card-title my-2">{{ product.title }}</h5>
+      <h5 class="card-title my-2">
+        <router-link
+          class="text-reset"
+          :to="{ name: 'productPage', params: { id: product.id } }"
+          >{{ product.title }}</router-link
+        >
+      </h5>
       <p
         class="card-text authors font-italic"
         v-html="formattedAuthorsHtml.join(' / ')"
@@ -43,11 +49,6 @@ export default {
       required: false,
       default: () => [],
     },
-    // orderProducts: {
-    //   type: Array,
-    //   required: false,
-    //   default: () => [],
-    // },
   },
 
   components: { AddtoCartButtonComponent },

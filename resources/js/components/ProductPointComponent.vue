@@ -1,9 +1,9 @@
 <template>
   <li class="col-sm-12">
     <p class="point font-weight-bold mb-1 mt-3">
-      <a class="text-reset" :href="`/products/${product.id}`">{{
+      <router-link :to="{ name: 'productPage', params: { id: product.id } }">{{
         product.title
-      }}</a>
+      }}</router-link>
       |
       <span
         class="font-italic font-weight-light"
@@ -68,11 +68,6 @@ export default {
       required: false,
       default: () => [],
     },
-    // orderProducts: {
-    //   type: Array,
-    //   required: false,
-    //   default: () => [],
-    // },
   },
 
   components: { AddtoCartButtonComponent },

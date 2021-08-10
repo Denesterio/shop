@@ -15,6 +15,12 @@ class ProductController extends Controller
         return Product::get();
     }
 
+    public function getProduct($id)
+    {
+        $book = Product::find($id)->first();
+        return $book;
+    }
+
     public function create(Request $request)
     {
         [

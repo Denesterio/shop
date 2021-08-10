@@ -9,7 +9,15 @@ const getSubcategories = () => {
 };
 
 const getMenu = () => {
-  return axios.get('/api/categories/menu').then(({ data }) => data);
+  const menu = sessionStorage.getItem('menu');
+  if (menu) {
+    const parsed = JSON.parse(menu);
+    return new Promise(resolve => resolve(parsed));
+  }
+  return axios.get('/api/categories/menu').then(({ data }) => {
+    sessionStorage.setItem('menu', JSON.stringify(data));
+    return data;
+  });
 };
 
 const getAuthors = () => {
@@ -33,7 +41,15 @@ const getProductsByType = (type, id) => {
 };
 
 const getNewProducts = () => {
-  return axios.get('/api/products/carousel').then(({ data }) => data);
+  const layoutCarousel = sessionStorage.getItem('layoutCarousel');
+  if (layoutCarousel) {
+    const parsed = JSON.parse(layoutCarousel);
+    return new Promise(resolve => resolve(parsed));
+  }
+  return axios.get('/api/products/carousel').then(({ data }) => {
+    sessionStorage.setItem('layoutCarousel', JSON.stringify(data));
+    return data;
+  });
 };
 
 const getOrderProducts = orderId => {
@@ -54,6 +70,10 @@ const getUser = () => {
   return axios.get('/api/auth/getUser');
 };
 
+const getProduct = productId => {
+  return axios.get(`/api/products/${productId}`).then(({ data }) => data);
+};
+
 export {
   getCategories,
   getTags,
@@ -66,5 +86,6 @@ export {
   getNewProducts,
   getOrderProducts,
   getCart,
-  getUser
+  getUser,
+  getProduct
 };
