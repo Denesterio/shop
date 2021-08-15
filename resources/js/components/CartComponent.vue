@@ -116,7 +116,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 td {
   min-width: 170px;
 }

@@ -179,6 +179,9 @@ export default {
 </script>
 
 <style scoped>
+a:hover {
+  color: #3490dc;
+}
 .dropdown-item {
   color: rgba(0, 0, 0, 0.5);
 }

@@ -131,7 +131,6 @@ export default {
 
 <style scoped>
 .image {
-  width: 65%;
   max-width: 150px;
   height: 200px;
   margin: 5px auto;
@@ -146,7 +145,7 @@ export default {
 .card-body {
   margin: 5px;
   padding: 5px;
-  height: 105px;
+  height: 125px;
 }
 .card-body p {
   margin-bottom: 5px;
