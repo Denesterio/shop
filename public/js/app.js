@@ -2393,12 +2393,7 @@ __webpack_require__.r(__webpack_exports__);
       "default": function _default() {
         return [];
       }
-    } // orderProducts: {
-    //   type: Array,
-    //   required: false,
-    //   default: () => [],
-    // },
-
+    }
   },
   components: {
     AddtoCartButtonComponent: _AddtoCartButtonComponent_vue__WEBPACK_IMPORTED_MODULE_0__.default
@@ -5283,26 +5278,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
 //
 //
 //
@@ -5373,19 +5348,14 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     }
   },
   computed: {
-    currentPage: function currentPage() {
-      var path = this.$route.path;
-
-      var _path$split$reverse = path.split("/").reverse(),
-          _path$split$reverse2 = _slicedToArray(_path$split$reverse, 1),
-          currentPage = _path$split$reverse2[0];
-
-      return currentPage || String(Math.min.apply(Math, _toConsumableArray(this.categories.map(function (cat) {
-        return cat.id;
-      }))));
+    currentPageId: function currentPageId() {
+      return this.$route.params.id;
     },
     isCategoryPage: function isCategoryPage() {
-      return !Number.isNaN(parseInt(this.currentPage));
+      return this.$route.name === "categoryProducts";
+    },
+    isSubcategoryPage: function isSubcategoryPage() {
+      return this.$route.name === "subcategoryProducts";
     }
   },
   methods: {
@@ -5393,18 +5363,19 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       var _this = this;
 
       if (this.isCategoryPage) {
-        return this.currentPage === String(id);
+        return parseInt(this.currentPageId) === id;
       }
 
-      var currentSubcategories = this.subcategories.filter(function (sub) {
-        return sub["category_id"] === id;
-      });
-      return !!currentSubcategories.find(function (sub) {
-        return sub.slug === _this.currentPage;
-      });
+      if (this.isSubcategoryPage) {
+        return this.subcategories.find(function (sub) {
+          return sub.slug === _this.currentPageId;
+        })["category_id"] === id;
+      }
+
+      return id === this.categories[0].id;
     },
     isActive: function isActive(slug) {
-      return this.currentPage === slug;
+      return this.currentPageId === slug;
     }
   }
 });
@@ -20209,7 +20180,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.dropdown-item[data-v-485090b2] {\n  color: rgba(0, 0, 0, 0.5);\n}\n.dropdown-item[data-v-485090b2]:hover {\n  color: rgba(0, 0, 0, 0.7);\n}\n.nav-link[data-v-485090b2] {\n  color: #5c5c5c;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\na[data-v-485090b2]:hover {\n  color: #3490dc;\n}\n.dropdown-item[data-v-485090b2] {\n  color: rgba(0, 0, 0, 0.5);\n}\n.dropdown-item[data-v-485090b2]:hover {\n  color: rgba(0, 0, 0, 0.7);\n}\n.nav-link[data-v-485090b2] {\n  color: #5c5c5c;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -20497,7 +20468,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.image[data-v-67b10b96] {\n  width: 65%;\n  max-width: 150px;\n  height: 200px;\n  margin: 5px auto;\n}\n.carousel[data-v-67b10b96] {\n  margin: 20px auto;\n  width: 95%;\n}\n.card[data-v-67b10b96] {\n  border-radius: 0px;\n}\n.card-body[data-v-67b10b96] {\n  margin: 5px;\n  padding: 5px;\n  height: 105px;\n}\n.card-body p[data-v-67b10b96] {\n  margin-bottom: 5px;\n  font-size: 0.8rem;\n}\n.title a[data-v-67b10b96] {\n  font-size: 0.9rem;\n}\n.title a[data-v-67b10b96]:hover {\n  cursor: pointer;\n}\n.carousel-control-prev[data-v-67b10b96],\n.carousel-control-next[data-v-67b10b96] {\n  height: 101%;\n  width: 25px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.image[data-v-67b10b96] {\n  max-width: 150px;\n  height: 200px;\n  margin: 5px auto;\n}\n.carousel[data-v-67b10b96] {\n  margin: 20px auto;\n  width: 95%;\n}\n.card[data-v-67b10b96] {\n  border-radius: 0px;\n}\n.card-body[data-v-67b10b96] {\n  margin: 5px;\n  padding: 5px;\n  height: 125px;\n}\n.card-body p[data-v-67b10b96] {\n  margin-bottom: 5px;\n  font-size: 0.8rem;\n}\n.title a[data-v-67b10b96] {\n  font-size: 0.9rem;\n}\n.title a[data-v-67b10b96]:hover {\n  cursor: pointer;\n}\n.carousel-control-prev[data-v-67b10b96],\n.carousel-control-next[data-v-67b10b96] {\n  height: 101%;\n  width: 25px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

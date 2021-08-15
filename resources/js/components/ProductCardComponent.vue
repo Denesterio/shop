@@ -43,11 +43,6 @@ export default {
       required: false,
       default: () => [],
     },
-    // orderProducts: {
-    //   type: Array,
-    //   required: false,
-    //   default: () => [],
-    // },
   },
 
   components: { AddtoCartButtonComponent },

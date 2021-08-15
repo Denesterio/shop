@@ -70,33 +70,34 @@ export default {
   },
 
   computed: {
-    currentPage() {
-      const path = this.$route.path;
-      const [currentPage] = path.split("/").reverse();
-      return (
-        currentPage || String(Math.min(...this.categories.map((cat) => cat.id)))
-      );
+    currentPageId() {
+      return this.$route.params.id;
     },
     isCategoryPage() {
-      return !Number.isNaN(parseInt(this.currentPage));
+      return this.$route.name === "categoryProducts";
+    },
+    isSubcategoryPage() {
+      return this.$route.name === "subcategoryProducts";
     },
   },
 
   methods: {
     isOpen(id) {
       if (this.isCategoryPage) {
-        return this.currentPage === String(id);
+        return parseInt(this.currentPageId) === id;
       }
-      const currentSubcategories = this.subcategories.filter(
-        (sub) => sub["category_id"] === id
-      );
-      return !!currentSubcategories.find(
-        (sub) => sub.slug === this.currentPage
-      );
+      if (this.isSubcategoryPage) {
+        return (
+          this.subcategories.find((sub) => sub.slug === this.currentPageId)[
+            "category_id"
+          ] === id
+        );
+      }
+      return id === this.categories[0].id;
     },
 
     isActive(slug) {
-      return this.currentPage === slug;
+      return this.currentPageId === slug;
     },
   },
 };
