@@ -1,36 +1,50 @@
-const deleteSubcategory = (subcategoryId) => {
+const deleteSubcategory = subcategoryId => {
   return axios.post('/api/admin/subcategories/delete', {
     id: subcategoryId,
-    _method: 'DELETE',
+    _method: 'DELETE'
   });
 };
 
-const deleteCategory = (categoryId) => {
+const deleteCategory = categoryId => {
   return axios.post('/api/admin/categories/delete', {
     id: categoryId,
-    _method: 'DELETE',
+    _method: 'DELETE'
   });
 };
 
-const deleteProduct = (productId) => {
+const deleteProduct = productId => {
   return axios.post('/api/admin/products/delete', {
     id: productId,
-    _method: 'DELETE',
+    _method: 'DELETE'
   });
 };
 
-const deleteTag = (tagId) => {
+const deleteTag = tagId => {
   return axios.post('/api/admin/tags/delete', {
     id: tagId,
-    _method: 'DELETE',
+    _method: 'DELETE'
   });
 };
 
-const deleteAuthor = (authorId) => {
+const deleteAuthor = authorId => {
   return axios.post('/api/admin/authors/delete', {
     id: authorId,
-    _method: 'DELETE',
+    _method: 'DELETE'
   });
 };
 
-export { deleteSubcategory, deleteCategory, deleteProduct, deleteTag, deleteAuthor };
+const deleteCover = coverId => {
+  return axios.post('/api/admin/covers/delete', {
+    id: coverId,
+    _method: 'DELETE'
+  });
+};
+
+export {
+  deleteSubcategory,
+  deleteCategory,
+  deleteProduct,
+  deleteTag,
+  deleteAuthor,
+  deleteCover
+};

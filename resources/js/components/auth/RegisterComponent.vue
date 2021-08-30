@@ -28,11 +28,7 @@
                     autofocus
                   />
 
-                  <p
-                    id="nameFeedback"
-                    class="invalid-feedback"
-                    role="alert"
-                  >
+                  <p id="nameFeedback" class="invalid-feedback" role="alert">
                     {{ getErrorMessage("name") }}
                   </p>
                 </div>
@@ -57,11 +53,7 @@
                     autocomplete="email"
                   />
 
-                  <p
-                    class="invalid-feedback"
-                    role="alert"
-                    id="emailFeedback"
-                  >
+                  <p class="invalid-feedback" role="alert" id="emailFeedback">
                     {{ getErrorMessage("email") }}
                   </p>
                 </div>
@@ -87,7 +79,11 @@
                     autocomplete="new-password"
                   />
 
-                  <p class="invalid-feedback" role="alert" id="passwordFeedback">
+                  <p
+                    class="invalid-feedback"
+                    role="alert"
+                    id="passwordFeedback"
+                  >
                     {{ getErrorMessage("password") }}
                   </p>
                 </div>
@@ -111,6 +107,7 @@
                     name="password_confirmation"
                     required
                     autocomplete="new-password"
+                    aria-label="Подтверждение пароля"
                   />
                   <p
                     class="invalid-feedback"
@@ -146,7 +143,7 @@
 <script>
 import { authRegister } from "../../api/auth.js";
 import { registrationSchema, getErrors } from "../../validate.js";
-import CreateError from "../../createError.js";
+import CreateError from "../../services/createError.js";
 export default {
   data() {
     return {
@@ -218,7 +215,8 @@ export default {
           }
         })
         .finally(() => {
-          this.processing = false});
+          this.processing = false;
+        });
     },
 
     isFieldInvalid(field) {

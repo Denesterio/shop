@@ -20,6 +20,8 @@ class CreateProductsTable extends Migration
             $table->text('description');
             $table->string('subcategory_slug');
             $table->string('picture');
+            $table->smallInteger('year')->unsigned();
+            $table->smallInteger('pages')->unsigned();
             $table->timestamps();
             $table
                 ->foreign('subcategory_slug')

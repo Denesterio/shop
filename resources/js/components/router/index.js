@@ -18,6 +18,7 @@ import TagsComponent from '../admin/TagsComponent.vue';
 import AuthorsListComponent from '../admin/AuthorsListComponent.vue';
 import PageNotFoundComponent from '../PageNotFoundComponent.vue';
 import ProductPageComponent from '../ProductPageComponent.vue';
+import CoversComponent from '../admin/CoversComponent.vue';
 
 const routes = [
   {
@@ -42,6 +43,11 @@ const routes = [
       {
         path: '/authors/:id',
         name: 'authorProducts',
+        component: ProductListComponent
+      },
+      {
+        path: '/tags/:id',
+        name: 'tagProducts',
         component: ProductListComponent
       }
     ]
@@ -100,6 +106,14 @@ const routes = [
     path: '/admin/tags',
     name: 'tags',
     component: TagsComponent,
+    meta: {
+      adminOnly: true
+    }
+  },
+  {
+    path: '/admin/covers',
+    name: 'covers',
+    component: CoversComponent,
     meta: {
       adminOnly: true
     }

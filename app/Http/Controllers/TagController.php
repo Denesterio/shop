@@ -30,4 +30,12 @@ class TagController extends Controller
         $id = $request['id'];
         Tag::find($id)->delete();
     }
+
+    public function showProducts($id)
+    {
+        $tag = Tag::where('id', $id)->first();
+        $products = $tag->products()->with('authors')->get();
+
+        return $products;
+    }
 }

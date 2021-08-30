@@ -5,10 +5,10 @@
       <table class="table mt-4 text-center align-middle">
         <thead class="table-light">
           <tr>
-            <th v-t="'table.title'"></th>
-            <th v-t="'table.price'"></th>
-            <th v-t="'table.quantity'"></th>
-            <th v-t="'table.sum'"></th>
+            <th v-t="'keys.title'"></th>
+            <th v-t="'keys.price'"></th>
+            <th v-t="'keys.quantity'"></th>
+            <th v-t="'keys.sum'"></th>
           </tr>
         </thead>
         <tbody>

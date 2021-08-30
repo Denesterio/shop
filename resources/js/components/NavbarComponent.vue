@@ -8,10 +8,13 @@
     "
   >
     <div class="container">
-      <router-link class="logo-text" :to="{ name: 'welcome' }"
+      <router-link
+        class="logo-text"
+        :to="{ name: 'welcome' }"
+        aria-label="на главную"
         >BOOKSHOP</router-link
       >
-      <button
+      <!-- <button
         class="navbar-toggler"
         type="button"
         data-toggle="collapse"
@@ -21,14 +24,56 @@
         aria-label="Toggle navigation"
       >
         <span class="navbar-toggler-icon"></span>
-      </button>
+      </button> -->
+
+      <input v-model="isMenuOpen" type="checkbox" id="burger-menu-switcher" />
+      <label for="burger-menu-switcher" class="burger-menu d-md-none">
+        <span class="burger-menu-span"></span>
+        <span class="burger-menu-span"></span>
+        <span class="burger-menu-span"></span>
+      </label>
+
+      <div class="burger-nav">
+        <ul @click="isMenuOpen = false" class="burger-menu-list">
+          <template v-if="user">
+            <li class="nav-item">
+              <router-link :to="{ name: 'cart' }"
+                >корзина ({{ cartProductsQuantity }})</router-link
+              >
+            </li>
+            <li class="nav-item">
+              <router-link
+                v-if="isUserAdmin"
+                :to="{ name: 'products' }"
+                v-t="'label.productAdd'"
+              ></router-link>
+            </li>
+            <li>
+              <router-link :to="{ name: 'profile' }">{{
+                $t("link.profile")
+              }}</router-link>
+            </li>
+            <li>
+              <a noreferrer nofollow @click="logout"> Выход </a>
+            </li>
+          </template>
+          <template v-else>
+            <li>
+              <a @click.prevent="moveToLogin" href="">Авторизация</a>
+            </li>
+            <li>
+              <router-link :to="{ name: 'register' }">Регистрация</router-link>
+            </li>
+          </template>
+        </ul>
+      </div>
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <!-- Left Side Of Navbar -->
-        <ul class="navbar-nav mr-auto"></ul>
+        <ul class="left navbar-nav mr-auto"></ul>
 
         <!-- Right Side Of Navbar -->
-        <ul class="navbar-nav ml-auto">
+        <ul class="right navbar-nav ml-auto">
           <template v-if="user">
             <li class="nav-item p-1">
               <router-link class="nav-link p-0" :to="{ name: 'cart' }"
@@ -74,9 +119,11 @@
                   />
                 </svg>
               </a>
-              <div v-if="showUsernameTooltip" class="navbar-tooltip">
-                {{ user.name }}
-              </div>
+              <base-tooltip-component
+                v-show="showUsernameTooltip"
+                ref="tooltip"
+                :text="user.name"
+              />
               <div
                 class="dropdown-menu dropdown-menu-right"
                 aria-labelledby="navbarDropdown"
@@ -121,8 +168,8 @@
 </template>
 
 <script>
-import { before } from "lodash";
 import { authLogout } from "../api/auth.js";
+import BaseTooltipComponent from "./BaseTooltipComponent.vue";
 export default {
   props: {
     appName: {
@@ -131,9 +178,12 @@ export default {
     },
   },
 
+  components: { BaseTooltipComponent },
+
   data() {
     return {
       showUsernameTooltip: false,
+      isMenuOpen: false,
     };
   },
 

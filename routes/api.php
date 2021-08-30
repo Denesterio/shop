@@ -8,8 +8,10 @@ use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\CoverController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RatingController;
+use App\Http\Controllers\ReviewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -44,7 +46,8 @@ Route::prefix('categories')->group(function () {
 Route::prefix('products')->group(function () {
     Route::get('/get', [ProductController::class, 'get']);
     Route::get('/carousel', [ProductController::class, 'carousel'])->name('carousel');
-    Route::get('/{productId}', [ProductController::class, 'getProduct']);
+    Route::get('/{productId}', [ProductController::class, 'show']);
+    Route::get('/{productId}/reviews', [ProductController::class, 'getReviews']);
 });
 
 Route::prefix('subcategories')->group(function () {
@@ -59,7 +62,24 @@ Route::prefix('authors')->group(function () {
         ->name('authorProducts');
 });
 
-Route::get('/tags/get', [TagController::class, 'get']);
+Route::prefix('tags')->group(function () {
+    Route::get('/get', [TagController::class, 'get']);
+    Route::get('/{tagId}/products', [TagController::class, 'showProducts'])
+        ->name('tagProducts');
+});
+
+Route::prefix('covers')->group(function () {
+    Route::get('/get', [CoverController::class, 'get']);
+});
+
+Route::prefix('ratings')->group(function () {
+    Route::get('/{productId}', [RatingController::class, 'get']);
+    Route::post('/create', [RatingController::class, 'create']);
+});
+
+Route::prefix('reviews')->group(function () {
+    Route::post('/create', [ReviewController::class, 'create']);
+});
 
 Route::prefix('admin')->middleware('admin')->group(function () {
     Route::get('/categories', [CategoryController::class, 'list'])->name('categories');
@@ -81,6 +101,9 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::post('/tags/create', [TagController::class, 'create']);
     Route::delete('/tags/delete', [TagController::class, 'delete']);
     Route::get('/tags', [TagController::class, 'list'])->name('tags');
+
+    Route::post('/covers/create', [CoverController::class, 'create']);
+    Route::delete('/covers/delete', [CoverController::class, 'delete']);
 });
 
 Route::prefix('order')->middleware('auth')->group(function () {

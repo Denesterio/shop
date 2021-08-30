@@ -23,14 +23,11 @@
             :alt="product.title"
             class="card-img-top image"
           />
-          <div class="card-body text-center">
-            <p class="title">
-              <a @click.prevent="openModal(product.id)" class="text-reset">{{
-                product.title
-              }}</a>
-            </p>
-            <p v-html="formattedAuthorsHtml(product.authors)"></p>
-          </div>
+          <product-title-component
+            :product="product"
+            :authors="product.authors"
+            class="card-body text-center"
+          />
         </div>
         <template v-slot:nextArrow="arrowOption">
           <button class="carousel-control-next bg-info" type="button">
@@ -44,14 +41,14 @@
 
 <script>
 import VueSlickCarousel from "vue-slick-carousel";
-import "vue-slick-carousel/dist/vue-slick-carousel.css";
-import "vue-slick-carousel/dist/vue-slick-carousel-theme.css";
+// import "vue-slick-carousel/dist/vue-slick-carousel.css";
+// import "vue-slick-carousel/dist/vue-slick-carousel-theme.css";
 import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
+import ProductTitleComponent from "../ProductTitleComponent.vue";
 import { getNewProducts } from "../../api/get.js";
 
 export default {
-  name: "MyComponent",
-  components: { VueSlickCarousel, SvgLoadingComponent },
+  components: { VueSlickCarousel, SvgLoadingComponent, ProductTitleComponent },
   data() {
     return {
       loading: true,
@@ -115,24 +112,13 @@ export default {
       })
       .finally(() => (this.loading = false));
   },
-
-  methods: {
-    formattedAuthorsHtml(authors) {
-      return authors
-        .map(
-          (author) =>
-            `<a class="text-muted text-small" href="/authors/${author.id}"><em>${author.title}</em></a>`
-        )
-        .join(" / ");
-    },
-  },
 };
 </script>
 
 <style scoped>
 .image {
-  max-width: 150px;
-  height: 200px;
+  max-width: 120px;
+  height: 180px;
   margin: 5px auto;
 }
 .carousel {
@@ -146,16 +132,6 @@ export default {
   margin: 5px;
   padding: 5px;
   height: 125px;
-}
-.card-body p {
-  margin-bottom: 5px;
-  font-size: 0.8rem;
-}
-.title a {
-  font-size: 0.9rem;
-}
-.title a:hover {
-  cursor: pointer;
 }
 .carousel-control-prev,
 .carousel-control-next {

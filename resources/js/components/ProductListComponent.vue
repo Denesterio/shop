@@ -35,7 +35,7 @@ import { getProductsByType } from "../api/get";
 
 const makeRequest = (to) => {
   const id = to.params.id;
-  const types = ["categories", "subcategories", "authors"];
+  const types = ["categories", "subcategories", "authors", "tags"];
   const type = to.path.split("/").find((type) => types.includes(type));
   return getProductsByType(type, id);
 };
@@ -60,9 +60,6 @@ export default {
     user() {
       return this.$store.state.user;
     },
-    // orderProducts() {
-    //   return this.$store.state.cartProducts;
-    // },
     currentComponent() {
       return `Product${this.selectedView}Component`;
     },

@@ -103,7 +103,7 @@ import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
 import { getMenu } from "../../api/get.js";
 import { createSubcategory } from "../../api/create.js";
 import { deleteSubcategory } from "../../api/delete.js";
-import transliterate from "../../transliterate.js";
+import transliterate from "../../services/transliterate.js";
 import {
   subcategorySchema,
   handleServerErrors,
@@ -175,8 +175,8 @@ export default {
             .then(({ data }) => {
               this.subcategories = [data, ...this.subcategories];
               this.subcategoryName = "";
-              this.categoryId = "";
               this.editedSlug = "";
+              this.editingStatus = null;
             })
             .catch((error) => {
               handleServerErrors(this, error, "добавить раздел");

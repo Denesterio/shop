@@ -10,15 +10,17 @@ export default {
     descrease: 'удалена из корзины',
     noProdCart: 'В корзине отсутствуют продукты',
     noProductsInCategory:
-      'В данной категории товаров пока нет, но они обязательно появятся'
+      'В данной категории товаров пока нет, но они обязательно появятся',
+    reviewHelpBlock: 'Отзыв должен быть не менее 10 символов'
   },
   link: {
     profile: 'Личный кабинет',
-    toCategories: 'на страницу добаления категорий',
-    toSubcategories: 'на страницу добаления разделов',
+    toCategories: 'на страницу добавления категорий',
+    toSubcategories: 'на страницу добавления разделов',
     toProducts: 'на страницу добавления товаров',
-    toTags: 'на страницу добаления тэгов',
-    toAuthors: 'на страницу добаления авторов'
+    toTags: 'на страницу добавления тэгов',
+    toAuthors: 'на страницу добавления авторов',
+    toCovers: 'на страницу добавления обложки'
   },
   label: {
     save: 'Сохранить',
@@ -34,13 +36,15 @@ export default {
     categoryAdd: '@.capitalize:label.add категорию',
     productAdd: '@.capitalize:label.add товар',
     tagAdd: '@.capitalize:label.add тэг',
+    coverAdd: '@.capitalize:label.add тип обложки',
     subacategoryAdd: '@.capitalize:label.add раздел',
     addToCart: 'купить',
-    pictureUpload: 'Загрузить изображение товара',
+    pictureUpload: 'Загрузить превью-изображение товара',
+    imagesUpload: 'Загрузить изображения для галлереи',
     subcatName: 'Имя нового раздела',
     newCategoryName: 'Имя новой категории',
     newCategoryDesc: 'Описание новой категории',
-    slug: 'Заполнитель в строке алреса',
+    slug: 'Заполнитель в строке адреса',
     clickEdit: 'кликните по полю для редактирования',
 
     login: 'Имя',
@@ -52,7 +56,10 @@ export default {
     auth: 'Авторизация',
 
     orderConfirm: 'Оформить заказ',
-    orderNum: 'Заказ №{num}'
+    orderNum: 'Заказ №{num}',
+
+    file: '{n} файлов | {n} файл | {n} файла | {n} файлов',
+    filesToUpload: 'выбран(ы) {quantity}'
   },
   error: {
     symbol: '{n} символов | {n} символа | {n} символов | {n} символов',
@@ -63,10 +70,13 @@ export default {
     email: 'Поле должно содержать правильный электронный адрес',
     сreateError: 'Не удалось {msg} из-за проблем с соединением или на сервере'
   },
-  table: {
+  keys: {
     title: 'Наименование товара',
     quantity: 'Количество',
     sum: 'Сумма',
-    price: 'Цена'
+    price: 'Цена',
+    year: 'Год издания',
+    pages: 'Кол-во страниц',
+    cover: 'Тип обложки'
   }
 };

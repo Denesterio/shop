@@ -71,7 +71,24 @@ const getUser = () => {
 };
 
 const getProduct = productId => {
-  return axios.get(`/api/products/${productId}`).then(({ data }) => data);
+  return axios.get(`/api/products/${productId}`).then(({ data }) => {
+    data.cover = data.cover.title;
+    return data;
+  });
+};
+
+const getRating = productId => {
+  return axios.get(`/api/ratings/${productId}`).then(({ data }) => data);
+};
+
+const getCovers = () => {
+  return axios.get(`/api/covers/get`).then(({ data }) => data);
+};
+
+const getProductReviews = productId => {
+  return axios
+    .get(`/api/products/${productId}/reviews`)
+    .then(({ data }) => data);
 };
 
 export {
@@ -87,5 +104,8 @@ export {
   getOrderProducts,
   getCart,
   getUser,
-  getProduct
+  getProduct,
+  getRating,
+  getCovers,
+  getProductReviews
 };

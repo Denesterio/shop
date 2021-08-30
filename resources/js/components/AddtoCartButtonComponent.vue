@@ -5,12 +5,12 @@
       <button
         @click="changeProductQuantity(productId, 'descrease')"
         id="descreaseQuantityButton"
-        :class="`btn btn-outline-dark btn-${size} in-cart-buttons`"
+        :class="`btn btn-outline-${color} btn-${size} in-cart-buttons`"
       >
         -
       </button>
       <button
-        :class="`btn btn-outline-dark btn-${size} in-cart-buttons`"
+        :class="`btn btn-outline-${color} btn-${size} in-cart-buttons`"
         disabled
         id="quantityButton"
       >
@@ -18,7 +18,7 @@
       </button>
       <button
         @click="changeProductQuantity(productId, 'increase')"
-        :class="`btn btn-outline-dark btn-${size} in-cart-buttons`"
+        :class="`btn btn-outline-${color} btn-${size} in-cart-buttons`"
       >
         +
       </button>
@@ -59,6 +59,11 @@ export default {
       type: String,
       required: false,
       default: "sm",
+    },
+    color: {
+      type: String,
+      required: false,
+      default: "dark",
     },
   },
 
@@ -162,5 +167,13 @@ export default {
 .in-cart-buttons {
   font-weight: 700;
   line-height: 1rem;
+}
+.btn-outline-light {
+  color: #333;
+  border: 2px solid #fff;
+}
+.btn-outline-light:not([disabled]):hover {
+  font-weight: bold;
+  color: #333;
 }
 </style>

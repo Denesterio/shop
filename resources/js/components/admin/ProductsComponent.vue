@@ -67,26 +67,102 @@
         <p class="invalid-feedback">{{}}</p>
       </div>
 
-      <div class="form-group">
-        <input
-          v-model="productPrice"
-          class="form-control"
-          :class="{ 'is-invalid': isFieldInvalid('price') }"
-          placeholder="Цена"
-        />
-        <p class="invalid-feedback">
-          {{ getErrorMessage("price") }}
-        </p>
+      <div class="row">
+        <div class="form-group col-md-4 col-sm-12">
+          <input
+            v-model="productPrice"
+            class="form-control"
+            :class="{ 'is-invalid': isFieldInvalid('price') }"
+            placeholder="Цена"
+          />
+          <p class="invalid-feedback">
+            {{ getErrorMessage("price") }}
+          </p>
+        </div>
+        <div class="form-group col-md-4 col-sm-12">
+          <input
+            v-model="productPages"
+            class="form-control"
+            :class="{ 'is-invalid': isFieldInvalid('pages') }"
+            placeholder="Количество страниц"
+          />
+          <p class="invalid-feedback">
+            {{ getErrorMessage("pages") }}
+          </p>
+        </div>
+        <div class="form-group col-md-4 col-sm-12">
+          <input
+            v-model="productYear"
+            class="form-control"
+            :class="{ 'is-invalid': isFieldInvalid('year') }"
+            placeholder="Год издания"
+          />
+          <p class="invalid-feedback">
+            {{ getErrorMessage("year") }}
+          </p>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="picture" v-t="'label.pictureUpload'"></label>
+      <div class="form-group mb-4">
+        <label for="previewPicture" v-t="'label.pictureUpload'"></label>
         <input
           @change="getPicture"
           class="form-control-file"
-          name="picture"
+          name="previewPicture"
           type="file"
+          accept=".webp, .jpg, .jpeg"
         />
+      </div>
+
+      <div class="form-group mb-4">
+        <label for="images" v-t="'label.imagesUpload'"></label>
+        <p>
+          <i18n path="label.filesToUpload" tag="span">
+            <template v-slot:quantity>
+              {{ `${$tc("label.file", images.length)}` }}
+            </template>
+          </i18n>
+          <a
+            @click.prevent="clearImages"
+            v-if="images.length"
+            href=""
+            noreferrer
+            nofollow
+            class="font-weight-normal"
+            >очистить</a
+          >
+        </p>
+        <input
+          @change="getimages"
+          class="form-control-file"
+          name="images[]"
+          type="file"
+          multiple
+          accept=".webp, .jpg, .jpeg"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="cover">Обложка:</label>
+        <p>
+          <router-link :to="{ name: 'covers' }">{{
+            $t("link.toCovers")
+          }}</router-link>
+        </p>
+        <select
+          v-model="productCover"
+          class="form-control"
+          :class="{ 'is-invalid': isFieldInvalid('productCover') }"
+          name="cover"
+        >
+          <option value="" selected>Нет</option>
+          <option v-for="cover in covers" :key="cover.id" :value="cover.id">
+            {{ cover.title }}
+          </option>
+        </select>
+        <p class="invalid-feedback">
+          {{ getErrorMessage("productCover") }}
+        </p>
       </div>
 
       <div class="form-group">
@@ -169,6 +245,7 @@ import {
   getCategories,
   getSubcategories,
   getTags,
+  getCovers,
 } from "../../api/get.js";
 import { createProduct } from "../../api/create.js";
 import { deleteProduct } from "../../api/delete.js";
@@ -184,10 +261,14 @@ export default {
       productName: "",
       productDescription: "",
       productPrice: "",
-      picture: [],
+      picture: null,
+      images: [],
       subcategorySlug: "",
       productAuthors: [], // массив авторов - объектов, связан с параграфом
       selectedTags: [], // массив тэгов
+      productYear: "",
+      productPages: "",
+      productCover: "",
 
       authors: [],
       products: [],
@@ -195,6 +276,7 @@ export default {
       categories: [],
       subcategories: [],
       tags: [],
+      covers: [],
 
       loading: true,
       processing: false,
@@ -223,6 +305,7 @@ export default {
       getSubcategories().then((data) => (this.subcategories = data)),
       getProducts().then((data) => (this.products = data)),
       getTags().then((data) => (this.tags = data)),
+      getCovers().then((data) => (this.covers = data)),
     ];
     Promise.all(promises).finally(() => (this.loading = false));
   },
@@ -240,13 +323,27 @@ export default {
       this.picture = e.target.files[0];
     },
 
+    getimages(e) {
+      if (e.target.files.length === 0) return;
+      for (const file of e.target.files) {
+        this.images.push(file);
+      }
+    },
+
+    clearImages() {
+      this.images = [];
+    },
+
     async createNewProduct() {
       this.errors = [];
       const fData = new FormData();
       const params = {
         title: this.productName,
         description: this.productDescription,
-        price: Number(this.productPrice),
+        price: Number.parseInt(this.productPrice),
+        year: Number.parseInt(this.productYear),
+        pages: Number.parseInt(this.productPages),
+        cover: this.productCover,
         subcategorySlug: this.subcategorySlug,
         picture: this.picture,
         productAuthors: JSON.stringify(this.productAuthors.map((a) => a.id)),
@@ -266,10 +363,15 @@ export default {
         fData.append(param, params[param]);
       }
 
+      for (const file of this.images) {
+        fData.append("images[]", file);
+      }
+
       this.processing = true;
       createProduct(fData)
         .then(({ data }) => {
           this.products = [data, ...this.products];
+          this.clearFields();
         })
         .catch((error) => {
           try {
@@ -285,6 +387,19 @@ export default {
         .finally(() => {
           this.processing = false;
         });
+    },
+
+    clearFields() {
+      this.productName = "";
+      this.productDescription = "";
+      this.productPrice = "";
+      this.productCover = "";
+      this.productYear = "";
+      this.productPages = "";
+      this.picture = null;
+      this.images = [];
+      this.selectedTags = [];
+      this.clearProductAuthors();
     },
 
     removeProduct(productId) {

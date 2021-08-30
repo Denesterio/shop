@@ -1,9 +1,11 @@
 <template>
   <li class="col-sm-12">
     <p class="point font-weight-bold mb-1 mt-3">
-      <router-link :to="{ name: 'productPage', params: { id: product.id } }">{{
-        product.title
-      }}</router-link>
+      <router-link
+        class="text-reset"
+        :to="{ name: 'productPage', params: { id: product.id } }"
+        >{{ product.title }}</router-link
+      >
       |
       <span
         class="font-italic font-weight-light"

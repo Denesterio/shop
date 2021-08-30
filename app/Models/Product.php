@@ -13,8 +13,16 @@ class Product extends Model
         'title',
         'subcategory_slug',
         'picture',
+        'pictures',
         'description',
         'price',
+        'pages',
+        'year',
+        'cover_id',
+    ];
+
+    protected $casts = [
+        'images' => 'array',
     ];
 
     public function authors()
@@ -25,5 +33,15 @@ class Product extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'tags_products');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function cover()
+    {
+        return $this->belongsTo(Cover::class);
     }
 }

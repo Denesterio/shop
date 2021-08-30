@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\AuthorsProduct;
 use App\Models\TagsProduct;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Facades\Image;
 
 class ProductController extends Controller
 {
@@ -15,9 +16,9 @@ class ProductController extends Controller
         return Product::get();
     }
 
-    public function getProduct($id)
+    public function show($id)
     {
-        $book = Product::find($id)->first();
+        $book = Product::with('authors', 'tags', 'cover')->find($id);
         return $book;
     }
 
@@ -28,58 +29,85 @@ class ProductController extends Controller
             'subcategorySlug' => $subcategorySlug,
             'description' => $description,
             'price' => $price,
+            'year' => $year,
+            'pages' => $pages,
             'productAuthors' => $authors,
             'tags' => $tags,
+            'cover' => $cover,
         ] = $request;
 
         $authors = json_decode($authors);
         $tags = json_decode($tags);
 
+        $currentYear = date('Y');
         $request->validate([
             'title' => ['required', 'string', 'max:255', 'unique:products,title'],
             'subcategorySlug' => ['required', 'string', 'max:255', 'exists:subcategories,slug'],
             'description' => ['required', 'string'],
             'price' => ['required', 'integer'],
+            'cover' => ['required', 'integer'],
+            'year' => ['required', 'integer', 'digits:4', "between:1900,{$currentYear}"],
+            'pages' => ['required', 'integer'],
             'productAuthors' => ['required', 'json'],
             'tags' => ['required', 'json'],
+            'picture' => 'nullable|image',
         ]);
 
         Validator::make(['authors' => $authors, 'tags' => $tags], [
             'authors' => ['required', 'array'],
-            'authors.*' => ['required', 'distinct'],
+            'authors.*' => ['required', 'distinct', 'exists:authors,id'],
             'tags' => ['required', 'array'],
-            'tags.*' => ['required', 'distinct'],
+            'tags.*' => ['required', 'distinct', 'exists:tags,id'],
         ])->validate();
 
         $filename = '';
+        $thumbFilename = '';
+        $picturesNames = [];
         if ($request->hasFile('picture')) {
             $file = $request->file('picture');
             $filename = time() . $file->getClientOriginalName();
             $request->file('picture')->storeAs('public/img', $filename);
+            $thumbnail = Image::make($file);
+            $thumbnail->resize(194, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+            $thumbFilename = time() . '_thumbnail_' . $file->getClientOriginalName();
+            $thumbnail->save('storage/img/' . $thumbFilename, 100);
+            $picturesNames[] = $filename;
         }
+
+
+        $picturesFiles = $request->allFiles();
+        if (array_key_exists('images', $picturesFiles) && gettype($picturesFiles['images']) === 'array') {;
+            foreach ($picturesFiles['images'] as $file) {
+                $validator = Validator::make(['file' => $file], [
+                    'file' => ['nullable', 'image'],
+                ]);
+                if (!$validator->fails()) {
+                    $name = time() . $file->getClientOriginalName();
+                    $file->storeAs('public/img', $name);
+                    $picturesNames[] = $name;
+                }
+            }
+        }
+
+
+        $pictures = json_encode($picturesNames);
 
         $product = Product::create([
             'title' => $title,
             'subcategory_slug' => $subcategorySlug,
-            'picture' => $filename,
+            'picture' => $thumbFilename,
+            'pictures' => $pictures,
             'price' => $price,
             'description' => $description,
+            'year' => $year,
+            'pages' => $pages,
+            'cover_id' => $cover,
         ]);
 
-
-        foreach ($tags as $tagId) {
-            TagsProduct::create([
-                'tag_id' => $tagId,
-                'product_id' => $product->id,
-            ]);
-        };
-
-        foreach ($authors as $authorId) {
-            AuthorsProduct::create([
-                'product_id' => $product->id,
-                'author_id' => $authorId,
-            ]);
-        };
+        $product->tags()->attach($tags);
+        $product->authors()->attach($authors);
 
         return $product;
     }
@@ -103,5 +131,10 @@ class ProductController extends Controller
             ->get();
 
         return $products;
+    }
+
+    public function getReviews($productId)
+    {
+        return Product::find($productId)->reviews()->with('user')->get();
     }
 }

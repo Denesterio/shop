@@ -8,7 +8,10 @@
     >
       <b-card-header header-tag="header" class="p-1" role="tab">
         <b-button block v-b-toggle="`accordion` + category.id" variant="info">
-          {{ category.title }}
+          <router-link
+            :to="{ name: 'categoryProducts', params: { id: category.id } }"
+            >{{ category.title }}</router-link
+          >
         </b-button>
       </b-card-header>
       <b-collapse
@@ -107,5 +110,11 @@ export default {
 .active {
   background-color: #c8e2f8;
   color: #03437a;
+}
+a {
+  color: #333333;
+}
+a:hover {
+  text-decoration: underline;
 }
 </style>

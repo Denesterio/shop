@@ -9,7 +9,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'BOOKSHOP') }}</title>
+    <title>{{ config('app.name', 'BOOKSHOP') }} - книжный магазин, посвященный программированию и комиксам</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
@@ -17,13 +17,6 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
-
-    <!-- <style>
-        .router-link-active:hover {
-            text-decoration: none;
-            color: rgba(0, 0, 0, 0.75)
-        }
-    </style> -->
 </head>
 
 <body>

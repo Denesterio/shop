@@ -1,20 +1,21 @@
-import * as yup from "yup";
-import i18n from "./lang";
-import CreateError from "./createError.js";
+import * as yup from 'yup';
+import i18n from './lang';
+import CreateError from './services/createError.js';
 
 yup.setLocale({
   mixed: {
-    required: i18n.t("error.required")
+    required: i18n.t('error.required')
   },
   string: {
-    min: i18n.t("error.min") + " ${min} " + i18n.tc("error.symbol", "${min}"),
-    email: i18n.t("error.email")
+    min: i18n.t('error.min') + ' ${min} ' + i18n.tc('error.symbol', '${min}'),
+    email: i18n.t('error.email')
   },
   number: {
-    positive: i18n.t("error.positive")
+    typeError: i18n.t('error.positive'),
+    positive: i18n.t('error.positive')
   },
   array: {
-    min: i18n.t("error.minAuthor")
+    min: i18n.t('error.minAuthor')
   }
 });
 
@@ -41,9 +42,21 @@ const productSchema = yup.object().shape({
   description: yup.string().required(),
   price: yup
     .number()
+    .typeError(i18n.t('error.positive'))
+    .positive()
+    .required(),
+  year: yup
+    .number()
+    .typeError(i18n.t('error.positive'))
+    .positive()
+    .required(),
+  pages: yup
+    .number()
+    .typeError(i18n.t('error.positive'))
     .positive()
     .required(),
   subcategorySlug: yup.string().required(),
+  productCover: yup.string().required(),
   productAuthors: yup
     .array()
     .required()
@@ -62,9 +75,9 @@ const handleServerErrors = (context, error, entity) => {
     });
   } else {
     Vue.swal.fire({
-      icon: "error",
-      title: "Ошибка",
-      text: context.$t("error.сreateError", { msg: entity })
+      icon: 'error',
+      title: 'Ошибка',
+      text: context.$t('error.сreateError', { msg: entity })
     });
   }
 };
@@ -84,7 +97,7 @@ const getErrors = error => {
   if (error?.response?.status === 422) {
     return Object.entries(error.response.data.errors).map(
       ([path, [message]]) => {
-        const splittedPath = path.split(".")[0];
+        const splittedPath = path.split('.')[0];
         return new CreateError(splittedPath, message);
       }
     );

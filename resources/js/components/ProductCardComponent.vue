@@ -7,19 +7,12 @@
         :alt="product.title"
       />
     </div>
-    <div class="card-body p-2">
-      <h5 class="card-title my-2">
-        <router-link
-          class="text-reset"
-          :to="{ name: 'productPage', params: { id: product.id } }"
-          >{{ product.title }}</router-link
-        >
-      </h5>
-      <p
-        class="card-text authors font-italic"
-        v-html="formattedAuthorsHtml.join(' / ')"
-      ></p>
-    </div>
+
+    <product-title-component
+      :product="product"
+      :authors="authors"
+      class="card-body p-2"
+    />
 
     <addto-cart-button-component
       :title="product.title"
@@ -38,6 +31,7 @@
 
 <script>
 import AddtoCartButtonComponent from "./AddtoCartButtonComponent.vue";
+import ProductTitleComponent from "./ProductTitleComponent.vue";
 export default {
   props: {
     product: {
@@ -51,16 +45,9 @@ export default {
     },
   },
 
-  components: { AddtoCartButtonComponent },
+  components: { AddtoCartButtonComponent, ProductTitleComponent },
 
   computed: {
-    formattedAuthorsHtml() {
-      return this.authors.map(
-        (author) =>
-          `<a class="text-muted" href="/authors/${author.id}">${author.title}</a>`
-      );
-    },
-
     picturePath() {
       return this.product.picture
         ? "/storage/img/" + this.product.picture
@@ -81,24 +68,10 @@ export default {
   max-width: 200px;
   aspect-ratio: auto;
 }
-.card-title,
-.product-price {
-  font-size: 1rem;
-}
 .modal-image {
   width: 25%;
   float: left;
   margin-right: 20px;
-}
-.authors {
-  font-size: 0.8rem;
-}
-.authors::before {
-  content: "";
-  display: block;
-  height: 1px;
-  background: #ccc;
-  margin: 5px 10px;
 }
 .product-price {
   font-weight: bold;
