@@ -1,15 +1,15 @@
 <template>
-  <div class="container mt-4 py-4">
+  <div class="container mt-5">
     <form class="container mb-4">
       <base-input-group-component
-        v-model.trim="currentAuthor"
-        field="currentAuthor"
+        v-model.trim="coverName"
+        field="coverName"
         :error="validationErrors.title"
-        >Имя и фамилия автора полностью</base-input-group-component
+        >{{ $t("label.newCover") }}</base-input-group-component
       >
 
       <base-button-component
-        @click.native.prevent="createNewAuthor"
+        @click.native.prevent="createNewCover"
         :disabled="processing"
         bType="create"
         v-t="'label.create'"
@@ -26,11 +26,11 @@ import {
   fillErrorsObject,
 } from "../../validate.js";
 export default {
-  name: "author-component",
+  name: "cover-component",
   data() {
     return {
-      authors: [],
-      currentAuthor: "",
+      coverName: "",
+      covers: [],
       loading: true,
       processing: false,
       validationErrors: {
@@ -40,36 +40,41 @@ export default {
   },
 
   methods: {
-    createNewAuthor() {
+    createNewCover() {
       const params = {
-        title: this.currentAuthor,
+        title: this.coverName,
       };
 
       onlyTitleSchema
         .validate(params, { abortEarly: false })
         .then(() => {
           this.processing = true;
-          new RequestBuilder("author")
+          new RequestBuilder("cover")
             .create(params)
             .then(({ data }) => {
-              this.authors = [data, ...this.authors];
-              this.currentAuthor = "";
+              this.covers = [data, ...this.covers];
+              this.coverName = "";
             })
-            .catch(() => {
-              handleServerErrors(this, error, "добавить автора");
+            .catch((error) => {
+              handleServerErrors(this, error, "добавить обложку");
             })
-            .finally(() => (this.processing = false));
+            .finally(() => {
+              this.processing = false;
+            });
         })
-        .catch((error) => {
-          fillErrorsObject(this.validationErrors, error);
-        });
+        .catch((error) => fillErrorsObject(this.validationErrors, error));
     },
   },
-
   watch: {
-    currentAuthor() {
+    coverName() {
       this.validationErrors.title = "";
     },
   },
 };
 </script>
+
+<style scoped>
+.coverList {
+  column-count: 2;
+}
+</style>

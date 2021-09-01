@@ -70,13 +70,11 @@
 <script>
 import ProfileOrderProductsComponent from "./ProfileOrderProductsComponent.vue";
 import ProfileInfoComponent from "./ProfileInfoComponent.vue";
-import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
-import { getOrders } from "../../api/get.js";
+import RequestBuilder from "../../api";
 export default {
   components: {
     ProfileOrderProductsComponent,
     ProfileInfoComponent,
-    SvgLoadingComponent,
   },
 
   data() {
@@ -88,7 +86,8 @@ export default {
   },
 
   mounted() {
-    getOrders()
+    new RequestBuilder("orders")
+      .get()
       .then((data) => {
         this.orders = data.reverse();
       })

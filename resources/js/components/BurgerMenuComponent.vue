@@ -10,7 +10,7 @@
         <li class="nav-item">
           <router-link
             v-if="isAdmin"
-            :to="{ name: 'products' }"
+            :to="{ name: 'admin' }"
             v-t="'label.productAdd'"
           ></router-link>
         </li>
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import { authLogout } from "../api/auth.js";
 export default {
   props: {
     userName: {

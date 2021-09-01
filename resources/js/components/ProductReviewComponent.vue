@@ -1,11 +1,11 @@
 <template>
-  <div class="my-2 p-2">
+  <li class="my-2">
     <p class="mb-1">
       <b>{{ review.user.name }}:</b>
     </p>
     <p class="date-container">{{ createdDate }}</p>
     <p>{{ review.body }}</p>
-  </div>
+  </li>
 </template>
 
 <script>

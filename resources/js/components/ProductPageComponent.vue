@@ -37,8 +37,7 @@
             >{{ tag.title }}</router-link
           >
 
-          <p></p>
-          <div class="row">
+          <div class="row mt-2">
             <div class="col-md-7">
               <table class="table table-borderless">
                 <tbody>
@@ -55,14 +54,13 @@
             </div>
             <div
               id="priceBadge"
-              class="col-md-5 text-center p-4 d-flex flex-column mb-4"
+              class="col-md-5 text-center p-4 d-flex flex-column mt-3"
             >
               <p class="price">{{ product.price }}&nbsp;руб.</p>
               <addto-cart-button-component
                 size="lg"
                 :productId="product.id"
                 :title="product.title"
-                color="light"
                 class="justify-content-center"
               />
             </div>
@@ -77,8 +75,7 @@
 </template>
 
 <script>
-import { getProduct } from "../api/get.js";
-import SvgLoadingComponent from "./svg/SvgLoadingComponent.vue";
+import RequestBuilder from "../api";
 import AddtoCartButtonComponent from "./AddtoCartButtonComponent.vue";
 import ProductPicturiesComponent from "./ProductPicturiesComponent.vue";
 import BaseBreadcrumbComponent from "./BaseBreadcrumbComponent.vue";
@@ -89,7 +86,6 @@ export default {
     AddtoCartButtonComponent,
     ProductPicturiesComponent,
     BaseBreadcrumbComponent,
-    SvgLoadingComponent,
     ProductRatingComponent,
     ProductReviewsComponent,
   },
@@ -100,7 +96,8 @@ export default {
     };
   },
   created() {
-    getProduct(this.$route.params.id)
+    new RequestBuilder("product")
+      .get(this.$route.params.id)
       .then((data) => (this.product = data))
       .finally(() => (this.loading = false));
   },

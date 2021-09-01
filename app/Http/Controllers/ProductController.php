@@ -31,7 +31,7 @@ class ProductController extends Controller
             'price' => $price,
             'year' => $year,
             'pages' => $pages,
-            'productAuthors' => $authors,
+            'authors' => $authors,
             'tags' => $tags,
             'cover' => $cover,
         ] = $request;
@@ -48,7 +48,7 @@ class ProductController extends Controller
             'cover' => ['required', 'integer'],
             'year' => ['required', 'integer', 'digits:4', "between:1900,{$currentYear}"],
             'pages' => ['required', 'integer'],
-            'productAuthors' => ['required', 'json'],
+            'authors' => ['required', 'json'],
             'tags' => ['required', 'json'],
             'picture' => 'nullable|image',
         ]);

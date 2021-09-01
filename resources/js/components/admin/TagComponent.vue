@@ -1,15 +1,15 @@
 <template>
-  <div class="container mt-4 py-4">
+  <div class="container mt-5">
     <form class="container mb-4">
       <base-input-group-component
-        v-model.trim="currentAuthor"
-        field="currentAuthor"
+        v-model.trim="tagName"
+        field="tagName"
         :error="validationErrors.title"
-        >Имя и фамилия автора полностью</base-input-group-component
+        >{{ $t("label.newTag") }}</base-input-group-component
       >
 
       <base-button-component
-        @click.native.prevent="createNewAuthor"
+        @click.native.prevent="createNewTag"
         :disabled="processing"
         bType="create"
         v-t="'label.create'"
@@ -26,11 +26,11 @@ import {
   fillErrorsObject,
 } from "../../validate.js";
 export default {
-  name: "author-component",
+  name: "tag-component",
   data() {
     return {
-      authors: [],
-      currentAuthor: "",
+      tagName: "",
+      tags: [],
       loading: true,
       processing: false,
       validationErrors: {
@@ -40,36 +40,41 @@ export default {
   },
 
   methods: {
-    createNewAuthor() {
+    createNewTag() {
       const params = {
-        title: this.currentAuthor,
+        title: this.tagName,
       };
 
       onlyTitleSchema
         .validate(params, { abortEarly: false })
         .then(() => {
           this.processing = true;
-          new RequestBuilder("author")
+          new RequestBuilder("tag")
             .create(params)
             .then(({ data }) => {
-              this.authors = [data, ...this.authors];
-              this.currentAuthor = "";
+              this.tags = [data, ...this.tags];
+              this.tagName = "";
             })
-            .catch(() => {
-              handleServerErrors(this, error, "добавить автора");
+            .catch((error) => {
+              handleServerErrors(this, error, "добавить тэг");
             })
-            .finally(() => (this.processing = false));
+            .finally(() => {
+              this.processing = false;
+            });
         })
-        .catch((error) => {
-          fillErrorsObject(this.validationErrors, error);
-        });
+        .catch((error) => fillErrorsObject(this.validationErrors, error));
     },
   },
-
   watch: {
-    currentAuthor() {
+    tagName() {
       this.validationErrors.title = "";
     },
   },
 };
 </script>
+
+<style scoped>
+.tagList {
+  column-count: 3;
+}
+</style>

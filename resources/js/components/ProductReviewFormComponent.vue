@@ -22,10 +22,8 @@
 </template>
 
 <script>
-import { createReview } from "../api/create.js";
-import SvgLoadingComponent from "./svg/SvgLoadingComponent.vue";
+import RequestBuilder from "../api";
 export default {
-  components: { SvgLoadingComponent },
   props: {
     productId: {
       type: Number,
@@ -47,7 +45,8 @@ export default {
         product_id: this.productId,
         review: this.reviewBody,
       };
-      createReview(params)
+      new RequestBuilder("review")
+        .create(params)
         .then(({ data }) => {
           this.$emit("add-review", data);
         })

@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { getRating } from "../api/get.js";
+import RequestBuilder from "../api";
 import ProductVotingComponent from "./ProductVotingComponent.vue";
 export default {
   components: { ProductVotingComponent },
@@ -61,7 +61,7 @@ export default {
   },
 
   created() {
-    getRating(this.productId).then((data) => {
+    new RequestBuilder("rating").get(this.productId).then((data) => {
       this.rating = data.rating.toFixed(2);
       this.votes = data.votes;
       this.isRated = data.isRated;

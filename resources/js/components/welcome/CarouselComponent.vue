@@ -43,12 +43,11 @@
 import VueSlickCarousel from "vue-slick-carousel";
 // import "vue-slick-carousel/dist/vue-slick-carousel.css";
 // import "vue-slick-carousel/dist/vue-slick-carousel-theme.css";
-import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
 import ProductTitleComponent from "../ProductTitleComponent.vue";
-import { getNewProducts } from "../../api/get.js";
+import RequestBuilder from "../../api";
 
 export default {
-  components: { VueSlickCarousel, SvgLoadingComponent, ProductTitleComponent },
+  components: { VueSlickCarousel, ProductTitleComponent },
   data() {
     return {
       loading: true,
@@ -103,7 +102,9 @@ export default {
   },
 
   created() {
-    getNewProducts()
+    const builder = new RequestBuilder("carouselProducts");
+    builder
+      .get()
       .then((data) => {
         this.newProducts = data;
       })

@@ -12,12 +12,19 @@
       <li class="list-group-item" v-if="userReview">
         <details>
           <summary>Ваш отзыв:</summary>
-          <product-review-component :review="userReview" />
+          <product-review-component
+            class="user-review p-3"
+            :review="userReview"
+          />
         </details>
       </li>
-      <li class="list-group-item" v-for="review in reviews" :key="review.id">
-        <product-review-component :review="review" />
-      </li>
+      <li
+        is="product-review-component"
+        class="list-group-item p-3"
+        v-for="review in reviews"
+        :key="review.id"
+        :review="review"
+      ></li>
     </ul>
     <product-review-form-component
       v-if="canUserAddReview"
@@ -32,7 +39,7 @@
 <script>
 import ProductReviewComponent from "./ProductReviewComponent.vue";
 import ProductReviewFormComponent from "./ProductReviewFormComponent.vue";
-import { getProductReviews } from "../api/get.js";
+import RequestBuilder from "../api";
 export default {
   components: { ProductReviewComponent, ProductReviewFormComponent },
   props: {
@@ -49,7 +56,7 @@ export default {
   },
 
   mounted() {
-    getProductReviews(this.productId).then((data) => {
+    new RequestBuilder("productReviews").get(this.productId).then((data) => {
       this.reviews = data;
     });
   },
@@ -80,5 +87,8 @@ export default {
 .review-message {
   font-size: 0.8rem;
   font-style: italic;
+}
+.user-review {
+  list-style-type: none;
 }
 </style>

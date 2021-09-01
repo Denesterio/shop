@@ -56,8 +56,12 @@ const productSchema = yup.object().shape({
     .positive()
     .required(),
   subcategorySlug: yup.string().required(),
-  productCover: yup.string().required(),
-  productAuthors: yup
+  cover: yup.string().required(),
+  authors: yup
+    .array()
+    .required()
+    .min(1),
+  tags: yup
     .array()
     .required()
     .min(1)

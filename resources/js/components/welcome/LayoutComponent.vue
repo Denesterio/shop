@@ -23,13 +23,11 @@
 <script>
 import CarouselComponent from "./CarouselComponent.vue";
 import LeftMenuComponent from "./LeftMenuComponent.vue";
-import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
-import { getMenu } from "../../api/get.js";
+import RequestBuilder from "../../api";
 export default {
   components: {
     CarouselComponent,
     LeftMenuComponent,
-    SvgLoadingComponent,
   },
   data() {
     return {
@@ -41,7 +39,8 @@ export default {
   },
 
   created() {
-    getMenu()
+    new RequestBuilder("menus")
+      .get()
       .then((data) => {
         this.categories = data.categories;
         this.subcategories = data.subcategories;

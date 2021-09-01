@@ -23,32 +23,28 @@
           </tr>
         </tbody>
       </table>
-        <i18n path="message.inOrder" tag="p">
-          <template v-slot:quantity>
-            <strong>
-              {{
-                `${$tc("message.product", commonQuantity)}`
-              }}
-            </strong>
-          </template>
-        </i18n>
-        <i18n path="message.sumProducts" tag="p">
-          <template v-slot:sum>
-            <strong>
-              {{ commonPrice }}
-            </strong>
-          </template>
-        </i18n>
+      <i18n path="message.inOrder" tag="p">
+        <template v-slot:quantity>
+          <strong>
+            {{ `${$tc("message.product", commonQuantity)}` }}
+          </strong>
+        </template>
+      </i18n>
+      <i18n path="message.sumProducts" tag="p">
+        <template v-slot:sum>
+          <strong>
+            {{ commonPrice }}
+          </strong>
+        </template>
+      </i18n>
     </template>
   </div>
 </template>
 
 <script>
-import { getOrderProducts } from "../../api/get.js";
-import SvgLoadingComponent from "../svg/SvgLoadingComponent.vue";
+import RequestBuilder from "../../api";
 export default {
   props: ["orderId", "status"],
-  components: { SvgLoadingComponent },
   data() {
     return {
       products: [],
@@ -73,7 +69,8 @@ export default {
     },
   },
   mounted() {
-    getOrderProducts(this.orderId)
+    new RequestBuilder("ordersProducts")
+      .get(this.orderId)
       .then((data) => {
         data.forEach((product) => {
           if (this.isConfirmed) {

@@ -31,13 +31,12 @@
 <script>
 import ProductCardComponent from "./ProductCardComponent.vue";
 import ProductPointComponent from "./ProductPointComponent.vue";
-import { getProductsByType } from "../api/get";
+import RequestBuilder from "../api";
 
 const makeRequest = (to) => {
   const id = to.params.id;
-  const types = ["categories", "subcategories", "authors", "tags"];
-  const type = to.path.split("/").find((type) => types.includes(type));
-  return getProductsByType(type, id);
+  const name = to.name;
+  return new RequestBuilder(name).get(id);
 };
 
 export default {

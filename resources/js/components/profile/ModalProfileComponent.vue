@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { editUserField } from "../../api/edit.js";
+import RequestBuilder from "../../api";
 import { getErrors } from "../../validate.js";
 export default {
   props: {
@@ -152,7 +152,8 @@ export default {
         [this.field]: this.currentValue,
         field: this.field,
       };
-      editUserField(params)
+      new RequestBuilder("user")
+        .edit(params)
         .then(({ data }) => {
           this.$store.commit("setUser", data);
           this.closeModal();

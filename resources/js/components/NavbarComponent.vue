@@ -14,17 +14,6 @@
         aria-label="на главную"
         >BOOKSHOP</router-link
       >
-      <!-- <button
-        class="navbar-toggler"
-        type="button"
-        data-toggle="collapse"
-        data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button> -->
 
       <input v-model="isMenuOpen" type="checkbox" id="burger-menu-switcher" />
       <label for="burger-menu-switcher" class="burger-menu d-md-none">
@@ -44,7 +33,7 @@
             <li class="nav-item">
               <router-link
                 v-if="isUserAdmin"
-                :to="{ name: 'products' }"
+                :to="{ name: 'admin' }"
                 v-t="'label.productAdd'"
               ></router-link>
             </li>
@@ -130,7 +119,7 @@
               >
                 <router-link
                   v-if="isUserAdmin"
-                  :to="{ name: 'products' }"
+                  :to="{ name: 'admin' }"
                   class="dropdown-item nav-link text-center"
                   v-t="'label.productAdd'"
                 ></router-link>

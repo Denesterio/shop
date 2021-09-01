@@ -4,21 +4,21 @@ import store from '../store';
 
 Vue.use(VueRouter);
 
-import ProductListComponent from '../ProductListComponent.vue';
-import WelcomeCategoryListComponent from '../welcome/WelcomeCategoryListComponent.vue';
+// auth pages
 import LoginComponent from '../auth/LoginComponent.vue';
 import RegisterComponent from '../auth/RegisterComponent.vue';
-import CartComponent from '../CartComponent.vue';
+// main layout
 import LayoutComponent from '../welcome/LayoutComponent.vue';
+import WelcomeCategoryListComponent from '../welcome/WelcomeCategoryListComponent.vue';
+import ProductListComponent from '../ProductListComponent.vue';
+// functional
+import CartComponent from '../CartComponent.vue';
 import ProfileComponent from '../profile/ProfileComponent.vue';
-import CategoriesComponent from '../admin/CategoriesComponent.vue';
-import SubcategoriesComponent from '../admin/SubcategoriesComponent.vue';
-import ProductsComponent from '../admin/ProductsComponent.vue';
-import TagsComponent from '../admin/TagsComponent.vue';
-import AuthorsListComponent from '../admin/AuthorsListComponent.vue';
-import PageNotFoundComponent from '../PageNotFoundComponent.vue';
 import ProductPageComponent from '../ProductPageComponent.vue';
-import CoversComponent from '../admin/CoversComponent.vue';
+// admin page
+import AdminLayoutComponent from '../admin/AdminLayoutComponent.vue';
+// 404
+import PageNotFoundComponent from '../PageNotFoundComponent.vue';
 
 const routes = [
   {
@@ -53,6 +53,14 @@ const routes = [
     ]
   },
   {
+    path: '/admin',
+    component: AdminLayoutComponent,
+    name: 'admin',
+    meta: {
+      adminOnly: true
+    }
+  },
+  {
     path: '/login',
     component: LoginComponent,
     name: 'login'
@@ -76,54 +84,6 @@ const routes = [
     name: 'profile',
     meta: {
       requiresAuth: true
-    }
-  },
-  {
-    path: '/admin/categories',
-    name: 'categories',
-    component: CategoriesComponent,
-    meta: {
-      adminOnly: true
-    }
-  },
-  {
-    path: '/admin/subcategories',
-    name: 'subcategories',
-    component: SubcategoriesComponent,
-    meta: {
-      adminOnly: true
-    }
-  },
-  {
-    path: '/admin/products',
-    name: 'products',
-    component: ProductsComponent,
-    meta: {
-      adminOnly: true
-    }
-  },
-  {
-    path: '/admin/tags',
-    name: 'tags',
-    component: TagsComponent,
-    meta: {
-      adminOnly: true
-    }
-  },
-  {
-    path: '/admin/covers',
-    name: 'covers',
-    component: CoversComponent,
-    meta: {
-      adminOnly: true
-    }
-  },
-  {
-    path: '/admin/authors',
-    name: 'authors',
-    component: AuthorsListComponent,
-    meta: {
-      adminOnly: true
     }
   },
   {

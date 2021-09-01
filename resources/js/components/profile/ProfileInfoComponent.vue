@@ -53,7 +53,7 @@
             type="button"
             id="confirmationButton"
             :disabled="isButtonDisabled"
-            v-t="'label.save'"
+            v-t="'label.create'"
           ></button>
         </div>
       </template>

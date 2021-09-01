@@ -1,6 +1,5 @@
+import RequestBuilder from '../../api';
 import { authLogin } from '../../api/auth.js';
-import { getUser, getCart } from '../../api/get.js';
-import { changeOrderProductsQuantity } from '../../api/edit.js';
 
 export default {
   state: {
@@ -20,7 +19,8 @@ export default {
     getUser({ commit, dispatch, state }) {
       if (!state.user && state.isUserLoading === false) {
         state.isUserLoading = true;
-        return getUser()
+        return new RequestBuilder('user')
+          .get()
           .then(response => {
             return new Promise(resolve => {
               dispatch('getCartProducts');
@@ -51,15 +51,13 @@ export default {
     },
 
     getCartProducts({ commit }) {
-      getCart().then(data => {
+      new RequestBuilder('cartProducts').get().then(data => {
         commit('setCartProducts', data);
       });
     },
 
     changeCartProductQuantity({ commit }, params) {
-      const method =
-        params.quantityChange === 'increase' ? 'addProduct' : 'deleteProduct';
-      return changeOrderProductsQuantity(params, method).then(data => {
+      return new RequestBuilder('ordersProducts').edit(params).then(data => {
         commit('setCartProducts', data);
       });
     },

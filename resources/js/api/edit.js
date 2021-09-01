@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const changeOrderProductsQuantity = (params, method) => {
+const editOrdersProducts = params => {
+  const method =
+    params.quantityChange === 'increase' ? 'addProduct' : 'deleteProduct';
   return axios.post(`/api/order/${method}`, params).then(({ data }) => {
     data.forEach(product => {
       product.quantity = product.pivot.quantity;
@@ -10,8 +12,8 @@ const changeOrderProductsQuantity = (params, method) => {
   });
 };
 
-const editUserField = params => {
+const editUser = params => {
   return axios.post('/api/user/edit', params);
 };
 
-export { changeOrderProductsQuantity, editUserField };
+export { editOrdersProducts, editUser };

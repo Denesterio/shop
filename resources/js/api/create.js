@@ -2,7 +2,7 @@ const createAuthor = params => {
   return axios.post('/api/admin/authors/create', params);
 };
 
-const confirmOrder = () => {
+const createOrderConfirmation = () => {
   return axios.get('/api/order/confirm');
 };
 
@@ -27,7 +27,7 @@ const createCover = params => {
   return axios.post('/api/admin/covers/create', params);
 };
 
-const sendRating = params => {
+const createRating = params => {
   return axios.post('/api/ratings/create', params);
 };
 
@@ -37,12 +37,12 @@ const createReview = params => {
 
 export {
   createAuthor,
-  confirmOrder,
+  createOrderConfirmation,
   createCategory,
   createTag,
   createSubcategory,
   createProduct,
   createCover,
-  sendRating,
+  createRating,
   createReview
 };

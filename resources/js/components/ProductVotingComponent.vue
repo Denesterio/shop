@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { sendRating } from "../api/create.js";
+import RequestBuilder from "../api";
 export default {
   props: {
     productId: {
@@ -90,7 +90,7 @@ export default {
         product_id: this.productId,
         rating,
       };
-      sendRating(params).then(() => {
+      new RequestBuilder("rating").create(params).then(() => {
         this.$emit("closeVoting", Number.parseInt(rating));
       });
     },

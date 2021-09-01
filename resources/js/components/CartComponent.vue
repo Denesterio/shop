@@ -58,7 +58,7 @@
 
 <script>
 import AddtoCartButtonComponent from "./AddtoCartButtonComponent.vue";
-import { confirmOrder } from "../api/create.js";
+import RequestBuilder from "../api";
 
 export default {
   components: { AddtoCartButtonComponent },
@@ -92,7 +92,8 @@ export default {
 
   methods: {
     confirm() {
-      confirmOrder()
+      new RequestBuilder("orderConfirmation")
+        .create()
         .then(() => {
           Vue.swal.fire({
             title: "Готово!",

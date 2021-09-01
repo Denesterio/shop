@@ -15,17 +15,19 @@ export default {
   },
   link: {
     profile: 'Личный кабинет',
-    toCategories: 'на страницу добавления категорий',
-    toSubcategories: 'на страницу добавления разделов',
-    toProducts: 'на страницу добавления товаров',
-    toTags: 'на страницу добавления тэгов',
-    toAuthors: 'на страницу добавления авторов',
-    toCovers: 'на страницу добавления обложки'
+    category: 'категории',
+    subcategory: 'разделы',
+    product: 'товары',
+    tag: 'тэги',
+    author: 'авторы',
+    cover: 'типы обложки',
+    clearForm: 'скрыть'
   },
   label: {
-    save: 'Сохранить',
+    create: 'Сохранить',
     delete: 'Удалить',
     change: 'Изменить',
+    clear: 'Очистить',
 
     all: 'все',
     category: 'категория',
@@ -41,11 +43,15 @@ export default {
     addToCart: 'купить',
     pictureUpload: 'Загрузить превью-изображение товара',
     imagesUpload: 'Загрузить изображения для галлереи',
-    subcatName: 'Имя нового раздела',
+    newSubcatName: 'Имя нового раздела',
     newCategoryName: 'Имя новой категории',
     newCategoryDesc: 'Описание новой категории',
+    newCover: 'Новый тип обложки',
+    newTag: 'Название тэга',
+    newProduct: 'Название нового продукта',
+    newProductDesc: 'Описание товара',
     slug: 'Заполнитель в строке адреса',
-    clickEdit: 'кликните по полю для редактирования',
+    clickEdit: 'кликните c зажатой ctrl для редактирования',
 
     login: 'Имя',
     email: 'Электронный адрес',
@@ -78,5 +84,13 @@ export default {
     year: 'Год издания',
     pages: 'Кол-во страниц',
     cover: 'Тип обложки'
+  },
+  plurals: {
+    category: 'categories',
+    subcategory: 'subcategories',
+    product: 'products',
+    tag: 'tags',
+    author: 'authors',
+    cover: 'covers'
   }
 };

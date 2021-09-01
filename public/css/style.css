@@ -5,6 +5,7 @@
   font-weight: normal;
 }
 
+/* navnar elements */
 .navbar {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -38,6 +39,12 @@
   box-shadow: 2px -2px 3px rgba(0, 0, 0, 0.3);
 }
 
+.router-link-active:hover {
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+/* tooltips */
 .base-tooltip-md {
   position: fixed;
   border-radius: 4px;
@@ -63,12 +70,14 @@
   z-index: 9999;
 }
 
-.router-link-active:hover {
-  text-decoration: none;
-  color: rgba(0, 0, 0, 0.75);
-}
-
+/* input groups */
 .invalid-feedback {
   font-size: 0.8rem;
+}
+
+.input-label {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin: 1rem 0;
 }
 

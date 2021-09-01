@@ -8,7 +8,7 @@ const getSubcategories = () => {
   return axios.get('/api/subcategories/get').then(({ data }) => data);
 };
 
-const getMenu = () => {
+const getMenus = () => {
   const menu = sessionStorage.getItem('menu');
   if (menu) {
     const parsed = JSON.parse(menu);
@@ -36,11 +36,25 @@ const getOrders = () => {
   return axios.get('/api/order/get').then(({ data }) => data);
 };
 
-const getProductsByType = (type, id) => {
-  return axios.get(`/api/${type}/${id}/products`).then(({ data }) => data);
+const getCategoryProducts = id => {
+  return axios.get(`/api/categories/${id}/products`).then(({ data }) => data);
 };
 
-const getNewProducts = () => {
+const getSubcategoryProducts = id => {
+  return axios
+    .get(`/api/subcategories/${id}/products`)
+    .then(({ data }) => data);
+};
+
+const getAuthorProducts = id => {
+  return axios.get(`/api/authors/${id}/products`).then(({ data }) => data);
+};
+
+const getTagProducts = id => {
+  return axios.get(`/api/tags/${id}/products`).then(({ data }) => data);
+};
+
+const getCarouselProducts = () => {
   const layoutCarousel = sessionStorage.getItem('layoutCarousel');
   if (layoutCarousel) {
     const parsed = JSON.parse(layoutCarousel);
@@ -52,11 +66,11 @@ const getNewProducts = () => {
   });
 };
 
-const getOrderProducts = orderId => {
+const getOrdersProducts = orderId => {
   return axios.get(`/api/order/${orderId}/products`).then(({ data }) => data);
 };
 
-const getCart = () => {
+const getCartProducts = () => {
   return axios.get('/api/order/cart').then(({ data }) => {
     data.forEach(product => {
       product.quantity = product.pivot.quantity;
@@ -95,14 +109,17 @@ export {
   getCategories,
   getTags,
   getSubcategories,
-  getMenu,
+  getMenus,
   getAuthors,
   getProducts,
   getOrders,
-  getProductsByType,
-  getNewProducts,
-  getOrderProducts,
-  getCart,
+  getCategoryProducts,
+  getSubcategoryProducts,
+  getAuthorProducts,
+  getTagProducts,
+  getCarouselProducts,
+  getOrdersProducts,
+  getCartProducts,
   getUser,
   getProduct,
   getRating,
