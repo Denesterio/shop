@@ -18,10 +18,22 @@
 
       <author-input-component
         @add-author="addAuthorToAuthors"
-        @clear-authors="clearProductAuthors"
         ref="authorsForm"
         :error="getErrorMessage('authors')"
       />
+
+      <p class="font-weight-bolder m-1 p-1 font-italic">
+        {{ formattedAuthors }}
+        <a
+          @click.prevent="clearAuthors"
+          v-if="product.authors.length"
+          href=""
+          noreferrer
+          nofollow
+          class="font-weight-normal"
+          v-t="'label.clear'"
+        ></a>
+      </p>
 
       <div class="form-group">
         <b-button
@@ -52,7 +64,7 @@
 
       <div class="row">
         <base-input-group-component
-          v-model.trim="product.price"
+          v-model.number="product.price"
           field="price"
           type="number"
           :error="getErrorMessage('price')"
@@ -61,7 +73,7 @@
         </base-input-group-component>
 
         <base-input-group-component
-          v-model.trim="product.pages"
+          v-model.number="product.pages"
           field="pages"
           type="number"
           :error="getErrorMessage('pages')"
@@ -70,7 +82,7 @@
         </base-input-group-component>
 
         <base-input-group-component
-          v-model.trim="product.year"
+          v-model.number="product.year"
           field="year"
           type="number"
           :error="getErrorMessage('year')"
@@ -212,12 +224,10 @@ export default {
       );
     },
 
-    filteredProducts() {
-      return this.products.filter((prod) =>
-        this.subcategorySlug
-          ? prod["subcategory_slug"] === this.subcategorySlug
-          : true
-      );
+    formattedAuthors() {
+      if (this.product.authors.length > 0) {
+        return this.product.authors.map((a) => a.title).join(", ");
+      }
     },
   },
 
@@ -247,10 +257,6 @@ export default {
       this.product.authors.push(author);
     },
 
-    clearProductAuthors() {
-      this.product.authors = [];
-    },
-
     getPicture(e) {
       this.product.picture = e.target.files[0];
     },
@@ -270,13 +276,13 @@ export default {
       const params = {
         title: this.product.title,
         description: this.product.description,
-        price: Number.parseInt(this.product.price),
-        year: Number.parseInt(this.product.year),
-        pages: Number.parseInt(this.product.pages),
+        price: this.product.price,
+        year: this.product.year,
+        pages: this.product.pages,
         cover: this.product.cover,
         subcategorySlug: this.product.subcategorySlug,
         picture: this.product.picture,
-        authors: JSON.stringify(this.product.authors.map((a) => a.id)),
+        authors: JSON.stringify(this.product.authors),
         tags: JSON.stringify(this.product.tags),
       };
 
@@ -315,7 +321,11 @@ export default {
           this.product[key] = "";
         }
       }
-      this.$refs.authorsForm.clearAuthors();
+      this.clearAuthors();
+    },
+
+    clearAuthors() {
+      this.product.authors = [];
     },
   },
 };

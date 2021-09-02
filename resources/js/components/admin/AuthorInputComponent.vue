@@ -6,8 +6,7 @@
       v-model="currentAuthor"
       @keydown.enter.prevent="addAuthorToAuthors"
       class="form-control"
-      :class="{ 'is-invalid': getErrorMessage('title') || error }"
-      :disabled="processing"
+      :class="{ 'is-invalid': error.length }"
       name="authors"
     />
     <p v-if="error.length" class="invalid-feedback">
@@ -20,41 +19,13 @@
         :value="author.title"
       ></option>
     </datalist>
-    <p v-if="getErrorMessage('title')" class="error-msg invalid-feedback">
-      {{ getErrorMessage("title") }}
-      <a
-        @click.prevent="createNewAuthor"
-        href=""
-        :class="{ 'text-decoration-line-through': processing }"
-        noreferrer
-        nofollow
-        :disabled="processing"
-        >добавить</a
-      >
-    </p>
-    <p class="font-weight-bolder m-1 p-1 font-italic">
-      {{ formattedAuthors }}
-      <a
-        @click.prevent="clearAuthors"
-        v-if="productAuthors.length"
-        href=""
-        noreferrer
-        nofollow
-        class="font-weight-normal"
-        >очистить</a
-      >
-    </p>
   </div>
 </template>
 
 <script>
 import RequestBuilder from "../../api/requestBuilder.js";
-import { onlyTitleSchema } from "../../validate.js";
-import СreateError from "../../services/createError.js";
-import validationMixin from "../../mixins/validationMixin.js";
 
 export default {
-  mixins: [validationMixin], // data: errors: [], methods: getErrorMessage(field)
   props: {
     error: {
       type: String,
@@ -66,9 +37,7 @@ export default {
   data() {
     return {
       currentAuthor: "",
-      productAuthors: [],
       authors: [],
-      processing: false,
     };
   },
 
@@ -85,10 +54,6 @@ export default {
       }
       return [];
     },
-
-    formattedAuthors() {
-      return this.productAuthors.map((a) => a.title).join(", ");
-    },
   },
 
   mounted() {
@@ -96,44 +61,16 @@ export default {
   },
 
   methods: {
-    async createNewAuthor() {
-      const isError = await this.validate(onlyTitleSchema, {
-        title: this.currentAuthor,
-      });
-      if (isError) return;
-
-      const fData = new FormData();
-      fData.append("title", this.currentAuthor);
-
-      this.processing = true;
-      new RequestBuilder("author")
-        .create(fData)
-        .then(({ data }) => {
-          this.authors = [data, ...this.authors];
-          this.currentAuthor = "";
-          this.productAuthors.push(data);
-        })
-        .catch((error) => {
-          this.handleServerError(error, "добавить автора");
-        })
-        .finally(() => {
-          this.processing = false;
-        });
-    },
-
     addAuthorToAuthors() {
-      if (this.currentAuthor === this.filteredAuthors[0]?.title) {
-        this.$emit("add-author", this.filteredAuthors[0]);
-        this.productAuthors.push(this.filteredAuthors[0]);
-        this.currentAuthor = "";
-      } else {
-        this.errors = [new СreateError("title", "Такого автора нет в базе")];
+      if (this.currentAuthor.length > 0) {
+        const addedAuthor = this.filteredAuthors.find(
+          (a) => a?.title === this.currentAuthor
+        );
+        if (addedAuthor) {
+          this.$emit("add-author", addedAuthor);
+          this.currentAuthor = "";
+        }
       }
-    },
-
-    clearAuthors() {
-      this.productAuthors = [];
-      this.$emit("clear-authors");
     },
   },
 };

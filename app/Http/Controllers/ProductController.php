@@ -38,6 +38,12 @@ class ProductController extends Controller
 
         $authors = json_decode($authors);
         $tags = json_decode($tags);
+        $authorsIds = array_map(function ($a) {
+            return $a->id;
+        }, $authors);
+        $authorsTitles = array_map(function ($a) {
+            return $a->title;
+        }, $authors);
 
         $currentYear = date('Y');
         $request->validate([
@@ -53,9 +59,11 @@ class ProductController extends Controller
             'picture' => 'nullable|image',
         ]);
 
-        Validator::make(['authors' => $authors, 'tags' => $tags], [
+
+
+        Validator::make(['authors' => $authorsTitles, 'tags' => $tags], [
             'authors' => ['required', 'array'],
-            'authors.*' => ['required', 'distinct', 'exists:authors,id'],
+            'authors.*' => ['required', 'distinct', 'exists:authors,title'],
             'tags' => ['required', 'array'],
             'tags.*' => ['required', 'distinct', 'exists:tags,id'],
         ])->validate();
@@ -106,8 +114,8 @@ class ProductController extends Controller
             'cover_id' => $cover,
         ]);
 
+        $product->authors()->attach($authorsIds);
         $product->tags()->attach($tags);
-        $product->authors()->attach($authors);
 
         return $product;
     }

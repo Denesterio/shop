@@ -3950,30 +3950,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../api/requestBuilder.js */ "./resources/js/api/requestBuilder.js");
-/* harmony import */ var _validate_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../validate.js */ "./resources/js/validate.js");
-/* harmony import */ var _services_createError_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../services/createError.js */ "./resources/js/services/createError.js");
-/* harmony import */ var _mixins_validationMixin_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/validationMixin.js */ "./resources/js/mixins/validationMixin.js");
-
-
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
+/* harmony import */ var _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../api/requestBuilder.js */ "./resources/js/api/requestBuilder.js");
 //
 //
 //
@@ -3998,38 +3975,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
-
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  mixins: [_mixins_validationMixin_js__WEBPACK_IMPORTED_MODULE_4__.default],
-  // data: errors: [], methods: getErrorMessage(field)
   props: {
     error: {
       type: String,
@@ -4040,9 +3987,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   data: function data() {
     return {
       currentAuthor: "",
-      productAuthors: [],
-      authors: [],
-      processing: false
+      authors: []
     };
   },
   computed: {
@@ -4056,83 +4001,29 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       return [];
-    },
-    formattedAuthors: function formattedAuthors() {
-      return this.productAuthors.map(function (a) {
-        return a.title;
-      }).join(", ");
     }
   },
   mounted: function mounted() {
     var _this = this;
 
-    new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("authors").get().then(function (data) {
+    new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__.default("authors").get().then(function (data) {
       return _this.authors = data;
     });
   },
   methods: {
-    createNewAuthor: function createNewAuthor() {
+    addAuthorToAuthors: function addAuthorToAuthors() {
       var _this2 = this;
 
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-        var isError, fData;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                _context.next = 2;
-                return _this2.validate(_validate_js__WEBPACK_IMPORTED_MODULE_2__.onlyTitleSchema, {
-                  title: _this2.currentAuthor
-                });
+      if (this.currentAuthor.length > 0) {
+        var addedAuthor = this.filteredAuthors.find(function (a) {
+          return (a === null || a === void 0 ? void 0 : a.title) === _this2.currentAuthor;
+        });
 
-              case 2:
-                isError = _context.sent;
-
-                if (!isError) {
-                  _context.next = 5;
-                  break;
-                }
-
-                return _context.abrupt("return");
-
-              case 5:
-                fData = new FormData();
-                fData.append("title", _this2.currentAuthor);
-                _this2.processing = true;
-                new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("author").create(fData).then(function (_ref) {
-                  var data = _ref.data;
-                  _this2.authors = [data].concat(_toConsumableArray(_this2.authors));
-                  _this2.currentAuthor = "";
-
-                  _this2.productAuthors.push(data);
-                })["catch"](function (error) {
-                  _this2.handleServerError(error, "добавить автора");
-                })["finally"](function () {
-                  _this2.processing = false;
-                });
-
-              case 9:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee);
-      }))();
-    },
-    addAuthorToAuthors: function addAuthorToAuthors() {
-      var _this$filteredAuthors;
-
-      if (this.currentAuthor === ((_this$filteredAuthors = this.filteredAuthors[0]) === null || _this$filteredAuthors === void 0 ? void 0 : _this$filteredAuthors.title)) {
-        this.$emit("add-author", this.filteredAuthors[0]);
-        this.productAuthors.push(this.filteredAuthors[0]);
-        this.currentAuthor = "";
-      } else {
-        this.errors = [new _services_createError_js__WEBPACK_IMPORTED_MODULE_3__.default("title", "Такого автора нет в базе")];
+        if (addedAuthor) {
+          this.$emit("add-author", addedAuthor);
+          this.currentAuthor = "";
+        }
       }
-    },
-    clearAuthors: function clearAuthors() {
-      this.productAuthors = [];
-      this.$emit("clear-authors");
     }
   }
 });
@@ -4822,6 +4713,18 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -4869,40 +4772,37 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         return _this.categoryId ? subcat["category_id"] === _this.categoryId : true;
       });
     },
-    filteredProducts: function filteredProducts() {
-      var _this2 = this;
-
-      return this.products.filter(function (prod) {
-        return _this2.subcategorySlug ? prod["subcategory_slug"] === _this2.subcategorySlug : true;
-      });
+    formattedAuthors: function formattedAuthors() {
+      if (this.product.authors.length > 0) {
+        return this.product.authors.map(function (a) {
+          return a.title;
+        }).join(", ");
+      }
     }
   },
   created: function created() {
-    var _this3 = this;
+    var _this2 = this;
 
     var promises = [new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("categories").get().then(function (data) {
-      return _this3.categories = data;
+      return _this2.categories = data;
     }), new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("subcategories").get().then(function (data) {
-      return _this3.subcategories = data;
+      return _this2.subcategories = data;
     }), new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("tags").get().then(function (data) {
-      return _this3.tags = data.sort(function (_ref, _ref2) {
+      return _this2.tags = data.sort(function (_ref, _ref2) {
         var a = _ref.title;
         var b = _ref2.title;
         return a < b ? -1 : 1;
       });
     }), new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("covers").get().then(function (data) {
-      return _this3.covers = data;
+      return _this2.covers = data;
     })];
     Promise.all(promises)["finally"](function () {
-      return _this3.loading = false;
+      return _this2.loading = false;
     });
   },
   methods: {
     addAuthorToAuthors: function addAuthorToAuthors(author) {
       this.product.authors.push(author);
-    },
-    clearProductAuthors: function clearProductAuthors() {
-      this.product.authors = [];
     },
     getPicture: function getPicture(e) {
       this.product.picture = e.target.files[0];
@@ -4928,7 +4828,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       this.product.images = [];
     },
     createNewProduct: function createNewProduct() {
-      var _this4 = this;
+      var _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
         var params, isError, fData, param, _iterator2, _step2, file;
@@ -4938,21 +4838,19 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
             switch (_context.prev = _context.next) {
               case 0:
                 params = {
-                  title: _this4.product.title,
-                  description: _this4.product.description,
-                  price: Number.parseInt(_this4.product.price),
-                  year: Number.parseInt(_this4.product.year),
-                  pages: Number.parseInt(_this4.product.pages),
-                  cover: _this4.product.cover,
-                  subcategorySlug: _this4.product.subcategorySlug,
-                  picture: _this4.product.picture,
-                  authors: JSON.stringify(_this4.product.authors.map(function (a) {
-                    return a.id;
-                  })),
-                  tags: JSON.stringify(_this4.product.tags)
+                  title: _this3.product.title,
+                  description: _this3.product.description,
+                  price: _this3.product.price,
+                  year: _this3.product.year,
+                  pages: _this3.product.pages,
+                  cover: _this3.product.cover,
+                  subcategorySlug: _this3.product.subcategorySlug,
+                  picture: _this3.product.picture,
+                  authors: JSON.stringify(_this3.product.authors),
+                  tags: JSON.stringify(_this3.product.tags)
                 };
                 _context.next = 3;
-                return _this4.validate(_validate_js__WEBPACK_IMPORTED_MODULE_2__.productSchema, params);
+                return _this3.validate(_validate_js__WEBPACK_IMPORTED_MODULE_2__.productSchema, params);
 
               case 3:
                 isError = _context.sent;
@@ -4971,7 +4869,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
                   fData.append(param, params[param]);
                 }
 
-                _iterator2 = _createForOfIteratorHelper(_this4.product.images);
+                _iterator2 = _createForOfIteratorHelper(_this3.product.images);
 
                 try {
                   for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
@@ -4984,16 +4882,16 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
                   _iterator2.f();
                 }
 
-                _this4.processing = true;
+                _this3.processing = true;
                 new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("product").create(fData).then(function (_ref3) {
                   var data = _ref3.data;
-                  _this4.products = [data].concat(_toConsumableArray(_this4.products));
+                  _this3.products = [data].concat(_toConsumableArray(_this3.products));
 
-                  _this4.clearForm();
+                  _this3.clearForm();
                 })["catch"](function (error) {
-                  _this4.handleServerError(error, "добавить продукт");
+                  _this3.handleServerError(error, "добавить продукт");
                 })["finally"](function () {
-                  _this4.processing = false;
+                  _this3.processing = false;
                 });
 
               case 12:
@@ -5013,7 +4911,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
         }
       }
 
-      this.$refs.authorsForm.clearAuthors();
+      this.clearAuthors();
+    },
+    clearAuthors: function clearAuthors() {
+      this.product.authors = [];
     }
   }
 });
@@ -71901,12 +71802,8 @@ var render = function() {
         }
       ],
       staticClass: "form-control",
-      class: { "is-invalid": _vm.getErrorMessage("title") || _vm.error },
-      attrs: {
-        list: "authorDatalist",
-        disabled: _vm.processing,
-        name: "authors"
-      },
+      class: { "is-invalid": _vm.error.length },
+      attrs: { list: "authorDatalist", name: "authors" },
       domProps: { value: _vm.currentAuthor },
       on: {
         keydown: function($event) {
@@ -71946,52 +71843,7 @@ var render = function() {
           }),
           0
         )
-      : _vm._e(),
-    _vm._v(" "),
-    _vm.getErrorMessage("title")
-      ? _c("p", { staticClass: "error-msg invalid-feedback" }, [
-          _vm._v("\n    " + _vm._s(_vm.getErrorMessage("title")) + "\n    "),
-          _c(
-            "a",
-            {
-              class: { "text-decoration-line-through": _vm.processing },
-              attrs: {
-                href: "",
-                noreferrer: "",
-                nofollow: "",
-                disabled: _vm.processing
-              },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.createNewAuthor.apply(null, arguments)
-                }
-              }
-            },
-            [_vm._v("добавить")]
-          )
-        ])
-      : _vm._e(),
-    _vm._v(" "),
-    _c("p", { staticClass: "font-weight-bolder m-1 p-1 font-italic" }, [
-      _vm._v("\n    " + _vm._s(_vm.formattedAuthors) + "\n    "),
-      _vm.productAuthors.length
-        ? _c(
-            "a",
-            {
-              staticClass: "font-weight-normal",
-              attrs: { href: "", noreferrer: "", nofollow: "" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.clearAuthors.apply(null, arguments)
-                }
-              }
-            },
-            [_vm._v("очистить")]
-          )
-        : _vm._e()
-    ])
+      : _vm._e()
   ])
 }
 var staticRenderFns = []
@@ -72461,11 +72313,32 @@ var render = function() {
           _c("author-input-component", {
             ref: "authorsForm",
             attrs: { error: _vm.getErrorMessage("authors") },
-            on: {
-              "add-author": _vm.addAuthorToAuthors,
-              "clear-authors": _vm.clearProductAuthors
-            }
+            on: { "add-author": _vm.addAuthorToAuthors }
           }),
+          _vm._v(" "),
+          _c("p", { staticClass: "font-weight-bolder m-1 p-1 font-italic" }, [
+            _vm._v("\n      " + _vm._s(_vm.formattedAuthors) + "\n      "),
+            _vm.product.authors.length
+              ? _c("a", {
+                  directives: [
+                    {
+                      name: "t",
+                      rawName: "v-t",
+                      value: "label.clear",
+                      expression: "'label.clear'"
+                    }
+                  ],
+                  staticClass: "font-weight-normal",
+                  attrs: { href: "", noreferrer: "", nofollow: "" },
+                  on: {
+                    click: function($event) {
+                      $event.preventDefault()
+                      return _vm.clearAuthors.apply(null, arguments)
+                    }
+                  }
+                })
+              : _vm._e()
+          ]),
           _vm._v(" "),
           _c(
             "div",
@@ -72554,11 +72427,7 @@ var render = function() {
                   model: {
                     value: _vm.product.price,
                     callback: function($$v) {
-                      _vm.$set(
-                        _vm.product,
-                        "price",
-                        typeof $$v === "string" ? $$v.trim() : $$v
-                      )
+                      _vm.$set(_vm.product, "price", _vm._n($$v))
                     },
                     expression: "product.price"
                   }
@@ -72578,11 +72447,7 @@ var render = function() {
                   model: {
                     value: _vm.product.pages,
                     callback: function($$v) {
-                      _vm.$set(
-                        _vm.product,
-                        "pages",
-                        typeof $$v === "string" ? $$v.trim() : $$v
-                      )
+                      _vm.$set(_vm.product, "pages", _vm._n($$v))
                     },
                     expression: "product.pages"
                   }
@@ -72602,11 +72467,7 @@ var render = function() {
                   model: {
                     value: _vm.product.year,
                     callback: function($$v) {
-                      _vm.$set(
-                        _vm.product,
-                        "year",
-                        typeof $$v === "string" ? $$v.trim() : $$v
-                      )
+                      _vm.$set(_vm.product, "year", _vm._n($$v))
                     },
                     expression: "product.year"
                   }
