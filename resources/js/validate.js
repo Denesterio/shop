@@ -71,32 +71,7 @@ const onlyTitleSchema = yup.object().shape({
   title: yup.string().required()
 });
 
-const handleServerErrors = (context, error, entity) => {
-  const validationErrors = error.response.data?.errors;
-  if (validationErrors) {
-    Object.entries(validationErrors).forEach(([key, [value]]) => {
-      context.validationErrors[key] = value;
-    });
-  } else {
-    Vue.swal.fire({
-      icon: 'error',
-      title: 'Ошибка',
-      text: context.$t('error.сreateError', { msg: entity })
-    });
-  }
-};
-
-const fillErrorsObject = (obj, error) => {
-  if (error.inner.length > 0) {
-    error.inner.forEach(err => {
-      obj[err.path] = err.message;
-    });
-  } else {
-    obj[error.path] = error.message;
-  }
-};
-
-// Альтернативная обработка ошибок
+// обработка ошибок
 const getErrors = error => {
   if (error?.response?.status === 422) {
     return Object.entries(error.response.data.errors).map(
@@ -123,7 +98,5 @@ export {
   productSchema,
   onlyTitleSchema,
   registrationSchema,
-  handleServerErrors,
-  fillErrorsObject,
   getErrors
 };

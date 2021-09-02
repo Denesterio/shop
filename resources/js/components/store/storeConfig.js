@@ -1,4 +1,4 @@
-import RequestBuilder from '../../api';
+import RequestBuilder from '../../api/requestBuilder.js';
 import { authLogin } from '../../api/auth.js';
 
 export default {

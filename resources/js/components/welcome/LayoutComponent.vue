@@ -23,7 +23,7 @@
 <script>
 import CarouselComponent from "./CarouselComponent.vue";
 import LeftMenuComponent from "./LeftMenuComponent.vue";
-import RequestBuilder from "../../api";
+import RequestBuilder from "../../api/requestBuilder.js";
 export default {
   components: {
     CarouselComponent,

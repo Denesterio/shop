@@ -5,7 +5,7 @@
     <span v-else-if="error">{{ error }}</span>
     <ul v-else class="list-group mt-4">
       <li
-        v-for="entity in entities"
+        v-for="entity in currentEntities"
         :key="entity.id"
         class="row justify-content-between mb-2 p-2"
       >
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import RequestBuilder from "../../api";
+import RequestBuilder from "../../api/requestBuilder.js";
 export default {
   props: {
     enType: {
@@ -35,11 +35,17 @@ export default {
       required: false,
       default: "",
     },
+
+    entities: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
   },
 
   data() {
     return {
-      entities: [],
+      currentEntities: this.entities,
       processing: false,
       error: "",
     };
@@ -50,7 +56,7 @@ export default {
       this.processing = true;
       new RequestBuilder(type)
         .get()
-        .then((data) => (this.entities = data))
+        .then((data) => (this.currentEntities = data))
         .catch((error) => (this.error = error.response.data.message))
         .finally(() => (this.processing = false));
     },
@@ -59,7 +65,10 @@ export default {
       new RequestBuilder(this.enType)
         .delete(id)
         .then(
-          () => (this.entities = this.entities.filter((ent) => ent.id !== id))
+          () =>
+            (this.currentEntities = this.currentEntities.filter(
+              (ent) => ent.id !== id
+            ))
         );
     },
   },
@@ -69,8 +78,12 @@ export default {
       if (newVal.length > 0) {
         this.getEntities(this.$t(`plurals.${this.enType}`));
       } else {
-        this.entities = [];
+        this.currentEntities = [];
       }
+    },
+
+    entities() {
+      this.currentEntities = this.entities;
     },
   },
 };

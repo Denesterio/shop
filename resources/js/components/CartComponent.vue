@@ -58,7 +58,7 @@
 
 <script>
 import AddtoCartButtonComponent from "./AddtoCartButtonComponent.vue";
-import RequestBuilder from "../api";
+import RequestBuilder from "../api/requestBuilder.js";
 
 export default {
   components: { AddtoCartButtonComponent },

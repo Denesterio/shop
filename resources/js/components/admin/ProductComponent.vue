@@ -153,18 +153,29 @@
         bType="create"
         v-t="'label.create'"
       ></base-button-component>
+
+      <base-button-component
+        @click.native.prevent="clearForm"
+        :disabled="processing"
+        bType="clear"
+        v-t="'label.clear'"
+        class="ml-2"
+      ></base-button-component>
     </form>
+
+    <entity-list-component enType="product" :entities="products" />
   </div>
 </template>
 
 <script>
-import RequestBuilder from "../../api";
-import { productSchema, getErrors } from "../../validate.js";
+import RequestBuilder from "../../api/requestBuilder.js";
+import { productSchema } from "../../validate.js";
 import AuthorInputComponent from "./AuthorInputComponent.vue";
 import validationMixin from "../../mixins/validationMixin.js";
+import EntityListComponent from "./EntityListComponent.vue";
 export default {
   name: "product-component",
-  components: { AuthorInputComponent },
+  components: { AuthorInputComponent, EntityListComponent },
   mixins: [validationMixin], // data: errors: [], methods: getErrorMessage(field)
   data() {
     return {
@@ -218,7 +229,14 @@ export default {
       new RequestBuilder("subcategories")
         .get()
         .then((data) => (this.subcategories = data)),
-      new RequestBuilder("tags").get().then((data) => (this.tags = data)),
+      new RequestBuilder("tags")
+        .get()
+        .then(
+          (data) =>
+            (this.tags = data.sort(({ title: a }, { title: b }) =>
+              a < b ? -1 : 1
+            ))
+        ),
       new RequestBuilder("covers").get().then((data) => (this.covers = data)),
     ];
     Promise.all(promises).finally(() => (this.loading = false));
@@ -249,8 +267,6 @@ export default {
     },
 
     async createNewProduct() {
-      this.errors = [];
-      const fData = new FormData();
       const params = {
         title: this.product.title,
         description: this.product.description,
@@ -264,15 +280,10 @@ export default {
         tags: JSON.stringify(this.product.tags),
       };
 
-      try {
-        await productSchema.validate(params, {
-          abortEarly: false,
-        });
-      } catch (error) {
-        this.errors = getErrors(error);
-        return;
-      }
+      const isError = await this.validate(productSchema, params);
+      if (isError) return;
 
+      const fData = new FormData();
       for (const param in params) {
         fData.append(param, params[param]);
       }
@@ -286,27 +297,23 @@ export default {
         .create(fData)
         .then(({ data }) => {
           this.products = [data, ...this.products];
-          this.clearFields();
+          this.clearForm();
         })
         .catch((error) => {
-          try {
-            this.errors = getErrors(error);
-          } catch (err) {
-            Vue.swal.fire({
-              icon: "error",
-              title: "Ошибка",
-              text: this.$t("error.сreateError", { msg: "добавить продукт" }),
-            });
-          }
+          this.handleServerError(error, "добавить продукт");
         })
         .finally(() => {
           this.processing = false;
         });
     },
 
-    clearFields() {
+    clearForm() {
       for (const key in this.product) {
-        this.product[key] = "";
+        if (key === "tags") {
+          this.product[key] = [];
+        } else {
+          this.product[key] = "";
+        }
       }
       this.$refs.authorsForm.clearAuthors();
     },

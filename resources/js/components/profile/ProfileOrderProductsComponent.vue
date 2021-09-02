@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import RequestBuilder from "../../api";
+import RequestBuilder from "../../api/requestBuilder.js";
 export default {
   props: ["orderId", "status"],
   data() {

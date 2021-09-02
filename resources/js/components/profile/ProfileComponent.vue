@@ -70,7 +70,7 @@
 <script>
 import ProfileOrderProductsComponent from "./ProfileOrderProductsComponent.vue";
 import ProfileInfoComponent from "./ProfileInfoComponent.vue";
-import RequestBuilder from "../../api";
+import RequestBuilder from "../../api/requestBuilder.js";
 export default {
   components: {
     ProfileOrderProductsComponent,

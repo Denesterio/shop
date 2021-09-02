@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import RequestBuilder from "../api";
+import RequestBuilder from "../api/requestBuilder.js";
 import AddtoCartButtonComponent from "./AddtoCartButtonComponent.vue";
 import ProductPicturiesComponent from "./ProductPicturiesComponent.vue";
 import BaseBreadcrumbComponent from "./BaseBreadcrumbComponent.vue";

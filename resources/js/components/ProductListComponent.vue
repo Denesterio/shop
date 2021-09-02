@@ -31,7 +31,7 @@
 <script>
 import ProductCardComponent from "./ProductCardComponent.vue";
 import ProductPointComponent from "./ProductPointComponent.vue";
-import RequestBuilder from "../api";
+import RequestBuilder from "../api/requestBuilder.js";
 
 const makeRequest = (to) => {
   const id = to.params.id;

@@ -2,17 +2,18 @@
   <div class="container mt-5">
     <form class="container mb-4">
       <base-input-group-component
-        v-model.trim="categoryName"
-        field="categoryName"
-        :error="validationErrors.title"
+        v-model.trim="category.title"
+        field="title"
+        :error="getErrorMessage('title')"
+        v-focus
         >{{ $t("label.newCategoryName") }}
       </base-input-group-component>
 
       <base-input-group-component
-        v-model="categoryDesc"
+        v-model="category.description"
         type="textarea"
-        field="categoryDesc"
-        :error="validationErrors.description"
+        field="description"
+        :error="getErrorMessage('description')"
         >{{ $t("label.newCategoryDesc") }}
       </base-input-group-component>
 
@@ -31,76 +32,64 @@
         class="ml-2"
       ></base-button-component>
     </form>
+
+    <entity-list-component enType="category" :entities="categories" />
   </div>
 </template>
 
 <script>
-import RequestBuilder from "../../api";
-import {
-  categorySchema,
-  handleServerErrors,
-  fillErrorsObject,
-} from "../../validate.js";
+import RequestBuilder from "../../api/requestBuilder.js";
+import EntityListComponent from "./EntityListComponent.vue";
+import validationMixin from "../../mixins/validationMixin.js";
+import { categorySchema } from "../../validate.js";
 
 export default {
   name: "category-component",
+  components: { EntityListComponent },
+  mixins: [validationMixin], // data: errors: [], methods: getErrorMessage(field)
   data() {
     return {
-      categoryName: "",
-      categoryDesc: "",
-
-      categories: [],
-      error: "",
-
-      loading: true,
-      processing: false,
-      validationErrors: {
+      category: {
         title: "",
         description: "",
       },
+
+      categories: [],
+
+      loading: true,
+      processing: false,
     };
   },
 
   methods: {
-    createNewCategory() {
-      const params = {
-        title: this.categoryName,
-        description: this.categoryDesc,
-      };
+    async createNewCategory() {
+      const isError = await this.validate(categorySchema, this.category);
+      if (isError) return;
 
-      categorySchema
-        .validate(params, { abortEarly: false })
-        .then(() => {
-          this.processing = true;
-          new RequestBuilder("category")
-            .create(params)
-            .then(({ data }) => {
-              this.categories = [data, ...this.categories];
-              this.clearForm();
-            })
-            .catch((error) => {
-              handleServerErrors(this, error, "добавить категорию");
-            })
-            .finally(() => {
-              this.processing = false;
-            });
+      const fData = new FormData();
+      for (const param in this.category) {
+        fData.append(param, this.category[param]);
+      }
+
+      this.processing = true;
+      new RequestBuilder("category")
+        .create(fData)
+        .then(({ data }) => {
+          this.categories = [data, ...this.categories];
+          this.clearForm();
         })
         .catch((error) => {
-          fillErrorsObject(this.validationErrors, error);
+          this.handleServerError(error, "добавить категорию");
+        })
+        .finally(() => {
+          this.processing = false;
         });
     },
 
     clearForm() {
-      this.categoryName = "";
-      this.categoryDesc = "";
-    },
-  },
-  watch: {
-    categoryName() {
-      this.validationErrors.title = "";
-    },
-    categoryDesc() {
-      this.validationErrors.description = "";
+      for (const key in this.category) {
+        this.category[key] = "";
+      }
     },
   },
 };

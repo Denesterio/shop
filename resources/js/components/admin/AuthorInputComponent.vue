@@ -6,7 +6,7 @@
       v-model="currentAuthor"
       @keydown.enter.prevent="addAuthorToAuthors"
       class="form-control"
-      :class="{ 'is-invalid': validationErrors.title || error }"
+      :class="{ 'is-invalid': getErrorMessage('title') || error }"
       :disabled="processing"
       name="authors"
     />
@@ -20,8 +20,8 @@
         :value="author.title"
       ></option>
     </datalist>
-    <p v-if="validationErrors.title.length" class="error-msg invalid-feedback">
-      {{ validationErrors.title }}
+    <p v-if="getErrorMessage('title')" class="error-msg invalid-feedback">
+      {{ getErrorMessage("title") }}
       <a
         @click.prevent="createNewAuthor"
         href=""
@@ -48,14 +48,13 @@
 </template>
 
 <script>
-import RequestBuilder from "../../api";
-import {
-  onlyTitleSchema,
-  handleServerErrors,
-  fillErrorsObject,
-} from "../../validate.js";
+import RequestBuilder from "../../api/requestBuilder.js";
+import { onlyTitleSchema } from "../../validate.js";
+import СreateError from "../../services/createError.js";
+import validationMixin from "../../mixins/validationMixin.js";
 
 export default {
+  mixins: [validationMixin], // data: errors: [], methods: getErrorMessage(field)
   props: {
     error: {
       type: String,
@@ -70,9 +69,6 @@ export default {
       productAuthors: [],
       authors: [],
       processing: false,
-      validationErrors: {
-        title: "",
-      },
     };
   },
 
@@ -100,23 +96,29 @@ export default {
   },
 
   methods: {
-    createNewAuthor() {
-      onlyTitleSchema
-        .validate({ title: this.currentAuthor })
-        .then((params) => {
-          this.processing = true;
-          new RequestBuilder("author")
-            .create(params)
-            .then(({ data }) => {
-              this.authors = [data, ...this.authors];
-              this.addAuthorToAuthors();
-            })
-            .catch(() => {
-              handleServerErrors(this, error, "добавить автора");
-            })
-            .finally(() => (this.processing = false));
+    async createNewAuthor() {
+      const isError = await this.validate(onlyTitleSchema, {
+        title: this.currentAuthor,
+      });
+      if (isError) return;
+
+      const fData = new FormData();
+      fData.append("title", this.currentAuthor);
+
+      this.processing = true;
+      new RequestBuilder("author")
+        .create(fData)
+        .then(({ data }) => {
+          this.authors = [data, ...this.authors];
+          this.currentAuthor = "";
+          this.productAuthors.push(data);
         })
-        .catch((error) => fillErrorsObject(this.validationErrors, error));
+        .catch((error) => {
+          this.handleServerError(error, "добавить автора");
+        })
+        .finally(() => {
+          this.processing = false;
+        });
     },
 
     addAuthorToAuthors() {
@@ -125,19 +127,13 @@ export default {
         this.productAuthors.push(this.filteredAuthors[0]);
         this.currentAuthor = "";
       } else {
-        this.validationErrors.title = "Такого автора нет в базе";
+        this.errors = [new СreateError("title", "Такого автора нет в базе")];
       }
     },
 
     clearAuthors() {
       this.productAuthors = [];
       this.$emit("clear-authors");
-    },
-  },
-
-  watch: {
-    currentAuthor() {
-      this.validationErrors.title = "";
     },
   },
 };

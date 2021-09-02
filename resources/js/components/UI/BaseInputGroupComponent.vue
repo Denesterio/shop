@@ -61,6 +61,11 @@ export default {
       required: false,
       default: false,
     },
+    focus: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
 
   methods: {
