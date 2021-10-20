@@ -1,6 +1,8 @@
 <template>
   <div class="d-flex flex-column justify-content-center">
-    <div class="picture-container">
+    <div
+      class="picture-container d-flex justify-content-center align-items-center"
+    >
       <img class="main-image" :src="picturePath" :alt="title" />
     </div>
     <div class="p-3 d-sm-none d-md-block" v-if="images.length">
@@ -63,8 +65,9 @@ export default {
 
 <style scoped>
 .main-image {
-  width: 75%;
-  height: auto;
+  width: auto;
+  max-width: 90%;
+  height: 400px;
 }
 
 .preview-image {
