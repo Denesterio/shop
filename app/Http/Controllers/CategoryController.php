@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreCategoryRequest;
 
 class CategoryController extends Controller
 {
@@ -18,19 +19,9 @@ class CategoryController extends Controller
         ];
     }
 
-    public function create(Request $request)
+    public function create(StoreCategoryRequest $request)
     {
-        $request->validate([
-            'title' => ['required', 'string', 'max:255', 'unique:categories'],
-            'description' => ['required', 'string'],
-        ]);
-
-        $cat = Category::create([
-            'title' => $request['title'],
-            'description' => $request['description']
-        ]);
-
-        return $cat;
+        return Category::create($request->validated());
     }
 
     public function get()

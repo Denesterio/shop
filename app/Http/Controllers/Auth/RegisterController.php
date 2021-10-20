@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreRegisterRequest;
 
 class RegisterController extends Controller
 {
@@ -73,14 +73,9 @@ class RegisterController extends Controller
         ]);
     }
 
-    public function register(Request $request)
+    public function register(StoreRegisterRequest $request)
     {
-        $credentials = $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:users'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
-
+        $credentials = $request->validated();
         $user = $this->create($credentials);
         Auth::login($user);
         return $user;

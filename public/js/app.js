@@ -2823,6 +2823,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     pictures: {
@@ -7212,27 +7214,13 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_2__.default.use(vue_sweetalert2__WEBPACK_IMPORTED_MODULE_0__.default); // import BootstrapVue from "bootstrap-vue";
-// Vue.use(BootstrapVue);
-
+vue__WEBPACK_IMPORTED_MODULE_2__.default.use(vue_sweetalert2__WEBPACK_IMPORTED_MODULE_0__.default);
 
 
 
 _components_UI__WEBPACK_IMPORTED_MODULE_5__.default.forEach(function (component) {
   vue__WEBPACK_IMPORTED_MODULE_2__.default.component(component.name, component);
 });
- // import { BButton } from 'bootstrap-vue';
-// import { BCollapse } from 'bootstrap-vue';
-// import { BFormGroup } from 'bootstrap-vue';
-// import { BFormCheckboxGroup } from 'bootstrap-vue';
-// import { BFormCheckbox } from 'bootstrap-vue';
-// import { BModal } from 'bootstrap-vue';
-// import { BFormRadioGroup } from 'bootstrap-vue';
-// import { BCard } from 'bootstrap-vue';
-// import { BCardHeader } from 'bootstrap-vue';
-// import { BCardBody } from 'bootstrap-vue';
-// import { VBToggle } from 'bootstrap-vue';
-// import { BBreadcrumb } from 'bootstrap-vue';
 
 vue__WEBPACK_IMPORTED_MODULE_2__.default.component('b-button-close', bootstrap_vue__WEBPACK_IMPORTED_MODULE_6__.BButtonClose);
 vue__WEBPACK_IMPORTED_MODULE_2__.default.component('b-button', bootstrap_vue__WEBPACK_IMPORTED_MODULE_7__.BButton);
@@ -22210,7 +22198,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.main-image[data-v-aa9581be] {\n  width: 75%;\n  height: auto;\n}\n.preview-image[data-v-aa9581be] {\n  width: 100%;\n}\n.image-preview-container[data-v-aa9581be] {\n  width: 72px;\n  height: -webkit-fit-content;\n  height: -moz-fit-content;\n  height: fit-content;\n  margin: 5px;\n}\n.image-preview[data-v-aa9581be]:hover {\n  cursor: pointer;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.main-image[data-v-aa9581be] {\n  width: auto;\n  max-width: 90%;\n  height: 400px;\n}\n.preview-image[data-v-aa9581be] {\n  width: 100%;\n}\n.image-preview-container[data-v-aa9581be] {\n  width: 72px;\n  height: -webkit-fit-content;\n  height: -moz-fit-content;\n  height: fit-content;\n  margin: 5px;\n}\n.image-preview[data-v-aa9581be]:hover {\n  cursor: pointer;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -70650,12 +70638,19 @@ var render = function() {
     "div",
     { staticClass: "d-flex flex-column justify-content-center" },
     [
-      _c("div", { staticClass: "picture-container" }, [
-        _c("img", {
-          staticClass: "main-image",
-          attrs: { src: _vm.picturePath, alt: _vm.title }
-        })
-      ]),
+      _c(
+        "div",
+        {
+          staticClass:
+            "picture-container d-flex justify-content-center align-items-center"
+        },
+        [
+          _c("img", {
+            staticClass: "main-image",
+            attrs: { src: _vm.picturePath, alt: _vm.title }
+          })
+        ]
+      ),
       _vm._v(" "),
       _vm.images.length
         ? _c(

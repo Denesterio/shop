@@ -4,20 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Cover;
+use App\Http\Requests\StoreCoverRequest;
 
 class CoverController extends Controller
 {
-    public function create(Request $request)
+    public function create(StoreCoverRequest $request)
     {
-        $request->validate([
-            'title' => ['required', 'string', 'max:255', 'unique:covers'],
-        ]);
-
-        $cover = Cover::create([
-            'title' => $request['title'],
-        ]);
-
-        return $cover;
+        return Cover::create($request->validated());
     }
 
     public function get()
