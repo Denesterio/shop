@@ -37,8 +37,8 @@
         class="alert alert-info text-center"
         role="alert"
       >
-        <strong>"{{ title }}"</strong> ({{ alertsCount }})
-        {{ $t(`message.${change}`) }}
+        <strong>"{{ title }}"</strong
+        ><span> ({{ alertsCount }}) {{ $t(`message.${change}`) }}</span>
       </div>
     </template>
   </div>
