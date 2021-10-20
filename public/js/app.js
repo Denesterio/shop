@@ -7212,27 +7212,13 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_2__.default.use(vue_sweetalert2__WEBPACK_IMPORTED_MODULE_0__.default); // import BootstrapVue from "bootstrap-vue";
-// Vue.use(BootstrapVue);
-
+vue__WEBPACK_IMPORTED_MODULE_2__.default.use(vue_sweetalert2__WEBPACK_IMPORTED_MODULE_0__.default);
 
 
 
 _components_UI__WEBPACK_IMPORTED_MODULE_5__.default.forEach(function (component) {
   vue__WEBPACK_IMPORTED_MODULE_2__.default.component(component.name, component);
 });
- // import { BButton } from 'bootstrap-vue';
-// import { BCollapse } from 'bootstrap-vue';
-// import { BFormGroup } from 'bootstrap-vue';
-// import { BFormCheckboxGroup } from 'bootstrap-vue';
-// import { BFormCheckbox } from 'bootstrap-vue';
-// import { BModal } from 'bootstrap-vue';
-// import { BFormRadioGroup } from 'bootstrap-vue';
-// import { BCard } from 'bootstrap-vue';
-// import { BCardHeader } from 'bootstrap-vue';
-// import { BCardBody } from 'bootstrap-vue';
-// import { VBToggle } from 'bootstrap-vue';
-// import { BBreadcrumb } from 'bootstrap-vue';
 
 vue__WEBPACK_IMPORTED_MODULE_2__.default.component('b-button-close', bootstrap_vue__WEBPACK_IMPORTED_MODULE_6__.BButtonClose);
 vue__WEBPACK_IMPORTED_MODULE_2__.default.component('b-button', bootstrap_vue__WEBPACK_IMPORTED_MODULE_7__.BButton);

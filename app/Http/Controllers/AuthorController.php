@@ -4,19 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Author;
+use App\Http\Requests\StoreAuthorRequest;
 
 class AuthorController extends Controller
 {
-    public function create(Request $request)
+    public function create(StoreAuthorRequest $request)
     {
-        $request->validate([
-            'title' => ['required', 'string', 'max:255', 'unique:authors'],
-        ]);
-        $author = Author::create([
-            'title' => $request['title'],
-        ]);
-
-        return $author;
+        return Author::create($request->validated());
     }
 
     public function get()

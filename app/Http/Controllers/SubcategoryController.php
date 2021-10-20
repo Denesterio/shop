@@ -5,24 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Http\Requests\StoreSubcategoryRequest;
 
 class SubcategoryController extends Controller
 {
-    public function create(Request $request)
+    public function create(StoreSubcategoryRequest $request)
     {
-        $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:255', 'unique:subcategories'],
-            'categoryId' => ['required', 'integer'],
+        $validated = $request->validated();
+        return Subcategory::create([
+            'title' => $validated['title'],
+            'slug' => $validated['slug'],
+            'category_id' => $validated['categoryId'],
         ]);
-
-        $subcat = Subcategory::create([
-            'title' => $request['title'],
-            'category_id' => $request['categoryId'],
-            'slug' => $request['slug'],
-        ]);
-
-        return $subcat;
     }
 
     public function get()

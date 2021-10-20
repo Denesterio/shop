@@ -4,8 +4,6 @@ require('./bootstrap');
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 Vue.use(VueSweetalert2);
-// import BootstrapVue from "bootstrap-vue";
-// Vue.use(BootstrapVue);
 
 import 'vue-slick-carousel/dist/vue-slick-carousel.css';
 import 'vue-slick-carousel/dist/vue-slick-carousel-theme.css';
@@ -31,18 +29,6 @@ import {
   VBToggle,
   BBreadcrumb
 } from 'bootstrap-vue';
-// import { BButton } from 'bootstrap-vue';
-// import { BCollapse } from 'bootstrap-vue';
-// import { BFormGroup } from 'bootstrap-vue';
-// import { BFormCheckboxGroup } from 'bootstrap-vue';
-// import { BFormCheckbox } from 'bootstrap-vue';
-// import { BModal } from 'bootstrap-vue';
-// import { BFormRadioGroup } from 'bootstrap-vue';
-// import { BCard } from 'bootstrap-vue';
-// import { BCardHeader } from 'bootstrap-vue';
-// import { BCardBody } from 'bootstrap-vue';
-// import { VBToggle } from 'bootstrap-vue';
-// import { BBreadcrumb } from 'bootstrap-vue';
 
 Vue.component('b-button-close', BButtonClose);
 Vue.component('b-button', BButton);
