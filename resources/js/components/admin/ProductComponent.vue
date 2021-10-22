@@ -1,6 +1,7 @@
 <template>
-  <div class="container mt-5">
+  <div class="container" :class="{ 'mt-4': formMode !== 'editing' }">
     <form class="container mb-5">
+      <!-- title -->
       <base-input-group-component
         v-model.trim="product.title"
         field="title"
@@ -8,6 +9,7 @@
         >{{ $t("label.newProduct") }}
       </base-input-group-component>
 
+      <!-- description -->
       <base-input-group-component
         v-model="product.description"
         type="textarea"
@@ -16,6 +18,7 @@
         >{{ $t("label.newProductDesc") }}
       </base-input-group-component>
 
+      <!-- author block -->
       <author-input-component
         @add-author="addAuthorToAuthors"
         ref="authorsForm"
@@ -30,11 +33,12 @@
           href=""
           noreferrer
           nofollow
-          class="font-weight-normal"
+          class="font-weight-normal small"
           v-t="'label.clear'"
         ></a>
       </p>
 
+      <!-- tags -->
       <div class="form-group">
         <b-button
           v-b-toggle="'collapse-tags'"
@@ -62,6 +66,7 @@
         <p class="invalid-feedback">{{}}</p>
       </div>
 
+      <!-- price, pages, year inputs row -->
       <div class="row">
         <base-input-group-component
           v-model.number="product.price"
@@ -91,20 +96,34 @@
         </base-input-group-component>
       </div>
 
+      <!-- preview & pictures upload block -->
       <div class="form-group mb-4">
-        <label for="previewPicture" v-t="'label.pictureUpload'"></label>
+        <label for="previewPicture" class="input-label file-label">
+          {{ $t("label.pictureUpload") }} <UploadIcon />
+        </label>
+        <p class="my-1 text-muted small">
+          {{
+            product.picture
+              ? $t("message.previewChoosen")
+              : $t("message.previewNotChoosen")
+          }}
+        </p>
         <input
           @change="getPicture"
-          class="form-control-file"
+          class="form-control-file invisible"
           name="previewPicture"
+          id="previewPicture"
           type="file"
           accept=".webp, .jpg, .jpeg"
+          title=""
         />
       </div>
 
       <div class="form-group mb-4">
-        <label for="images" v-t="'label.imagesUpload'"></label>
-        <p>
+        <label for="images" class="input-label file-label">
+          {{ $t("label.imagesUpload") }} <UploadIcon />
+        </label>
+        <p class="my-1 text-muted small">
           <i18n path="label.filesToUpload" tag="span">
             <template v-slot:quantity>
               {{ `${$tc("label.file", product.images.length)}` }}
@@ -122,14 +141,17 @@
         </p>
         <input
           @change="getImages"
-          class="form-control-file"
+          class="form-control-file invisible"
+          id="images"
           name="images[]"
           type="file"
           multiple
           accept=".webp, .jpg, .jpeg"
+          title=""
         />
       </div>
 
+      <!-- cover, category, subcategory -->
       <div class="row">
         <base-select-group-component
           v-model.number="product.cover"
@@ -175,34 +197,56 @@
       ></base-button-component>
     </form>
 
-    <entity-list-component enType="product" :entities="products" />
+    <entity-list-component
+      v-if="this.formMode === 'creating'"
+      enType="product"
+      :entities="products"
+    />
   </div>
 </template>
 
 <script>
+import AuthorInputComponent from "./AuthorInputComponent.vue";
+import EntityListComponent from "./EntityListComponent.vue";
+import UploadIcon from "../svg/UploadIcon.vue";
+import validationMixin from "../../mixins/validationMixin.js";
 import RequestBuilder from "../../api/requestBuilder.js";
 import { productSchema } from "../../validate.js";
-import AuthorInputComponent from "./AuthorInputComponent.vue";
-import validationMixin from "../../mixins/validationMixin.js";
-import EntityListComponent from "./EntityListComponent.vue";
 export default {
   name: "product-component",
-  components: { AuthorInputComponent, EntityListComponent },
-  mixins: [validationMixin], // data: errors: [], methods: getErrorMessage(field)
+  components: { AuthorInputComponent, EntityListComponent, UploadIcon },
+  mixins: [validationMixin], // data: errors: [], methods: getErrorMessage(field), async validate, validateServerErrors
+  props: {
+    formMode: {
+      type: String,
+      required: false,
+      default: "creating",
+    },
+    entityForEdit: {
+      type: Object,
+      required: false,
+      default: () => ({}),
+    },
+  },
+
   data() {
     return {
       product: {
-        title: "",
-        description: "",
-        price: "",
-        picture: "",
-        images: [],
-        subcategorySlug: "",
-        authors: [],
-        tags: [],
-        year: "",
-        pages: "",
-        cover: "",
+        title: this.entityForEdit.title || "",
+        description: this.entityForEdit.description || "",
+        price: this.entityForEdit.price || "",
+        picture: this.entityForEdit.picture || "",
+        images: this.entityForEdit.pictures
+          ? JSON.parse(this.entityForEdit.pictures)
+          : [],
+        subcategorySlug: this.entityForEdit["subcategory_slug"] || "",
+        authors: this.entityForEdit.authors || [],
+        tags: this.entityForEdit.tags
+          ? this.entityForEdit.tags.map((tag) => tag.id)
+          : [],
+        year: this.entityForEdit.year || "",
+        pages: this.entityForEdit.pages || "",
+        cover: this.entityForEdit.cover_id || "",
       },
 
       authors: [],
@@ -332,3 +376,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.file-label:hover {
+  cursor: pointer;
+  color: #000;
+}
+</style>

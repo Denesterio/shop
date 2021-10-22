@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div class="container" :class="{ 'mt-4': formMode !== 'editing' }">
     <form class="container mb-4">
       <base-input-group-component
         v-model.trim="tag.title"
@@ -25,7 +25,11 @@
       ></base-button-component>
     </form>
 
-    <entity-list-component enType="tag" :entities="tags" />
+    <entity-list-component
+      v-if="isCreatingMode"
+      enType="tag"
+      :entities="tags"
+    />
   </div>
 </template>
 
@@ -38,15 +42,34 @@ export default {
   name: "tag-component",
   components: { EntityListComponent },
   mixins: [validationMixin], // data: errors: [], methods: getErrorMessage(field), async validate, validateServerErrors
+  props: {
+    formMode: {
+      type: String,
+      required: false,
+      default: "creating",
+    },
+    entityForEdit: {
+      type: Object,
+      required: false,
+      default: () => ({}),
+    },
+  },
+
   data() {
     return {
       tag: {
-        title: "",
+        title: this.entityForEdit.title || "",
       },
       tags: [],
       loading: true,
       processing: false,
     };
+  },
+
+  computed: {
+    isCreatingMode() {
+      return this.formMode === "creating";
+    },
   },
 
   methods: {

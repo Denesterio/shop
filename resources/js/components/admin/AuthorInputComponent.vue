@@ -57,7 +57,9 @@ export default {
   },
 
   mounted() {
-    new RequestBuilder("authors").get().then((data) => (this.authors = data));
+    new RequestBuilder("authors")
+      .get()
+      .then(({ data }) => (this.authors = data));
   },
 
   methods: {

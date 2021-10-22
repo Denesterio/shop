@@ -8,11 +8,12 @@
       class="form-control"
       :class="{ 'is-invalid': error.length }"
     >
-      <option value="" selected v-t="'label.all'"></option>
+      <option value="" v-t="'label.all'"></option>
       <option
         v-for="entity in entities"
         :value="entity[optionValue]"
         :key="entity[forKey]"
+        :selected="entity[optionValue] === value"
       >
         {{ entity.title }}
       </option>

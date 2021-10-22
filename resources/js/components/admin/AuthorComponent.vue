@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-4 py-4">
+  <div class="container py-4" :class="{ 'mt-4': formMode !== 'editing' }">
     <form class="container mb-4">
       <base-input-group-component
         v-model.trim="author.title"
@@ -25,7 +25,11 @@
       ></base-button-component>
     </form>
 
-    <entity-list-component enType="author" :entities="authors" />
+    <entity-list-component
+      v-if="isCreatingMode"
+      enType="author"
+      :entities="authors"
+    />
   </div>
 </template>
 
@@ -37,16 +41,35 @@ import { onlyTitleSchema } from "../../validate.js";
 export default {
   name: "author-component",
   components: { EntityListComponent },
-  mixins: [validationMixin], // data: errors: [], methods: getErrorMessage(field)
+  mixins: [validationMixin], // data: errors: [], methods: getErrorMessage(field), async validate, validateServerErrors
+  props: {
+    formMode: {
+      type: String,
+      required: false,
+      default: "creating",
+    },
+    entityForEdit: {
+      type: Object,
+      required: false,
+      default: () => ({}),
+    },
+  },
+
   data() {
     return {
       author: {
-        title: "",
+        title: this.entityForEdit.title || "",
       },
 
       authors: [],
       processing: false,
     };
+  },
+
+  computed: {
+    isCreatingMode() {
+      return this.formMode === "creating";
+    },
   },
 
   methods: {

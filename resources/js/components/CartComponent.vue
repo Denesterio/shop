@@ -5,7 +5,7 @@
       <table class="table mt-4 text-center align-middle">
         <thead class="table-light">
           <tr>
-            <th v-t="'keys.title'"></th>
+            <th v-t="'keys.product.title'"></th>
             <th v-t="'keys.price'"></th>
             <th v-t="'keys.quantity'"></th>
             <th v-t="'keys.sum'"></th>

@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div class="container" :class="{ 'mt-4': formMode !== 'editing' }">
     <form class="container mb-4">
       <base-input-group-component
         v-model.trim="subcategory.title"
@@ -52,7 +52,11 @@
       ></base-button-component>
     </form>
 
-    <entity-list-component enType="subcategory" :entities="subcategories" />
+    <entity-list-component
+      v-if="this.formMode === 'creating'"
+      enType="subcategory"
+      :entities="subcategories"
+    />
   </div>
 </template>
 
@@ -66,16 +70,29 @@ import { subcategorySchema } from "../../validate.js";
 export default {
   name: "subcategory-component",
   components: { EntityListComponent },
-  mixins: [validationMixin], // data: errors: [], methods: getErrorMessage(field)
+  mixins: [validationMixin], // data: errors: [], methods: getErrorMessage(field), async validate, validateServerErrors
+  props: {
+    formMode: {
+      type: String,
+      required: false,
+      default: "creating",
+    },
+    entityForEdit: {
+      type: Object,
+      required: false,
+      default: () => ({}),
+    },
+  },
+
   data() {
     return {
       subcategory: {
-        title: "",
-        categoryId: "",
+        title: this.entityForEdit.title || "",
+        categoryId: this.entityForEdit["category_id"],
       },
-      editedSlug: "",
+      editedSlug: this.entityForEdit.slug || "",
 
-      isEditingMode: false,
+      isEditingMode: this.formMode === "editing",
       categories: [],
       subcategories: [],
 

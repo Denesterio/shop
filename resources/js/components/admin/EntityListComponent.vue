@@ -9,6 +9,8 @@
           v-for="entity in currentEntities"
           :key="entity.id"
           :entity="entity"
+          :enType="enType"
+          @show-edit-form="showEditForm"
         >
         </EntityListItem>
       </ul>
@@ -23,8 +25,8 @@
 
 <script>
 import BasePagination from "../BasePagination.vue";
-import RequestBuilder from "../../api/requestBuilder.js";
 import EntityListItem from "./EntityListItem.vue";
+import RequestBuilder from "../../api/requestBuilder.js";
 export default {
   components: { BasePagination, EntityListItem },
   props: {
@@ -93,6 +95,11 @@ export default {
               (ent) => ent.id !== id
             ))
         );
+    },
+
+    showEditForm(id) {
+      const entityForEdit = this.currentEntities.find((en) => en.id === id);
+      this.$emit("show-edit-form", entityForEdit);
     },
   },
 

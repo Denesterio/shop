@@ -11,7 +11,9 @@ export default {
     noProdCart: 'В корзине отсутствуют продукты',
     noProductsInCategory:
       'В данной категории товаров пока нет, но они обязательно появятся',
-    reviewHelpBlock: 'Отзыв должен быть не менее 10 символов'
+    reviewHelpBlock: 'Отзыв должен быть не менее 10 символов',
+    previewChoosen: 'превью выбрано',
+    previewNotChoosen: 'превью не выбрано'
   },
   link: {
     profile: 'Личный кабинет',
@@ -30,6 +32,7 @@ export default {
     clear: 'Очистить',
     edit: 'Редактировать',
     details: 'Детали',
+    cancel: 'Отменить',
 
     all: 'все',
     category: 'категория',
@@ -79,13 +82,28 @@ export default {
     сreateError: 'Не удалось {msg} из-за проблем с соединением или на сервере'
   },
   keys: {
-    title: 'Наименование товара',
+    product: {
+      title: 'Наименование товара'
+    },
+    id: 'Идентификатор',
     quantity: 'Количество',
+    title: 'Название (имя)',
     sum: 'Сумма',
     price: 'Цена',
     year: 'Год издания',
     pages: 'Кол-во страниц',
-    cover: 'Тип обложки'
+    cover: 'Тип обложки',
+    subcategory_slug: 'Раздел',
+    picture: 'Изображение',
+    pictures: 'Изображения',
+    created_at: 'Дата создания',
+    updated_at: 'Последнее обновление',
+    slug: 'Заполнитель',
+    description: 'Описание',
+    category_id: 'Идентификатор категории',
+    cover_id: 'Идентификатор обложки',
+    authors: 'Авторы',
+    tags: 'Тэги'
   },
   plurals: {
     category: 'categories',

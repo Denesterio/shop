@@ -13,7 +13,7 @@ class ProductController extends Controller
 {
     public function get()
     {
-        return Product::OrderBy('id', 'desc')->paginate(20);
+        return Product::with('authors', 'tags')->OrderBy('id', 'desc')->paginate(20);
     }
 
     public function show($id)

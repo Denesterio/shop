@@ -14,7 +14,27 @@
     <keep-alive>
       <component :is="activeForm" />
     </keep-alive>
-    <entity-list-component :enType="activeList" />
+    <entity-list-component
+      @show-edit-form="showEntityEditForm"
+      :enType="activeList"
+    />
+    <b-modal
+      v-model="isModalOpen"
+      id="modal-lg"
+      size="lg"
+      :title="$t('label.edit')"
+      content-class="shadow"
+      hide-backdrop
+    >
+      <component
+        :is="currentEditFormComponent"
+        formMode="editing"
+        :entityForEdit="entityForEdit"
+      />
+      <template #modal-footer="{ cancel }">
+        <b-button variant="secondary" @click="cancel()" v-t="'label.cancel'" />
+      </template>
+    </b-modal>
   </div>
 </template>
 
@@ -28,6 +48,9 @@ export default {
     return {
       activeForm: "",
       activeList: "",
+      isModalOpen: false,
+      currentEditFormComponent: null,
+      entityForEdit: "",
     };
   },
 
@@ -46,6 +69,14 @@ export default {
 
     changeList(entity) {
       this.activeList = entity;
+    },
+
+    showEntityEditForm(entityForEdit) {
+      this.currentEditFormComponent = Object.values(forms).find(
+        (form) => form.name === `${this.activeList}-component`
+      );
+      this.isModalOpen = true;
+      this.entityForEdit = entityForEdit;
     },
   },
 };

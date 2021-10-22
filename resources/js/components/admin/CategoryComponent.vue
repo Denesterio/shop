@@ -1,5 +1,5 @@
 <template>
-  <div class="container mt-5">
+  <div class="container" :class="{ 'mt-4': formMode !== 'editing' }">
     <form class="container mb-4">
       <base-input-group-component
         v-model.trim="category.title"
@@ -33,7 +33,11 @@
       ></base-button-component>
     </form>
 
-    <entity-list-component enType="category" :entities="categories" />
+    <entity-list-component
+      v-if="isCreatingMode"
+      enType="category"
+      :entities="categories"
+    />
   </div>
 </template>
 
@@ -46,12 +50,25 @@ import { categorySchema } from "../../validate.js";
 export default {
   name: "category-component",
   components: { EntityListComponent },
-  mixins: [validationMixin], // data: errors: [], methods: getErrorMessage(field)
+  mixins: [validationMixin], // data: errors: [], methods: getErrorMessage(field), async validate, validateServerErrors
+  props: {
+    formMode: {
+      type: String,
+      required: false,
+      default: "creating",
+    },
+    entityForEdit: {
+      type: Object,
+      required: false,
+      default: () => ({}),
+    },
+  },
+
   data() {
     return {
       category: {
-        title: "",
-        description: "",
+        title: this.entityForEdit.title || "",
+        description: this.entityForEdit.description || "",
       },
 
       categories: [],
@@ -59,6 +76,12 @@ export default {
       loading: true,
       processing: false,
     };
+  },
+
+  computed: {
+    isCreatingMode() {
+      return this.formMode === "creating";
+    },
   },
 
   methods: {
