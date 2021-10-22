@@ -2,6 +2,7 @@ import * as getters from './get.js';
 import * as creators from './create.js';
 import * as editors from './edit.js';
 import * as deleters from './delete.js';
+import axios from 'axios';
 
 export default class RequestBuilder {
   constructor(item) {
@@ -9,7 +10,8 @@ export default class RequestBuilder {
     // надеюсь, будет интуитивно понятно, где использовать единственное или множественное число
     // create, delete, edit в единственном (кроме edit.orderProducts)
     // get зависит от того, объект или массив объектов ожидается (в том числе Menus)
-    this.item = item[0].toUpperCase() + item.slice(1);
+    this.item = item ? item[0].toUpperCase() + item.slice(1) : '';
+    this.client = axios;
   }
 
   get(id) {
@@ -30,5 +32,9 @@ export default class RequestBuilder {
   edit(id) {
     const editor = `edit${this.item}`;
     return editors[editor](id);
+  }
+
+  makeRequest(url) {
+    return this.client.get(url).then(res => res.data);
   }
 }

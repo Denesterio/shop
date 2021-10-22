@@ -3,32 +3,30 @@
     <h4 v-if="enType.length" v-t="`link.${enType}`" v-upfirst></h4>
     <svg-loading-component v-if="processing" />
     <span v-else-if="error">{{ error }}</span>
-    <ul v-else class="list-group mt-4">
-      <li
-        v-for="entity in currentEntities"
-        :key="entity.id"
-        class="row justify-content-between mb-2 p-2"
-      >
-        <div class="col-8 col-sm-10 col-lg-11 p-2 border-bottom">
-          {{ entity.title }}
-        </div>
-        <base-button-component
-          @click.native="remove(entity.id)"
-          :disabled="processing"
-          bType="delete"
-          v-t="'label.delete'"
-          bSize="sm"
-          class="col-4 col-sm-2 col-lg-1"
-          aria-label="Удалить"
-        ></base-button-component>
-      </li>
-    </ul>
+    <div v-else-if="currentEntities.length">
+      <ul class="list-group mt-4">
+        <EntityListItem
+          v-for="entity in currentEntities"
+          :key="entity.id"
+          :entity="entity"
+        >
+        </EntityListItem>
+      </ul>
+      <BasePagination
+        @change-page="getEntitiesByUrl"
+        :settings="paginationSettings"
+        class="my-3 mx-auto"
+      />
+    </div>
   </div>
 </template>
 
 <script>
+import BasePagination from "../BasePagination.vue";
 import RequestBuilder from "../../api/requestBuilder.js";
+import EntityListItem from "./EntityListItem.vue";
 export default {
+  components: { BasePagination, EntityListItem },
   props: {
     enType: {
       type: String,
@@ -46,19 +44,44 @@ export default {
   data() {
     return {
       currentEntities: this.entities,
+      paginationSettings: { links: [] },
       processing: false,
       error: "",
     };
   },
 
+  paginationSettingsKeys: [
+    "current_page",
+    "next_page_url",
+    "prev_page_url",
+    "first_page_url",
+  ],
+
   methods: {
+    fillDataFromResponse(resData) {
+      this.currentEntities = resData.data;
+      this.paginationSettings = {
+        links: resData.links.slice(1, resData.links.length - 1),
+      };
+      this.$options.paginationSettingsKeys.forEach(
+        (key) => (this.paginationSettings[key] = resData[key])
+      );
+    },
+
     getEntities(type) {
       this.processing = true;
       new RequestBuilder(type)
         .get()
-        .then((data) => (this.currentEntities = data))
+        .then((data) => this.fillDataFromResponse(data))
         .catch((error) => (this.error = error.response.data.message))
         .finally(() => (this.processing = false));
+    },
+
+    getEntitiesByUrl(url) {
+      new RequestBuilder()
+        .makeRequest(url)
+        .then((data) => this.fillDataFromResponse(data))
+        .catch((error) => (this.error = error.response.data.message));
     },
 
     remove(id) {

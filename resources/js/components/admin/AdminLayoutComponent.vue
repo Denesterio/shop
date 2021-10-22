@@ -1,5 +1,5 @@
 <template>
-  <div class="container-xl mt-4">
+  <div class="container-xl my-4 overflow-hidden shadow p-3">
     <nav-tabs-component @changeActive="changeForm" :entities="entities">
       <template v-slot:header>Добавить:</template>
     </nav-tabs-component>

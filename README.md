@@ -24,7 +24,7 @@ php artisan db:seed
 php artisan migrate:fresh --seed
 ```
 
-Создающийся пользователь: admin, почта: mail@mail.ru пароль: adminadmin.
+Создающийся пользователь: 'admin', почта: 'mail@mail.ru', пароль: 'adminadmin'.
 
 ### Запустить тесты фронтенда
 

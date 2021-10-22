@@ -28,6 +28,8 @@ export default {
     delete: 'Удалить',
     change: 'Изменить',
     clear: 'Очистить',
+    edit: 'Редактировать',
+    details: 'Детали',
 
     all: 'все',
     category: 'категория',

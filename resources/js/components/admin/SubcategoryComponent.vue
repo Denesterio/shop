@@ -88,7 +88,7 @@ export default {
     new RequestBuilder("categories")
       .get()
       .then((data) => {
-        this.categories = data;
+        this.categories = data.data;
       })
       .finally(() => (this.loading = false));
   },

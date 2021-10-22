@@ -21,7 +21,7 @@ class SubcategoryController extends Controller
 
     public function get()
     {
-        return Subcategory::get();
+        return Subcategory::OrderBy('id', 'desc')->paginate(20);
     }
 
     public function delete(Request $request)

@@ -26,7 +26,7 @@ class CategoryController extends Controller
 
     public function get()
     {
-        return Category::get();
+        return Category::OrderBy('id', 'desc')->paginate(20);
     }
 
     public function delete(Request $request)

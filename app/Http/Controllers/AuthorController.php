@@ -15,7 +15,7 @@ class AuthorController extends Controller
 
     public function get()
     {
-        return Author::OrderBy('id', 'desc')->get();
+        return Author::OrderBy('id', 'desc')->paginate(20);
     }
 
     public function delete(Request $request)

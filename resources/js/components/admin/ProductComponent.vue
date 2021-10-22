@@ -235,19 +235,21 @@ export default {
     const promises = [
       new RequestBuilder("categories")
         .get()
-        .then((data) => (this.categories = data)),
+        .then(({ data }) => (this.categories = data)),
       new RequestBuilder("subcategories")
         .get()
-        .then((data) => (this.subcategories = data)),
+        .then(({ data }) => (this.subcategories = data)),
       new RequestBuilder("tags")
         .get()
         .then(
-          (data) =>
+          ({ data }) =>
             (this.tags = data.sort(({ title: a }, { title: b }) =>
               a < b ? -1 : 1
             ))
         ),
-      new RequestBuilder("covers").get().then((data) => (this.covers = data)),
+      new RequestBuilder("covers")
+        .get()
+        .then(({ data }) => (this.covers = data)),
     ];
     Promise.all(promises).finally(() => (this.loading = false));
   },
