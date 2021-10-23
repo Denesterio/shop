@@ -107,6 +107,15 @@
               ? $t("message.previewChoosen")
               : $t("message.previewNotChoosen")
           }}
+          <a
+            @click.prevent="clearPicture"
+            v-if="product.images.length"
+            href=""
+            noreferrer
+            nofollow
+            class="font-weight-normal"
+            >очистить</a
+          >
         </p>
         <input
           @change="getPicture"
@@ -372,6 +381,10 @@ export default {
 
     clearAuthors() {
       this.product.authors = [];
+    },
+
+    clearPicture() {
+      this.product.picture = null;
     },
   },
 };
