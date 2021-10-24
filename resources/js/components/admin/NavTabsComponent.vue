@@ -49,10 +49,11 @@ export default {
       this.activeIndex = this.entities.findIndex(
         (link) => link === event.target.dataset.link
       );
-      this.$emit("changeActive", event.target.dataset.link);
+      this.$emit("change-active", event.target.dataset.link);
     },
+
     remove() {
-      this.$emit("changeActive", "");
+      this.$emit("change-active", "");
     },
   },
 };

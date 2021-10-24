@@ -32,22 +32,22 @@ const routes = [
       },
       {
         path: '/categories/:id',
-        name: 'categoryProducts',
+        name: 'category.products',
         component: ProductListComponent
       },
       {
         path: '/subcategories/:id',
-        name: 'subcategoryProducts',
+        name: 'subcategory.products',
         component: ProductListComponent
       },
       {
         path: '/authors/:id',
-        name: 'authorProducts',
+        name: 'author.products',
         component: ProductListComponent
       },
       {
         path: '/tags/:id',
-        name: 'tagProducts',
+        name: 'tag.products',
         component: ProductListComponent
       }
     ]

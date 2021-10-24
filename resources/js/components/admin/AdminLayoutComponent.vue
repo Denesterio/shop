@@ -1,10 +1,10 @@
 <template>
   <div class="container-xl my-4 overflow-hidden shadow p-3">
-    <nav-tabs-component @changeActive="changeForm" :entities="entities">
+    <nav-tabs-component @change-active="changeForm" :entities="entities">
       <template v-slot:header>Добавить:</template>
     </nav-tabs-component>
     <nav-tabs-component
-      @changeActive="changeList"
+      @change-active="changeList"
       :entities="entities"
       class="mt-3"
     >
@@ -46,8 +46,8 @@ export default {
   components: { EntityListComponent, NavTabsComponent, ...forms },
   data() {
     return {
-      activeForm: "",
-      activeList: "",
+      activeForm: "", // component
+      activeList: "", // name of entity in single
       isModalOpen: false,
       currentEditFormComponent: null,
       entityForEdit: "",

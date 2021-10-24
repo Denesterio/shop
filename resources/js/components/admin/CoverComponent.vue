@@ -10,7 +10,7 @@
       >
 
       <base-button-component
-        @click.native.prevent="createNewCover"
+        @click.native.prevent="submitCover"
         :disabled="processing"
         bType="create"
         v-t="'label.create'"
@@ -75,7 +75,7 @@ export default {
   },
 
   methods: {
-    async createNewCover() {
+    async submitCover() {
       const isError = await this.validate(onlyTitleSchema, this.cover);
       if (isError) return;
 
@@ -84,15 +84,38 @@ export default {
         fData.append(param, this.cover[param]);
       }
 
+      if (this.isCreatingMode) {
+        this.createNewCover(fData);
+      } else {
+        this.editCover(fData);
+      }
+    },
+
+    createNewCover(data) {
       this.processing = true;
-      new RequestBuilder("cover")
-        .create(fData)
+      new RequestBuilder("covers")
+        .create(data)
         .then(({ data }) => {
           this.covers = [data, ...this.covers];
           this.clearForm();
         })
         .catch((error) => {
           this.handleServerError(error, "добавить обложку");
+        })
+        .finally(() => {
+          this.processing = false;
+        });
+    },
+
+    editCover(data) {
+      this.processing = true;
+      new RequestBuilder("cover")
+        .edit(this.entityForEdit.id, data)
+        .then(({ data }) => {
+          this.$emit("update-entity", data);
+        })
+        .catch((error) => {
+          this.handleServerError(error, "обновить тип обложки");
         })
         .finally(() => {
           this.processing = false;

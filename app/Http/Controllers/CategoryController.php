@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 
 class CategoryController extends Controller
 {
@@ -19,26 +20,35 @@ class CategoryController extends Controller
         ];
     }
 
-    public function create(StoreCategoryRequest $request)
+    public function store(StoreCategoryRequest $request)
     {
         return Category::create($request->validated());
     }
 
-    public function get()
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        return Category::OrderBy('id', 'desc')->paginate(20);
+        $validated = $request->validated();
+        $category->fill($validated);
+        $category->save();
+        return $category;
     }
 
-    public function delete(Request $request)
+    public function index(Request $request)
     {
-        $id = $request['id'];
-        Category::find($id)->delete();
+        if ($request['_limit']) {
+            return Category::OrderBy('id', 'desc')->paginate($request['_limit']);
+        }
+
+        return ['data' => Category::OrderBy('id', 'desc')->get()];
     }
 
-    public function showProducts($id)
+    public function destroy(Category $category)
     {
-        $products = Category::find($id)->products()->with('authors')->get();
+        $category->delete();
+    }
 
-        return $products;
+    public function show($id)
+    {
+        return Category::find($id)->products()->with('authors')->get();
     }
 }

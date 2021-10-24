@@ -102,10 +102,11 @@ export default {
   },
 
   created() {
-    const builder = new RequestBuilder("carouselProducts");
+    const builder = new RequestBuilder("products");
     builder
+      .perPage(10)
       .get()
-      .then((data) => {
+      .then(({ data }) => {
         this.newProducts = data;
       })
       .catch((err) => {

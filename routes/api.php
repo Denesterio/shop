@@ -37,40 +37,19 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::prefix('categories')->group(function () {
-    Route::get('/get', [CategoryController::class, 'get']);
-    Route::get('/{categoryId}/products', [CategoryController::class, 'showProducts'])
-        ->name('categoryProducts');
     Route::get('/menu', [CategoryController::class, 'menu'])->name('menu');
 });
+Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
 
+Route::apiResource('products', ProductController::class)->only(['index', 'show']);
 Route::prefix('products')->group(function () {
-    Route::get('/get', [ProductController::class, 'get']);
-    Route::get('/carousel', [ProductController::class, 'carousel'])->name('carousel');
-    Route::get('/{productId}', [ProductController::class, 'show']);
     Route::get('/{productId}/reviews', [ProductController::class, 'getReviews']);
 });
 
-Route::prefix('subcategories')->group(function () {
-    Route::get('/get', [SubcategoryController::class, 'get']);
-    Route::get('/{subcategorySlug}/products', [SubcategoryController::class, 'showProducts'])
-        ->name('subcategoryProducts');
-});
-
-Route::prefix('authors')->group(function () {
-    Route::get('/get', [AuthorController::class, 'get']);
-    Route::get('/{authorId}/products', [AuthorController::class, 'showProducts'])
-        ->name('authorProducts');
-});
-
-Route::prefix('tags')->group(function () {
-    Route::get('/get', [TagController::class, 'get']);
-    Route::get('/{tagId}/products', [TagController::class, 'showProducts'])
-        ->name('tagProducts');
-});
-
-Route::prefix('covers')->group(function () {
-    Route::get('/get', [CoverController::class, 'get']);
-});
+Route::apiResource('subcategories', SubcategoryController::class)->only(['index', 'show']);
+Route::apiResource('authors', AuthorController::class)->only(['index', 'show']);
+Route::apiResource('tags', TagController::class)->only(['index', 'show']);
+Route::apiResource('covers', CoverController::class)->only(['index']);
 
 Route::prefix('ratings')->group(function () {
     Route::get('/{productId}', [RatingController::class, 'get']);
@@ -82,41 +61,25 @@ Route::prefix('reviews')->group(function () {
 });
 
 Route::prefix('admin')->middleware('admin')->group(function () {
-    Route::get('/categories', [CategoryController::class, 'list'])->name('categories');
-    Route::post('/categories/create', [CategoryController::class, 'create']);
-    Route::delete('/categories/delete', [CategoryController::class, 'delete']);
-
-    Route::get('/products', [ProductController::class, 'list'])->name('products');
-    Route::post('/products/create', [ProductController::class, 'create']);
-    Route::delete('/products/delete', [ProductController::class, 'delete'])->name('product.delete');
-
-    Route::post('/subcategories/create', [SubcategoryController::class, 'create']);
-    Route::delete('/subcategories/delete', [SubcategoryController::class, 'delete']);
-    Route::get('/subcategories', [SubcategoryController::class, 'list'])->name('subcategories');
-
-    Route::get('/authors', [AuthorController::class, 'list'])->name('authors');
-    Route::post('/authors/create', [AuthorController::class, 'create']);
-    Route::delete('/authors/delete', [AuthorController::class, 'delete']);
-
-    Route::post('/tags/create', [TagController::class, 'create']);
-    Route::delete('/tags/delete', [TagController::class, 'delete']);
-    Route::get('/tags', [TagController::class, 'list'])->name('tags');
-
-    Route::post('/covers/create', [CoverController::class, 'create']);
-    Route::delete('/covers/delete', [CoverController::class, 'delete']);
-});
-
-Route::prefix('order')->middleware('auth')->group(function () {
-    Route::get('get', [OrderController::class, 'get']);
-    Route::post('addProduct', [OrderController::class, 'addProduct']);
-    Route::post('deleteProduct', [OrderController::class, 'deleteProduct']);
-    Route::get('confirm', [OrderController::class, 'confirm']);
-    Route::get('{orderId}/products', [OrderController::class, 'products']);
-    Route::get('/cart', [OrderController::class, 'showCart'])->name('cart');
+    Route::apiResource('categories', CategoryController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('products', ProductController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('subcategories', SubcategoryController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('authors', AuthorController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('tags', TagController::class)->only(['store', 'update', 'destroy']);
+    Route::apiResource('covers', CoverController::class)->only(['store', 'update', 'destroy']);
 });
 
 Route::middleware('auth')->group(function () {
     Route::post('/user/edit', [UserController::class, 'edit'])->name('user.edit');
+
+    Route::prefix('order')->group(function () {
+        Route::get('get', [OrderController::class, 'get']);
+        Route::post('addProduct', [OrderController::class, 'addProduct']);
+        Route::post('deleteProduct', [OrderController::class, 'deleteProduct']);
+        Route::get('confirm', [OrderController::class, 'confirm']);
+        Route::get('{orderId}/products', [OrderController::class, 'products']);
+        Route::get('/cart', [OrderController::class, 'showCart'])->name('cart');
+    });
 });
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

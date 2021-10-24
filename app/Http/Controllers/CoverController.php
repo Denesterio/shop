@@ -8,19 +8,30 @@ use App\Http\Requests\StoreCoverRequest;
 
 class CoverController extends Controller
 {
-    public function create(StoreCoverRequest $request)
+    public function store(StoreCoverRequest $request)
     {
         return Cover::create($request->validated());
     }
 
-    public function get()
+    public function update(StoreCoverRequest $request, Cover $cover)
     {
-        return Cover::OrderBy('id', 'desc')->paginate(20);
+        $validated = $request->validated();
+        $cover->title = $validated['title'];
+        $cover->save();
+        return $cover;
     }
 
-    public function delete(Request $request)
+    public function index(Request $request)
     {
-        $id = $request['id'];
-        Cover::find($id)->delete();
+        if ($request['_limit']) {
+            return Cover::OrderBy('id', 'desc')->paginate($request['_limit']);
+        }
+
+        return ['data' => Cover::OrderBy('id', 'desc')->get()];
+    }
+
+    public function destroy(Cover $cover)
+    {
+        $cover->delete();
     }
 }

@@ -2671,7 +2671,8 @@ __webpack_require__.r(__webpack_exports__);
 
 var makeRequest = function makeRequest(to) {
   var id = to.params.id;
-  var name = to.name;
+  var splitterIndex = to.name.indexOf(".");
+  var name = to.name.substring(0, splitterIndex);
   return new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__.default(name).get(id);
 };
 
@@ -2844,7 +2845,8 @@ __webpack_require__.r(__webpack_exports__);
     var _this = this;
 
     new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__.default("product").get(this.$route.params.id).then(function (data) {
-      return _this.product = data;
+      data.cover = data.cover.title;
+      _this.product = data;
     })["finally"](function () {
       return _this.loading = false;
     });
@@ -3865,7 +3867,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   data: function data() {
     return {
       activeForm: "",
+      // component
       activeList: "",
+      // name of entity in single
       isModalOpen: false,
       currentEditFormComponent: null,
       entityForEdit: ""
@@ -3918,8 +3922,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _EntityListComponent_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./EntityListComponent.vue */ "./resources/js/components/admin/EntityListComponent.vue");
 /* harmony import */ var _mixins_validationMixin_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../mixins/validationMixin.js */ "./resources/js/mixins/validationMixin.js");
 /* harmony import */ var _validate_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../validate.js */ "./resources/js/validate.js");
-
-
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -3931,6 +3933,8 @@ function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symb
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -4011,7 +4015,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }
   },
   methods: {
-    createNewAuthor: function createNewAuthor() {
+    submitAuthor: function submitAuthor() {
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
@@ -4040,25 +4044,48 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   fData.append(param, _this.author[param]);
                 }
 
-                _this.processing = true;
-                new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("author").create(fData).then(function (_ref) {
-                  var data = _ref.data;
-                  _this.authors = [data].concat(_toConsumableArray(_this.authors));
+                if (_this.isCreatingMode) {
+                  _this.createNewAuthor(fData);
+                } else {
+                  _this.editAuthor(fData);
+                }
 
-                  _this.clearForm();
-                })["catch"](function (error) {
-                  _this.handleServerError(error, "добавить автора");
-                })["finally"](function () {
-                  _this.processing = false;
-                });
-
-              case 9:
+              case 8:
               case "end":
                 return _context.stop();
             }
           }
         }, _callee);
       }))();
+    },
+    createNewAuthor: function createNewAuthor(data) {
+      var _this2 = this;
+
+      this.processing = true;
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("authors").create(data).then(function (_ref) {
+        var data = _ref.data;
+        _this2.authors = [data].concat(_toConsumableArray(_this2.authors));
+
+        _this2.clearForm();
+      })["catch"](function (error) {
+        _this2.handleServerError(error, "добавить автора");
+      })["finally"](function () {
+        _this2.processing = false;
+      });
+    },
+    editAuthor: function editAuthor(data) {
+      var _this3 = this;
+
+      this.processing = true;
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("author").edit(this.entityForEdit.id, data).then(function (_ref2) {
+        var data = _ref2.data;
+
+        _this3.$emit("update-entity", data);
+      })["catch"](function (error) {
+        _this3.handleServerError(error, "обновить автора");
+      })["finally"](function () {
+        _this3.processing = false;
+      });
     },
     clearForm: function clearForm() {
       for (var key in this.author) {
@@ -4179,8 +4206,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _EntityListComponent_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./EntityListComponent.vue */ "./resources/js/components/admin/EntityListComponent.vue");
 /* harmony import */ var _mixins_validationMixin_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../mixins/validationMixin.js */ "./resources/js/mixins/validationMixin.js");
 /* harmony import */ var _validate_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../validate.js */ "./resources/js/validate.js");
-
-
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -4192,6 +4217,8 @@ function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symb
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -4282,7 +4309,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }
   },
   methods: {
-    createNewCategory: function createNewCategory() {
+    submitCategory: function submitCategory() {
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
@@ -4311,25 +4338,48 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   fData.append(param, _this.category[param]);
                 }
 
-                _this.processing = true;
-                new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("category").create(fData).then(function (_ref) {
-                  var data = _ref.data;
-                  _this.categories = [data].concat(_toConsumableArray(_this.categories));
+                if (_this.isCreatingMode) {
+                  _this.createCategory(fData);
+                } else {
+                  _this.editCategory(fData);
+                }
 
-                  _this.clearForm();
-                })["catch"](function (error) {
-                  _this.handleServerError(error, "добавить категорию");
-                })["finally"](function () {
-                  _this.processing = false;
-                });
-
-              case 9:
+              case 8:
               case "end":
                 return _context.stop();
             }
           }
         }, _callee);
       }))();
+    },
+    createCategory: function createCategory(data) {
+      var _this2 = this;
+
+      this.processing = true;
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("categories").create(data).then(function (_ref) {
+        var data = _ref.data;
+        _this2.categories = [data].concat(_toConsumableArray(_this2.categories));
+
+        _this2.clearForm();
+      })["catch"](function (error) {
+        _this2.handleServerError(error, "добавить категорию");
+      })["finally"](function () {
+        _this2.processing = false;
+      });
+    },
+    editCategory: function editCategory(data) {
+      var _this3 = this;
+
+      this.processing = true;
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("category").edit(this.entityForEdit.id, data).then(function (_ref2) {
+        var data = _ref2.data;
+
+        _this3.$emit("update-entity", data);
+      })["catch"](function (error) {
+        _this3.handleServerError(error, "обновить категорию");
+      })["finally"](function () {
+        _this3.processing = false;
+      });
     },
     clearForm: function clearForm() {
       for (var key in this.category) {
@@ -4358,8 +4408,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _EntityListComponent_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./EntityListComponent.vue */ "./resources/js/components/admin/EntityListComponent.vue");
 /* harmony import */ var _mixins_validationMixin_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../mixins/validationMixin.js */ "./resources/js/mixins/validationMixin.js");
 /* harmony import */ var _validate_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../validate.js */ "./resources/js/validate.js");
-
-
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -4371,6 +4419,8 @@ function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symb
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -4452,7 +4502,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }
   },
   methods: {
-    createNewCover: function createNewCover() {
+    submitCover: function submitCover() {
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
@@ -4481,25 +4531,48 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   fData.append(param, _this.cover[param]);
                 }
 
-                _this.processing = true;
-                new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("cover").create(fData).then(function (_ref) {
-                  var data = _ref.data;
-                  _this.covers = [data].concat(_toConsumableArray(_this.covers));
+                if (_this.isCreatingMode) {
+                  _this.createNewCover(fData);
+                } else {
+                  _this.editCover(fData);
+                }
 
-                  _this.clearForm();
-                })["catch"](function (error) {
-                  _this.handleServerError(error, "добавить обложку");
-                })["finally"](function () {
-                  _this.processing = false;
-                });
-
-              case 9:
+              case 8:
               case "end":
                 return _context.stop();
             }
           }
         }, _callee);
       }))();
+    },
+    createNewCover: function createNewCover(data) {
+      var _this2 = this;
+
+      this.processing = true;
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("covers").create(data).then(function (_ref) {
+        var data = _ref.data;
+        _this2.covers = [data].concat(_toConsumableArray(_this2.covers));
+
+        _this2.clearForm();
+      })["catch"](function (error) {
+        _this2.handleServerError(error, "добавить обложку");
+      })["finally"](function () {
+        _this2.processing = false;
+      });
+    },
+    editCover: function editCover(data) {
+      var _this3 = this;
+
+      this.processing = true;
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("cover").edit(this.entityForEdit.id, data).then(function (_ref2) {
+        var data = _ref2.data;
+
+        _this3.$emit("update-entity", data);
+      })["catch"](function (error) {
+        _this3.handleServerError(error, "обновить тип обложки");
+      })["finally"](function () {
+        _this3.processing = false;
+      });
     },
     clearForm: function clearForm() {
       for (var key in this.cover) {
@@ -4525,6 +4598,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _BasePagination_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../BasePagination.vue */ "./resources/js/components/BasePagination.vue");
 /* harmony import */ var _EntityListItem_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./EntityListItem.vue */ "./resources/js/components/admin/EntityListItem.vue");
 /* harmony import */ var _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../api/requestBuilder.js */ "./resources/js/api/requestBuilder.js");
+//
 //
 //
 //
@@ -4595,11 +4669,13 @@ __webpack_require__.r(__webpack_exports__);
         return _this.paginationSettings[key] = resData[key];
       });
     },
+    // используется в watch, type сущности передается во множественном числе,
+    // полученном из enType через i18n
     getEntities: function getEntities(type) {
       var _this2 = this;
 
       this.processing = true;
-      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__.default(type).get().then(function (data) {
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__.default(type).perPage(20).get().then(function (data) {
         return _this2.fillDataFromResponse(data);
       })["catch"](function (error) {
         return _this2.error = error.response.data.message;
@@ -4607,11 +4683,12 @@ __webpack_require__.r(__webpack_exports__);
         return _this2.processing = false;
       });
     },
+    // используются сслыки из пагинации laravel
     getEntitiesByUrl: function getEntitiesByUrl(url) {
       var _this3 = this;
 
-      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__.default().makeRequest(url).then(function (data) {
-        return _this3.fillDataFromResponse(data);
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__.default().makeRequest(url).then(function (res) {
+        return _this3.fillDataFromResponse(res.data);
       })["catch"](function (error) {
         return _this3.error = error.response.data.message;
       });
@@ -4733,6 +4810,9 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       return value;
+    },
+    remove: function remove(id) {
+      this.$emit("remove-entity", id);
     }
   }
 });
@@ -4800,10 +4880,10 @@ __webpack_require__.r(__webpack_exports__);
       this.activeIndex = this.entities.findIndex(function (link) {
         return link === event.target.dataset.link;
       });
-      this.$emit("changeActive", event.target.dataset.link);
+      this.$emit("change-active", event.target.dataset.link);
     },
     remove: function remove() {
-      this.$emit("changeActive", "");
+      this.$emit("change-active", "");
     }
   }
 });
@@ -4829,8 +4909,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mixins_validationMixin_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/validationMixin.js */ "./resources/js/mixins/validationMixin.js");
 /* harmony import */ var _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../api/requestBuilder.js */ "./resources/js/api/requestBuilder.js");
 /* harmony import */ var _validate_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../validate.js */ "./resources/js/validate.js");
-
-
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -4838,6 +4916,8 @@ function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread n
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -4849,6 +4929,15 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5127,6 +5216,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           return a.title;
         }).join(", ");
       }
+    },
+    isCreatingMode: function isCreatingMode() {
+      return this.formMode === "creating";
     }
   },
   created: function created() {
@@ -5180,7 +5272,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     clearImages: function clearImages() {
       this.product.images = [];
     },
-    createNewProduct: function createNewProduct() {
+    submitProduct: function submitProduct() {
       var _this3 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
@@ -5235,25 +5327,48 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
                   _iterator2.f();
                 }
 
-                _this3.processing = true;
-                new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_5__.default("product").create(fData).then(function (_ref7) {
-                  var data = _ref7.data;
-                  _this3.products = [data].concat(_toConsumableArray(_this3.products));
+                if (_this3.isCreatingMode) {
+                  _this3.createNewProduct(fData);
+                } else {
+                  _this3.editProduct(fData);
+                }
 
-                  _this3.clearForm();
-                })["catch"](function (error) {
-                  _this3.handleServerError(error, "добавить продукт");
-                })["finally"](function () {
-                  _this3.processing = false;
-                });
-
-              case 12:
+              case 11:
               case "end":
                 return _context.stop();
             }
           }
         }, _callee);
       }))();
+    },
+    createNewProduct: function createNewProduct(data) {
+      var _this4 = this;
+
+      this.processing = true;
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_5__.default("products").create(data).then(function (_ref7) {
+        var data = _ref7.data;
+        _this4.products = [data].concat(_toConsumableArray(_this4.products));
+
+        _this4.clearForm();
+      })["catch"](function (error) {
+        _this4.handleServerError(error, "добавить продукт");
+      })["finally"](function () {
+        _this4.processing = false;
+      });
+    },
+    editProduct: function editProduct(data) {
+      var _this5 = this;
+
+      this.processing = true;
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_5__.default("product").edit(this.entityForEdit.id, data).then(function (_ref8) {
+        var data = _ref8.data;
+
+        _this5.$emit("update-entity", data);
+      })["catch"](function (error) {
+        _this5.handleServerError(error, "обновить товар");
+      })["finally"](function () {
+        _this5.processing = false;
+      });
     },
     clearForm: function clearForm() {
       for (var key in this.product) {
@@ -5268,6 +5383,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     },
     clearAuthors: function clearAuthors() {
       this.product.authors = [];
+    },
+    clearPicture: function clearPicture() {
+      this.product.picture = null;
     }
   }
 });
@@ -5292,8 +5410,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _EntityListComponent_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./EntityListComponent.vue */ "./resources/js/components/admin/EntityListComponent.vue");
 /* harmony import */ var _mixins_validationMixin_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../mixins/validationMixin.js */ "./resources/js/mixins/validationMixin.js");
 /* harmony import */ var _validate_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../validate.js */ "./resources/js/validate.js");
-
-
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -5305,6 +5421,8 @@ function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symb
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
@@ -5439,11 +5557,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.editedSlug = this.subcategorySlug;
       this.isEditingMode = true;
     },
-    createNewSubcategory: function createNewSubcategory() {
+    submitSubcategory: function submitSubcategory() {
       var _this2 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-        var params, isError;
+        var params, isError, fData, param;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -5465,25 +5583,54 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 return _context.abrupt("return");
 
               case 6:
-                _this2.processing = true;
-                new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("subcategory").create(params).then(function (_ref) {
-                  var data = _ref.data;
-                  _this2.subcategories = [data].concat(_toConsumableArray(_this2.subcategories));
+                fData = new FormData();
 
-                  _this2.clearForm();
-                })["catch"](function (error) {
-                  _this2.handleServerError(error, "добавить раздел");
-                })["finally"](function () {
-                  _this2.processing = false;
-                });
+                for (param in params) {
+                  fData.append(param, params[param]);
+                }
 
-              case 8:
+                if (_this2.isCreatingMode) {
+                  _this2.createNewSubcategory(fData);
+                } else {
+                  _this2.editSubcategory(fData);
+                }
+
+              case 9:
               case "end":
                 return _context.stop();
             }
           }
         }, _callee);
       }))();
+    },
+    createNewSubcategory: function createNewSubcategory(data) {
+      var _this3 = this;
+
+      this.processing = true;
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("subcategories").create(data).then(function (_ref) {
+        var data = _ref.data;
+        _this3.subcategories = [data].concat(_toConsumableArray(_this3.subcategories));
+
+        _this3.clearForm();
+      })["catch"](function (error) {
+        _this3.handleServerError(error, "добавить раздел");
+      })["finally"](function () {
+        _this3.processing = false;
+      });
+    },
+    editSubcategory: function editSubcategory(data) {
+      var _this4 = this;
+
+      this.processing = true;
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("subcategory").edit(this.entityForEdit.id, data).then(function (_ref2) {
+        var data = _ref2.data;
+
+        _this4.$emit("update-entity", data);
+      })["catch"](function (error) {
+        _this4.handleServerError(error, "обновить раздел");
+      })["finally"](function () {
+        _this4.processing = false;
+      });
     },
     clearForm: function clearForm() {
       for (var key in this.subcategory) {
@@ -5515,8 +5662,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _EntityListComponent_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./EntityListComponent.vue */ "./resources/js/components/admin/EntityListComponent.vue");
 /* harmony import */ var _mixins_validationMixin_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../mixins/validationMixin.js */ "./resources/js/mixins/validationMixin.js");
 /* harmony import */ var _validate_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../validate.js */ "./resources/js/validate.js");
-
-
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -5528,6 +5673,8 @@ function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symb
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
@@ -5609,7 +5756,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     }
   },
   methods: {
-    createNewTag: function createNewTag() {
+    submitTag: function submitTag() {
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
@@ -5638,25 +5785,48 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   fData.append(param, _this.tag[param]);
                 }
 
-                _this.processing = true;
-                new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("tag").create(fData).then(function (_ref) {
-                  var data = _ref.data;
-                  _this.tags = [data].concat(_toConsumableArray(_this.tags));
+                if (_this.isCreatingMode) {
+                  _this.createNewTag(fData);
+                } else {
+                  _this.editTag(fData);
+                }
 
-                  _this.clearForm();
-                })["catch"](function (error) {
-                  _this.handleServerError(error, "добавить тэг");
-                })["finally"](function () {
-                  _this.processing = false;
-                });
-
-              case 9:
+              case 8:
               case "end":
                 return _context.stop();
             }
           }
         }, _callee);
       }))();
+    },
+    createNewTag: function createNewTag(data) {
+      var _this2 = this;
+
+      this.processing = true;
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("tags").create(data).then(function (_ref) {
+        var data = _ref.data;
+        _this2.tags = [data].concat(_toConsumableArray(_this2.tags));
+
+        _this2.clearForm();
+      })["catch"](function (error) {
+        _this2.handleServerError(error, "добавить тэг");
+      })["finally"](function () {
+        _this2.processing = false;
+      });
+    },
+    editTag: function editTag(data) {
+      var _this3 = this;
+
+      this.processing = true;
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("tag").edit(this.entityForEdit.id, data).then(function (_ref2) {
+        var data = _ref2.data;
+
+        _this3.$emit("update-entity", data);
+      })["catch"](function (error) {
+        _this3.handleServerError(error, "обновить тэг");
+      })["finally"](function () {
+        _this3.processing = false;
+      });
     },
     clearForm: function clearForm() {
       this.tag.title = "";
@@ -6532,11 +6702,15 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
   },
   computed: {
     formattedDate: function formattedDate() {
-      var _this$user$updated_at = this.user["updated_at"].split("T"),
-          _this$user$updated_at2 = _slicedToArray(_this$user$updated_at, 1),
-          date = _this$user$updated_at2[0];
+      if (this.user["created_at"]) {
+        var _this$user$created_at = this.user["created_at"].split("T"),
+            _this$user$created_at2 = _slicedToArray(_this$user$created_at, 1),
+            date = _this$user$created_at2[0];
 
-      return date.split("-").reverse().join(".");
+        return date.split("-").reverse().join(".");
+      }
+
+      return "";
     },
     typeInput: function typeInput() {
       return this.fieldToChange === "name" ? "text" : "email";
@@ -6835,8 +7009,9 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this = this;
 
-    var builder = new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__.default("carouselProducts");
-    builder.get().then(function (data) {
+    var builder = new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__.default("products");
+    builder.perPage(10).get().then(function (_ref) {
+      var data = _ref.data;
       _this.newProducts = data;
     })["catch"](function (err) {
       _this.error = err.response.data.message;
@@ -6903,7 +7078,7 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this = this;
 
-    new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__.default("menus").get().then(function (data) {
+    new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__.default("menu").get().then(function (data) {
       _this.categories = data.categories;
       _this.subcategories = data.subcategories;
     })["catch"](function (err) {
@@ -7004,10 +7179,10 @@ __webpack_require__.r(__webpack_exports__);
       return this.$route.params.id;
     },
     isCategoryPage: function isCategoryPage() {
-      return this.$route.name === "categoryProducts";
+      return this.$route.name === "category.products";
     },
     isSubcategoryPage: function isSubcategoryPage() {
-      return this.$route.name === "subcategoryProducts";
+      return this.$route.name === "subcategory.products";
     }
   },
   methods: {
@@ -7142,132 +7317,6 @@ var authRegister = function authRegister(params) {
 
 /***/ }),
 
-/***/ "./resources/js/api/create.js":
-/*!************************************!*\
-  !*** ./resources/js/api/create.js ***!
-  \************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "createAuthor": () => (/* binding */ createAuthor),
-/* harmony export */   "createOrderConfirmation": () => (/* binding */ createOrderConfirmation),
-/* harmony export */   "createCategory": () => (/* binding */ createCategory),
-/* harmony export */   "createTag": () => (/* binding */ createTag),
-/* harmony export */   "createSubcategory": () => (/* binding */ createSubcategory),
-/* harmony export */   "createProduct": () => (/* binding */ createProduct),
-/* harmony export */   "createCover": () => (/* binding */ createCover),
-/* harmony export */   "createRating": () => (/* binding */ createRating),
-/* harmony export */   "createReview": () => (/* binding */ createReview)
-/* harmony export */ });
-var createAuthor = function createAuthor(params) {
-  return axios.post('/api/admin/authors/create', params);
-};
-
-var createOrderConfirmation = function createOrderConfirmation() {
-  return axios.get('/api/order/confirm');
-};
-
-var createTag = function createTag(params) {
-  return axios.post('/api/admin/tags/create', params);
-};
-
-var createSubcategory = function createSubcategory(params) {
-  return axios.post('/api/admin/subcategories/create', params);
-};
-
-var createCategory = function createCategory(params) {
-  return axios.post('/api/admin/categories/create', params);
-};
-
-var createProduct = function createProduct(params) {
-  var config = {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  };
-  return axios.post('/api/admin/products/create', params, config);
-};
-
-var createCover = function createCover(params) {
-  return axios.post('/api/admin/covers/create', params);
-};
-
-var createRating = function createRating(params) {
-  return axios.post('/api/ratings/create', params);
-};
-
-var createReview = function createReview(params) {
-  return axios.post('/api/reviews/create', params);
-};
-
-
-
-/***/ }),
-
-/***/ "./resources/js/api/delete.js":
-/*!************************************!*\
-  !*** ./resources/js/api/delete.js ***!
-  \************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "deleteSubcategory": () => (/* binding */ deleteSubcategory),
-/* harmony export */   "deleteCategory": () => (/* binding */ deleteCategory),
-/* harmony export */   "deleteProduct": () => (/* binding */ deleteProduct),
-/* harmony export */   "deleteTag": () => (/* binding */ deleteTag),
-/* harmony export */   "deleteAuthor": () => (/* binding */ deleteAuthor),
-/* harmony export */   "deleteCover": () => (/* binding */ deleteCover)
-/* harmony export */ });
-var deleteSubcategory = function deleteSubcategory(subcategoryId) {
-  return axios.post('/api/admin/subcategories/delete', {
-    id: subcategoryId,
-    _method: 'DELETE'
-  });
-};
-
-var deleteCategory = function deleteCategory(categoryId) {
-  return axios.post('/api/admin/categories/delete', {
-    id: categoryId,
-    _method: 'DELETE'
-  });
-};
-
-var deleteProduct = function deleteProduct(productId) {
-  return axios.post('/api/admin/products/delete', {
-    id: productId,
-    _method: 'DELETE'
-  });
-};
-
-var deleteTag = function deleteTag(tagId) {
-  return axios.post('/api/admin/tags/delete', {
-    id: tagId,
-    _method: 'DELETE'
-  });
-};
-
-var deleteAuthor = function deleteAuthor(authorId) {
-  return axios.post('/api/admin/authors/delete', {
-    id: authorId,
-    _method: 'DELETE'
-  });
-};
-
-var deleteCover = function deleteCover(coverId) {
-  return axios.post('/api/admin/covers/delete', {
-    id: coverId,
-    _method: 'DELETE'
-  });
-};
-
-
-
-/***/ }),
-
 /***/ "./resources/js/api/edit.js":
 /*!**********************************!*\
   !*** ./resources/js/api/edit.js ***!
@@ -7304,198 +7353,6 @@ var editUser = function editUser(params) {
 
 /***/ }),
 
-/***/ "./resources/js/api/get.js":
-/*!*********************************!*\
-  !*** ./resources/js/api/get.js ***!
-  \*********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "getCategories": () => (/* binding */ getCategories),
-/* harmony export */   "getTags": () => (/* binding */ getTags),
-/* harmony export */   "getSubcategories": () => (/* binding */ getSubcategories),
-/* harmony export */   "getMenus": () => (/* binding */ getMenus),
-/* harmony export */   "getAuthors": () => (/* binding */ getAuthors),
-/* harmony export */   "getProducts": () => (/* binding */ getProducts),
-/* harmony export */   "getOrders": () => (/* binding */ getOrders),
-/* harmony export */   "getCategoryProducts": () => (/* binding */ getCategoryProducts),
-/* harmony export */   "getSubcategoryProducts": () => (/* binding */ getSubcategoryProducts),
-/* harmony export */   "getAuthorProducts": () => (/* binding */ getAuthorProducts),
-/* harmony export */   "getTagProducts": () => (/* binding */ getTagProducts),
-/* harmony export */   "getCarouselProducts": () => (/* binding */ getCarouselProducts),
-/* harmony export */   "getOrdersProducts": () => (/* binding */ getOrdersProducts),
-/* harmony export */   "getCartProducts": () => (/* binding */ getCartProducts),
-/* harmony export */   "getUser": () => (/* binding */ getUser),
-/* harmony export */   "getProduct": () => (/* binding */ getProduct),
-/* harmony export */   "getRating": () => (/* binding */ getRating),
-/* harmony export */   "getCovers": () => (/* binding */ getCovers),
-/* harmony export */   "getProductReviews": () => (/* binding */ getProductReviews)
-/* harmony export */ });
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
-
-
-var getCategories = function getCategories() {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/categories/get').then(function (_ref) {
-    var data = _ref.data;
-    return data;
-  });
-};
-
-var getSubcategories = function getSubcategories() {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/subcategories/get').then(function (_ref2) {
-    var data = _ref2.data;
-    return data;
-  });
-};
-
-var getMenus = function getMenus() {
-  var menu = sessionStorage.getItem('menu');
-
-  if (menu) {
-    var parsed = JSON.parse(menu);
-    return new Promise(function (resolve) {
-      return resolve(parsed);
-    });
-  }
-
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/categories/menu').then(function (_ref3) {
-    var data = _ref3.data;
-    sessionStorage.setItem('menu', JSON.stringify(data));
-    return data;
-  });
-};
-
-var getAuthors = function getAuthors() {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/authors/get').then(function (_ref4) {
-    var data = _ref4.data;
-    return data;
-  });
-};
-
-var getTags = function getTags() {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/tags/get').then(function (_ref5) {
-    var data = _ref5.data;
-    return data;
-  });
-};
-
-var getProducts = function getProducts() {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/products/get').then(function (_ref6) {
-    var data = _ref6.data;
-    return data;
-  });
-};
-
-var getOrders = function getOrders() {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/order/get').then(function (_ref7) {
-    var data = _ref7.data;
-    return data;
-  });
-};
-
-var getCategoryProducts = function getCategoryProducts(id) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/categories/".concat(id, "/products")).then(function (_ref8) {
-    var data = _ref8.data;
-    return data;
-  });
-};
-
-var getSubcategoryProducts = function getSubcategoryProducts(id) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/subcategories/".concat(id, "/products")).then(function (_ref9) {
-    var data = _ref9.data;
-    return data;
-  });
-};
-
-var getAuthorProducts = function getAuthorProducts(id) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/authors/".concat(id, "/products")).then(function (_ref10) {
-    var data = _ref10.data;
-    return data;
-  });
-};
-
-var getTagProducts = function getTagProducts(id) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/tags/".concat(id, "/products")).then(function (_ref11) {
-    var data = _ref11.data;
-    return data;
-  });
-};
-
-var getCarouselProducts = function getCarouselProducts() {
-  var layoutCarousel = sessionStorage.getItem('layoutCarousel');
-
-  if (layoutCarousel) {
-    var parsed = JSON.parse(layoutCarousel);
-    return new Promise(function (resolve) {
-      return resolve(parsed);
-    });
-  }
-
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/products/carousel').then(function (_ref12) {
-    var data = _ref12.data;
-    sessionStorage.setItem('layoutCarousel', JSON.stringify(data));
-    return data;
-  });
-};
-
-var getOrdersProducts = function getOrdersProducts(orderId) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/order/".concat(orderId, "/products")).then(function (_ref13) {
-    var data = _ref13.data;
-    return data;
-  });
-};
-
-var getCartProducts = function getCartProducts() {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/order/cart').then(function (_ref14) {
-    var data = _ref14.data;
-    data.forEach(function (product) {
-      product.quantity = product.pivot.quantity;
-      product.order_id = product.pivot.order_id;
-    });
-    return data;
-  });
-};
-
-var getUser = function getUser() {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/auth/getUser');
-};
-
-var getProduct = function getProduct(productId) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/products/".concat(productId)).then(function (_ref15) {
-    var data = _ref15.data;
-    data.cover = data.cover.title;
-    return data;
-  });
-};
-
-var getRating = function getRating(productId) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/ratings/".concat(productId)).then(function (_ref16) {
-    var data = _ref16.data;
-    return data;
-  });
-};
-
-var getCovers = function getCovers() {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/covers/get").then(function (_ref17) {
-    var data = _ref17.data;
-    return data;
-  });
-};
-
-var getProductReviews = function getProductReviews(productId) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/products/".concat(productId, "/reviews")).then(function (_ref18) {
-    var data = _ref18.data;
-    return data;
-  });
-};
-
-
-
-/***/ }),
-
 /***/ "./resources/js/api/requestBuilder.js":
 /*!********************************************!*\
   !*** ./resources/js/api/requestBuilder.js ***!
@@ -7507,73 +7364,251 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ RequestBuilder)
 /* harmony export */ });
-/* harmony import */ var _get_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./get.js */ "./resources/js/api/get.js");
-/* harmony import */ var _create_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./create.js */ "./resources/js/api/create.js");
-/* harmony import */ var _edit_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./edit.js */ "./resources/js/api/edit.js");
-/* harmony import */ var _delete_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./delete.js */ "./resources/js/api/delete.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _edit_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./edit.js */ "./resources/js/api/edit.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _routes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./routes.js */ "./resources/js/api/routes.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+function _classPrivateMethodGet(receiver, privateSet, fn) { if (!privateSet.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return fn; }
 
 
 
 
 
+var _needAdminPrefix = /*#__PURE__*/new WeakSet();
+
+var _getPrefix = /*#__PURE__*/new WeakSet();
+
+var _getUrl = /*#__PURE__*/new WeakSet();
 
 var RequestBuilder = /*#__PURE__*/function () {
   function RequestBuilder(item) {
+    var countPerPage = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
     _classCallCheck(this, RequestBuilder);
 
-    // принимает аргументом объект(ы), с которыми предстоит работать
-    // надеюсь, будет интуитивно понятно, где использовать единственное или множественное число
-    // create, delete, edit в единственном (кроме edit.orderProducts)
-    // get зависит от того, объект или массив объектов ожидается (в том числе Menus)
-    this.item = item ? item[0].toUpperCase() + item.slice(1) : '';
-    this.client = (axios__WEBPACK_IMPORTED_MODULE_4___default());
+    _getUrl.add(this);
+
+    _getPrefix.add(this);
+
+    _needAdminPrefix.add(this);
+
+    // принимает аргументом item объект(ы)-сущности, с которыми предстоит работать
+    // при передаче id в единственном числе, без id - во множественном
+    // по логике laravel apiResource
+    this.item = item;
+    this.client = (axios__WEBPACK_IMPORTED_MODULE_1___default());
+    this.method = 'GET';
+    this.countPerPage = countPerPage;
   }
 
   _createClass(RequestBuilder, [{
     key: "get",
     value: function get(id) {
-      var getter = "get".concat(this.item);
-      return _get_js__WEBPACK_IMPORTED_MODULE_0__[getter](id);
+      var url = _classPrivateMethodGet(this, _getUrl, _getUrl2).call(this, id);
+
+      return this.client.get(url).then(function (response) {
+        return response.data;
+      });
     }
   }, {
     key: "create",
-    value: function create(params) {
-      var creator = "create".concat(this.item);
-      return _create_js__WEBPACK_IMPORTED_MODULE_1__[creator](params);
+    value: function create(data) {
+      this.method = 'POST';
+
+      var url = _classPrivateMethodGet(this, _getUrl, _getUrl2).call(this);
+
+      var config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        withCredentials: true
+      };
+      return this.client.post(url, data, config);
     }
   }, {
     key: "delete",
     value: function _delete(id) {
-      var deleter = "delete".concat(this.item);
-      return _delete_js__WEBPACK_IMPORTED_MODULE_3__[deleter](id);
+      this.method = 'DELETE';
+
+      var url = _classPrivateMethodGet(this, _getUrl, _getUrl2).call(this, id);
+
+      return this.client.post(url, {
+        id: id,
+        _method: 'DELETE'
+      }, {
+        withCredentials: true
+      });
     }
   }, {
     key: "edit",
-    value: function edit(id) {
-      var editor = "edit".concat(this.item);
-      return _edit_js__WEBPACK_IMPORTED_MODULE_2__[editor](id);
+    value: function edit(id, data) {
+      this.method = 'PUT';
+
+      var url = _classPrivateMethodGet(this, _getUrl, _getUrl2).call(this, id);
+
+      var config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        withCredentials: true
+      };
+      data.append('_method', 'PUT');
+      data.append('id', id);
+      return this.client.post(url, data, config);
     }
   }, {
     key: "makeRequest",
     value: function makeRequest(url) {
-      return this.client.get(url).then(function (res) {
-        return res.data;
-      });
+      var method = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'get';
+      return this.client[method](url);
+    }
+  }, {
+    key: "perPage",
+    value: function perPage(count) {
+      return new RequestBuilder(this.item, count);
     }
   }]);
 
   return RequestBuilder;
 }();
 
+function _needAdminPrefix2() {
+  return ['categories', 'subcategories', 'tags', 'authors', 'covers', 'products', 'category', 'subcategory', 'tag', 'author', 'cover', 'product'].includes(this.item);
+}
 
+function _getPrefix2() {
+  if (this.method !== 'GET' && _classPrivateMethodGet(this, _needAdminPrefix, _needAdminPrefix2)) {
+    return 'admin';
+  }
+
+  return '';
+}
+
+function _getUrl2(id) {
+  var prefix = _classPrivateMethodGet(this, _getPrefix, _getPrefix2).call(this);
+
+  var url = new URL(_routes_js__WEBPACK_IMPORTED_MODULE_2__.default[this.item](prefix, id));
+
+  if (this.countPerPage) {
+    url.searchParams.append('_limit', this.countPerPage);
+  }
+
+  return url;
+}
+
+
+
+/***/ }),
+
+/***/ "./resources/js/api/routes.js":
+/*!************************************!*\
+  !*** ./resources/js/api/routes.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+var BASE_URL = 'http://localhost:8000';
+var API_PREFIX = 'api';
+
+var buildBase = function buildBase(prefix) {
+  if (prefix.length > 0) {
+    return [BASE_URL, API_PREFIX, prefix];
+  }
+
+  return [BASE_URL, API_PREFIX];
+};
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  categories: function categories(prefix) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['categories']).join('/');
+  },
+  category: function category(prefix, id) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['categories', id]).join('/');
+  },
+  menu: function menu(prefix) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['categories', 'menu']).join('/');
+  },
+  subcategories: function subcategories(prefix) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['subcategories']).join('/');
+  },
+  subcategory: function subcategory(prefix, id) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['subcategories', id]).join('/');
+  },
+  authors: function authors(prefix) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['authors']).join('/');
+  },
+  author: function author(prefix, id) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['authors', id]).join('/');
+  },
+  tags: function tags(prefix) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['tags']).join('/');
+  },
+  tag: function tag(prefix, id) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['tags', id]).join('/');
+  },
+  covers: function covers(prefix) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['covers']).join('/');
+  },
+  cover: function cover(prefix, id) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['covers', id]).join('/');
+  },
+  products: function products(prefix) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['products']).join('/');
+  },
+  product: function product(prefix, id) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['products', id]).join('/');
+  },
+  // categoryProducts: id =>
+  //   [BASE_URL, API_PREFIX, 'categories', id, 'products'].join('/'),
+  // subcategoryProducts: id =>
+  //   [BASE_URL, API_PREFIX, 'subcategories', id, 'products'].join('/'),
+  // tagsProduct: id => [BASE_URL, API_PREFIX, 'tags', id, 'products'].join('/'),
+  // authorProducts: id =>
+  //   [BASE_URL, API_PREFIX, 'authors', id, 'products'].join('/'),
+  orders: function orders() {
+    return [BASE_URL, API_PREFIX, 'order', 'get'].join('/');
+  },
+  orderProducts: function orderProducts(id) {
+    return [BASE_URL, API_PREFIX, 'order', id, 'products'].join('/');
+  },
+  cartProducts: function cartProducts() {
+    return [BASE_URL, API_PREFIX, 'order', 'cart'].join('/');
+  },
+  user: function user() {
+    return [BASE_URL, API_PREFIX, 'auth', 'getUser'].join('/');
+  },
+  rating: function rating(productId) {
+    return [BASE_URL, API_PREFIX, 'ratings', productId].join('/');
+  },
+  productReviews: function productReviews(productId) {
+    return [BASE_URL, API_PREFIX, 'products', productId, 'reviews'].join('/');
+  },
+  orderConfirmation: function orderConfirmation() {
+    return [BASE_URL, API_PREFIX, 'order', 'confirm'].join('/');
+  }
+});
 
 /***/ }),
 
@@ -7813,19 +7848,19 @@ var routes = [{
     name: 'welcome'
   }, {
     path: '/categories/:id',
-    name: 'categoryProducts',
+    name: 'category.products',
     component: _ProductListComponent_vue__WEBPACK_IMPORTED_MODULE_7__.default
   }, {
     path: '/subcategories/:id',
-    name: 'subcategoryProducts',
+    name: 'subcategory.products',
     component: _ProductListComponent_vue__WEBPACK_IMPORTED_MODULE_7__.default
   }, {
     path: '/authors/:id',
-    name: 'authorProducts',
+    name: 'author.products',
     component: _ProductListComponent_vue__WEBPACK_IMPORTED_MODULE_7__.default
   }, {
     path: '/tags/:id',
-    name: 'tagProducts',
+    name: 'tag.products',
     component: _ProductListComponent_vue__WEBPACK_IMPORTED_MODULE_7__.default
   }]
 }, {
@@ -7978,7 +8013,7 @@ __webpack_require__.r(__webpack_exports__);
         return new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__.default('user').get().then(function (response) {
           return new Promise(function (resolve) {
             dispatch('getCartProducts');
-            commit('setUser', response.data);
+            commit('setUser', response);
             resolve();
           });
         })["finally"](function () {
@@ -7988,6 +8023,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     setUser: function setUser(_ref2, data) {
       var commit = _ref2.commit;
+      console.dir(data);
       commit('setUser', data);
     },
     login: function login(_ref3, params) {
@@ -8008,6 +8044,12 @@ __webpack_require__.r(__webpack_exports__);
     getCartProducts: function getCartProducts(_ref5) {
       var commit = _ref5.commit;
       new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__.default('cartProducts').get().then(function (data) {
+        data.forEach(function (product) {
+          var _product$pivot, _product$pivot2;
+
+          product.quantity = (_product$pivot = product.pivot) === null || _product$pivot === void 0 ? void 0 : _product$pivot.quantity;
+          product.order_id = (_product$pivot2 = product.pivot) === null || _product$pivot2 === void 0 ? void 0 : _product$pivot2.order_id;
+        });
         commit('setCartProducts', data);
       });
     },
@@ -72393,7 +72435,7 @@ var render = function() {
     [
       _c("nav-tabs-component", {
         attrs: { entities: _vm.entities },
-        on: { changeActive: _vm.changeForm },
+        on: { "change-active": _vm.changeForm },
         scopedSlots: _vm._u([
           {
             key: "header",
@@ -72408,7 +72450,7 @@ var render = function() {
       _c("nav-tabs-component", {
         staticClass: "mt-3",
         attrs: { entities: _vm.entities },
-        on: { changeActive: _vm.changeList },
+        on: { "change-active": _vm.changeList },
         scopedSlots: _vm._u([
           {
             key: "header",
@@ -72552,7 +72594,7 @@ var render = function() {
             nativeOn: {
               click: function($event) {
                 $event.preventDefault()
-                return _vm.createNewAuthor.apply(null, arguments)
+                return _vm.submitAuthor.apply(null, arguments)
               }
             }
           }),
@@ -72751,7 +72793,7 @@ var render = function() {
             nativeOn: {
               click: function($event) {
                 $event.preventDefault()
-                return _vm.createNewCategory.apply(null, arguments)
+                return _vm.submitCategory.apply(null, arguments)
               }
             }
           }),
@@ -72851,7 +72893,7 @@ var render = function() {
             nativeOn: {
               click: function($event) {
                 $event.preventDefault()
-                return _vm.createNewCover.apply(null, arguments)
+                return _vm.submitCover.apply(null, arguments)
               }
             }
           }),
@@ -72943,7 +72985,10 @@ var render = function() {
                   return _c("EntityListItem", {
                     key: entity.id,
                     attrs: { entity: entity, enType: _vm.enType },
-                    on: { "show-edit-form": _vm.showEditForm }
+                    on: {
+                      "show-edit-form": _vm.showEditForm,
+                      "remove-entity": _vm.remove
+                    }
                   })
                 }),
                 1
@@ -73434,8 +73479,24 @@ var render = function() {
                       ? _vm.$t("message.previewChoosen")
                       : _vm.$t("message.previewNotChoosen")
                   ) +
-                  "\n      "
-              )
+                  "\n        "
+              ),
+              _vm.product.images.length
+                ? _c(
+                    "a",
+                    {
+                      staticClass: "font-weight-normal",
+                      attrs: { href: "", noreferrer: "", nofollow: "" },
+                      on: {
+                        click: function($event) {
+                          $event.preventDefault()
+                          return _vm.clearPicture.apply(null, arguments)
+                        }
+                      }
+                    },
+                    [_vm._v("очистить")]
+                  )
+                : _vm._e()
             ]),
             _vm._v(" "),
             _c("input", {
@@ -73607,7 +73668,7 @@ var render = function() {
             nativeOn: {
               click: function($event) {
                 $event.preventDefault()
-                return _vm.createNewProduct.apply(null, arguments)
+                return _vm.submitProduct.apply(null, arguments)
               }
             }
           }),
@@ -73774,7 +73835,7 @@ var render = function() {
             nativeOn: {
               click: function($event) {
                 $event.preventDefault()
-                return _vm.createNewSubcategory.apply(null, arguments)
+                return _vm.submitSubcategory.apply(null, arguments)
               }
             }
           }),
@@ -73874,7 +73935,7 @@ var render = function() {
             nativeOn: {
               click: function($event) {
                 $event.preventDefault()
-                return _vm.createNewTag.apply(null, arguments)
+                return _vm.submitTag.apply(null, arguments)
               }
             }
           }),
@@ -75485,7 +75546,7 @@ var render = function() {
                     {
                       attrs: {
                         to: {
-                          name: "categoryProducts",
+                          name: "category.products",
                           params: { id: category.id }
                         }
                       }
@@ -75531,7 +75592,7 @@ var render = function() {
                               class: { active: _vm.isActive(subcategory.slug) },
                               attrs: {
                                 to: {
-                                  name: "subcategoryProducts",
+                                  name: "subcategory.products",
                                   params: { id: subcategory.slug }
                                 }
                               }
@@ -75560,7 +75621,7 @@ var render = function() {
                             class: { active: _vm.isOpen(category.id) },
                             attrs: {
                               to: {
-                                name: "categoryProducts",
+                                name: "category.products",
                                 params: { id: category.id }
                               }
                             }
@@ -75629,7 +75690,10 @@ var render = function() {
             staticClass: "btn btn-primary",
             attrs: {
               id: _vm.category.id,
-              to: { name: "categoryProducts", params: { id: _vm.category.id } },
+              to: {
+                name: "category.products",
+                params: { id: _vm.category.id }
+              },
               role: "link",
               "aria-label": _vm.category.title
             }

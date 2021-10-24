@@ -10,7 +10,7 @@
       </base-input-group-component>
 
       <base-button-component
-        @click.native.prevent="createNewAuthor"
+        @click.native.prevent="submitAuthor"
         :disabled="processing"
         bType="create"
         v-t="'label.create'"
@@ -73,7 +73,7 @@ export default {
   },
 
   methods: {
-    async createNewAuthor() {
+    async submitAuthor() {
       const isError = await this.validate(onlyTitleSchema, this.author);
       if (isError) return;
 
@@ -82,15 +82,38 @@ export default {
         fData.append(param, this.author[param]);
       }
 
+      if (this.isCreatingMode) {
+        this.createNewAuthor(fData);
+      } else {
+        this.editAuthor(fData);
+      }
+    },
+
+    createNewAuthor(data) {
       this.processing = true;
-      new RequestBuilder("author")
-        .create(fData)
+      new RequestBuilder("authors")
+        .create(data)
         .then(({ data }) => {
           this.authors = [data, ...this.authors];
           this.clearForm();
         })
         .catch((error) => {
           this.handleServerError(error, "добавить автора");
+        })
+        .finally(() => {
+          this.processing = false;
+        });
+    },
+
+    editAuthor(data) {
+      this.processing = true;
+      new RequestBuilder("author")
+        .edit(this.entityForEdit.id, data)
+        .then(({ data }) => {
+          this.$emit("update-entity", data);
+        })
+        .catch((error) => {
+          this.handleServerError(error, "обновить автора");
         })
         .finally(() => {
           this.processing = false;

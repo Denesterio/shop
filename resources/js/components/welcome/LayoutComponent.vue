@@ -39,7 +39,7 @@ export default {
   },
 
   created() {
-    new RequestBuilder("menus")
+    new RequestBuilder("menu")
       .get()
       .then((data) => {
         this.categories = data.categories;

@@ -35,7 +35,8 @@ import RequestBuilder from "../api/requestBuilder.js";
 
 const makeRequest = (to) => {
   const id = to.params.id;
-  const name = to.name;
+  const splitterIndex = to.name.indexOf(".");
+  const name = to.name.substring(0, splitterIndex);
   return new RequestBuilder(name).get(id);
 };
 

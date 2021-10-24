@@ -83,8 +83,12 @@ export default {
 
   computed: {
     formattedDate() {
-      const [date] = this.user["updated_at"].split("T");
-      return date.split("-").reverse().join(".");
+      if (this.user["created_at"]) {
+        const [date] = this.user["created_at"].split("T");
+        return date.split("-").reverse().join(".");
+      }
+
+      return "";
     },
     typeInput() {
       return this.fieldToChange === "name" ? "text" : "email";

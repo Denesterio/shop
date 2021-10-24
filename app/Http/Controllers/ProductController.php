@@ -7,13 +7,22 @@ use App\Models\Product;
 use App\Models\AuthorsProduct;
 use App\Models\TagsProduct;
 use App\Http\Requests\StoreProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Services\FileUploader;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
-    public function get()
+    public function index(Request $request)
     {
-        return Product::with('authors', 'tags')->OrderBy('id', 'desc')->paginate(20);
+        // DB::listen(function ($query) {
+        //     var_dump($query->sql, $query->bindings);
+        // });
+        if ($request['_limit']) {
+            return Product::with('authors', 'tags')->OrderBy('id', 'desc')->paginate($request['_limit']);
+        }
+
+        return Product::with('authors', 'tags')->OrderBy('id', 'desc')->get();
     }
 
     public function show($id)
@@ -22,7 +31,7 @@ class ProductController extends Controller
         return $book;
     }
 
-    public function create(StoreProductRequest $request, FileUploader $fileUploader)
+    public function store(StoreProductRequest $request, FileUploader $fileUploader)
     {
         $validated = $request->validated();
 
@@ -30,8 +39,8 @@ class ProductController extends Controller
         $picturesNames = [];
         if ($request->hasFile('picture')) {
             $file = $request->file('picture');
-            $filename = $fileUploader->uploadImage($file);
-            $thumbFilename = $fileUploader->uploadThumbnail($file);
+            [$filename, $thumb] = $fileUploader->saveThumbnail($file);
+            $thumbFilename = $thumb;
             $picturesNames[] = $filename;
         }
 
@@ -67,25 +76,61 @@ class ProductController extends Controller
         return $product;
     }
 
-    public function delete(Request $request)
+    public function update(UpdateProductRequest $request, Product $product, FileUploader $fileUploader)
     {
-        $id = $request['id'];
-        TagsProduct::where('product_id', $id)->delete();
-        AuthorsProduct::where('product_id', $id)->delete();
-        Product::find($id)->delete();
+        $validated = $request->validated();
+
+        $thumbFilename = '';
+        $picturesNames = [];
+        if ($request->hasFile('picture')) {
+            $file = $request->file('picture');
+            [$filename, $thumb] = $fileUploader->saveThumbnail($file);
+            $thumbFilename = $thumb;
+            $picturesNames[] = $filename;
+        } else if (Str::contains($validated['picture'], '_thumbnail_')) {
+            $thumbFilename = $validated['picture'];
+        }
+
+        $pictures = '';
+        if ($request['images'] && gettype($request['images'][0]) === 'string') {
+            $pictures = $request['images'];
+        } else {
+            foreach ($request['images'] as $file) {
+                $name = $fileUploader->uploadImage($file);
+                $picturesNames[] = $name;
+                $pictures = json_encode($picturesNames);
+            }
+        }
+
+        $product->fill([
+            'title' => $validated['title'],
+            'subcategory_slug' => $validated['subcategorySlug'],
+            'picture' => $thumbFilename,
+            'pictures' => $pictures,
+            'price' => $validated['price'],
+            'description' => $validated['description'],
+            'year' => $validated['year'],
+            'pages' => $validated['pages'],
+            'cover_id' => $validated['cover'],
+        ]);
+
+        $authorsIds = array_map(function ($a) {
+            return $a->id;
+        }, $validated['authors']);
+
+        $product->authors()->sync($authorsIds);
+        $product->tags()->sync($validated['tags']);
+
+        $product->save();
+
+        return $product;
     }
 
-    public static function carousel()
+    public function destroy(Product $product)
     {
-        // DB::listen(function ($query) {
-        //     var_dump($query->sql, $query->bindings);
-        // });
-        $products = Product::with('authors')
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
-            ->get();
-
-        return $products;
+        TagsProduct::where('product_id', $product->id)->delete();
+        AuthorsProduct::where('product_id', $product->id)->delete();
+        $product->delete();
     }
 
     public function getReviews($productId)

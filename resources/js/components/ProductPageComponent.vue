@@ -98,7 +98,10 @@ export default {
   created() {
     new RequestBuilder("product")
       .get(this.$route.params.id)
-      .then((data) => (this.product = data))
+      .then((data) => {
+        data.cover = data.cover.title;
+        this.product = data;
+      })
       .finally(() => (this.loading = false));
   },
 

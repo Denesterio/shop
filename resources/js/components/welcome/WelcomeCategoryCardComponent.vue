@@ -7,7 +7,7 @@
       </p>
       <router-link
         :id="category.id"
-        :to="{ name: 'categoryProducts', params: { id: category.id } }"
+        :to="{ name: 'category.products', params: { id: category.id } }"
         class="btn btn-primary"
         role="link"
         :aria-label="category.title"

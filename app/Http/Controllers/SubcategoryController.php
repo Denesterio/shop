@@ -6,10 +6,11 @@ use App\Models\Subcategory;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Http\Requests\StoreSubcategoryRequest;
+use App\Http\Requests\UpdateSubcategoryRequest;
 
 class SubcategoryController extends Controller
 {
-    public function create(StoreSubcategoryRequest $request)
+    public function store(StoreSubcategoryRequest $request)
     {
         $validated = $request->validated();
         return Subcategory::create([
@@ -19,18 +20,29 @@ class SubcategoryController extends Controller
         ]);
     }
 
-    public function get()
+    public function update(UpdateSubcategoryRequest $request, Subcategory $subcategory)
     {
-        return Subcategory::OrderBy('id', 'desc')->paginate(20);
+        $validated = $request->validated();
+        $subcategory->fill($validated);
+        $subcategory->save();
+        return $subcategory;
     }
 
-    public function delete(Request $request)
+    public function index(Request $request)
     {
-        $id = $request['id'];
-        Subcategory::find($id)->delete();
+        if ($request['_limit']) {
+            return Subcategory::OrderBy('id', 'desc')->paginate($request['_limit']);
+        }
+
+        return ['data' => Subcategory::OrderBy('id', 'desc')->get()];
     }
 
-    public function showProducts($id)
+    public function destroy(Subcategory $subcategory)
+    {
+        $subcategory->delete();
+    }
+
+    public function show($id)
     {
         $products = Product::with('authors')
             ->where('subcategory_slug', '=', $id)

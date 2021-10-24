@@ -75,6 +75,10 @@ export default {
 
       return value;
     },
+
+    remove(id) {
+      this.$emit("remove-entity", id);
+    },
   },
 };
 </script>

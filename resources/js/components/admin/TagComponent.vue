@@ -10,7 +10,7 @@
       >
 
       <base-button-component
-        @click.native.prevent="createNewTag"
+        @click.native.prevent="submitTag"
         :disabled="processing"
         bType="create"
         v-t="'label.create'"
@@ -73,7 +73,7 @@ export default {
   },
 
   methods: {
-    async createNewTag() {
+    async submitTag() {
       const isError = await this.validate(onlyTitleSchema, this.tag);
       if (isError) return;
 
@@ -82,15 +82,38 @@ export default {
         fData.append(param, this.tag[param]);
       }
 
+      if (this.isCreatingMode) {
+        this.createNewTag(fData);
+      } else {
+        this.editTag(fData);
+      }
+    },
+
+    createNewTag(data) {
       this.processing = true;
-      new RequestBuilder("tag")
-        .create(fData)
+      new RequestBuilder("tags")
+        .create(data)
         .then(({ data }) => {
           this.tags = [data, ...this.tags];
           this.clearForm();
         })
         .catch((error) => {
           this.handleServerError(error, "добавить тэг");
+        })
+        .finally(() => {
+          this.processing = false;
+        });
+    },
+
+    editTag(data) {
+      this.processing = true;
+      new RequestBuilder("tag")
+        .edit(this.entityForEdit.id, data)
+        .then(({ data }) => {
+          this.$emit("update-entity", data);
+        })
+        .catch((error) => {
+          this.handleServerError(error, "обновить тэг");
         })
         .finally(() => {
           this.processing = false;

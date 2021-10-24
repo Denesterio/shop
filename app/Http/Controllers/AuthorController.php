@@ -8,23 +8,39 @@ use App\Http\Requests\StoreAuthorRequest;
 
 class AuthorController extends Controller
 {
-    public function create(StoreAuthorRequest $request)
+    public function store(StoreAuthorRequest $request)
     {
         return Author::create($request->validated());
     }
 
-    public function get()
+    public function update(StoreAuthorRequest $request, Author $author)
     {
-        return Author::OrderBy('id', 'desc')->paginate(20);
+        $validated = $request->validated();
+        $author->title = $validated['title'];
+        $author->save();
+        return $author;
     }
 
-    public function delete(Request $request)
+    public function index(Request $request)
     {
-        $id = $request['id'];
-        Author::find($id)->delete();
+        if ($request['_limit']) {
+            return Author::OrderBy('id', 'desc')->paginate($request['_limit']);
+        }
+
+        return ['data' => Author::OrderBy('id', 'desc')->get()];
     }
 
-    public function showProducts($id)
+    // public function get()
+    // {
+    //     return Author::OrderBy('id', 'desc')->paginate(20);
+    // }
+
+    public function destroy(Author $author)
+    {
+        $author->delete();
+    }
+
+    public function show($id)
     {
         $author = Author::where('id', $id)->first();
         $products = $author->products()->with('authors')->get();

@@ -191,7 +191,7 @@
       </div>
 
       <base-button-component
-        @click.native.prevent="createNewProduct"
+        @click.native.prevent="submitProduct"
         :disabled="processing"
         bType="create"
         v-t="'label.create'"
@@ -282,6 +282,10 @@ export default {
         return this.product.authors.map((a) => a.title).join(", ");
       }
     },
+
+    isCreatingMode() {
+      return this.formMode === "creating";
+    },
   },
 
   created() {
@@ -327,7 +331,7 @@ export default {
       this.product.images = [];
     },
 
-    async createNewProduct() {
+    async submitProduct() {
       const params = {
         title: this.product.title,
         description: this.product.description,
@@ -353,15 +357,38 @@ export default {
         fData.append("images[]", file);
       }
 
+      if (this.isCreatingMode) {
+        this.createNewProduct(fData);
+      } else {
+        this.editProduct(fData);
+      }
+    },
+
+    createNewProduct(data) {
       this.processing = true;
-      new RequestBuilder("product")
-        .create(fData)
+      new RequestBuilder("products")
+        .create(data)
         .then(({ data }) => {
           this.products = [data, ...this.products];
           this.clearForm();
         })
         .catch((error) => {
           this.handleServerError(error, "добавить продукт");
+        })
+        .finally(() => {
+          this.processing = false;
+        });
+    },
+
+    editProduct(data) {
+      this.processing = true;
+      new RequestBuilder("product")
+        .edit(this.entityForEdit.id, data)
+        .then(({ data }) => {
+          this.$emit("update-entity", data);
+        })
+        .catch((error) => {
+          this.handleServerError(error, "обновить товар");
         })
         .finally(() => {
           this.processing = false;

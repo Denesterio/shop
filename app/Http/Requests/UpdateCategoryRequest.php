@@ -4,11 +4,11 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use App\Models\Tag;
 use Illuminate\Validation\Rule;
+use Illuminate\Http\Request;
+use App\Models\Category;
 
-class StoreTagRequest extends FormRequest
+class UpdateCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,14 +27,10 @@ class StoreTagRequest extends FormRequest
      */
     public function rules(Request $request)
     {
-        if ($request->method() === 'POST') {
-            return [
-                'title' => ['required', 'string', 'max:255', 'unique:tags'],
-            ];
-        }
-        $tag = Tag::find($request['id']);
+        $category = Category::find($request['id']);
         return [
-            'title' => ['required', 'string', 'max:255', Rule::unique('tags')->ignore($tag->id)],
+            'title' => ['required', 'string', 'max:255', Rule::unique('categories')->ignore($category)],
+            'description' => ['required', 'string'],
         ];
     }
 }

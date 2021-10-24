@@ -4,6 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Models\Author;
+use Illuminate\Validation\Rule;
 
 class StoreAuthorRequest extends FormRequest
 {
@@ -22,10 +25,16 @@ class StoreAuthorRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(Request $request)
     {
+        if ($request->method() === 'POST') {
+            return [
+                'title' => ['required', 'string', 'max:255', 'unique:authors'],
+            ];
+        }
+        $author = Author::find($request['id']);
         return [
-            'title' => ['required', 'string', 'max:255', 'unique:authors'],
+            'title' => ['required', 'string', 'max:255', Rule::unique('authors')->ignore($author->id)],
         ];
     }
 }

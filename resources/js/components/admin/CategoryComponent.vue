@@ -18,7 +18,7 @@
       </base-input-group-component>
 
       <base-button-component
-        @click.native.prevent="createNewCategory"
+        @click.native.prevent="submitCategory"
         :disabled="processing"
         bType="create"
         v-t="'label.create'"
@@ -85,7 +85,7 @@ export default {
   },
 
   methods: {
-    async createNewCategory() {
+    async submitCategory() {
       const isError = await this.validate(categorySchema, this.category);
       if (isError) return;
 
@@ -94,15 +94,38 @@ export default {
         fData.append(param, this.category[param]);
       }
 
+      if (this.isCreatingMode) {
+        this.createCategory(fData);
+      } else {
+        this.editCategory(fData);
+      }
+    },
+
+    createCategory(data) {
       this.processing = true;
-      new RequestBuilder("category")
-        .create(fData)
+      new RequestBuilder("categories")
+        .create(data)
         .then(({ data }) => {
           this.categories = [data, ...this.categories];
           this.clearForm();
         })
         .catch((error) => {
           this.handleServerError(error, "добавить категорию");
+        })
+        .finally(() => {
+          this.processing = false;
+        });
+    },
+
+    editCategory(data) {
+      this.processing = true;
+      new RequestBuilder("category")
+        .edit(this.entityForEdit.id, data)
+        .then(({ data }) => {
+          this.$emit("update-entity", data);
+        })
+        .catch((error) => {
+          this.handleServerError(error, "обновить категорию");
         })
         .finally(() => {
           this.processing = false;

@@ -14,7 +14,7 @@ final class FileUploader
      */
     public function uploadImage($file)
     {
-        $filename = time() . $file->getClientOriginalName();
+        $filename = $this->getFilename($file);
         $file->storeAs('public/img', $filename);
         return $filename;
     }
@@ -25,8 +25,25 @@ final class FileUploader
         $thumbnail->resize(self::THUMBNAIL_WIDTH, null, function ($constraint) {
             $constraint->aspectRatio();
         });
-        $thumbFilename = time() . '_thumbnail_' . $file->getClientOriginalName();
-        $thumbnail->save('storage/img/' . $thumbFilename, 100);
+        $thumbFilename = $this->getThumbnailName($file);
+        $thumbnail->save('storage/img/' . $thumbFilename, 80);
         return $thumbFilename;
+    }
+
+    public function getFilename($file)
+    {
+        return time() . '_' . $file->getClientOriginalName();
+    }
+
+    private function getThumbnailName($file)
+    {
+        return time() . '_thumbnail_' . $file->getClientOriginalName();
+    }
+
+    public function saveThumbnail($file)
+    {
+        $filename = $this->uploadImage($file);
+        $thumbFilename = $this->uploadThumbnail($file);
+        return [$filename, $thumbFilename];
     }
 }

@@ -24,7 +24,7 @@ export default {
           .then(response => {
             return new Promise(resolve => {
               dispatch('getCartProducts');
-              commit('setUser', response.data);
+              commit('setUser', response);
               resolve();
             });
           })
@@ -33,6 +33,7 @@ export default {
     },
 
     setUser({ commit }, data) {
+      console.dir(data);
       commit('setUser', data);
     },
 
@@ -52,6 +53,10 @@ export default {
 
     getCartProducts({ commit }) {
       new RequestBuilder('cartProducts').get().then(data => {
+        data.forEach(product => {
+          product.quantity = product.pivot?.quantity;
+          product.order_id = product.pivot?.order_id;
+        });
         commit('setCartProducts', data);
       });
     },

@@ -11,6 +11,7 @@
           :entity="entity"
           :enType="enType"
           @show-edit-form="showEditForm"
+          @remove-entity="remove"
         >
         </EntityListItem>
       </ul>
@@ -70,19 +71,23 @@ export default {
       );
     },
 
+    // используется в watch, type сущности передается во множественном числе,
+    // полученном из enType через i18n
     getEntities(type) {
       this.processing = true;
       new RequestBuilder(type)
+        .perPage(20)
         .get()
         .then((data) => this.fillDataFromResponse(data))
         .catch((error) => (this.error = error.response.data.message))
         .finally(() => (this.processing = false));
     },
 
+    // используются сслыки из пагинации laravel
     getEntitiesByUrl(url) {
       new RequestBuilder()
         .makeRequest(url)
-        .then((data) => this.fillDataFromResponse(data))
+        .then((res) => this.fillDataFromResponse(res.data))
         .catch((error) => (this.error = error.response.data.message));
     },
 

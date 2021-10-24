@@ -8,23 +8,39 @@ use App\Http\Requests\StoreTagRequest;
 
 class TagController extends Controller
 {
-    public function create(StoreTagRequest $request)
+    public function store(StoreTagRequest $request)
     {
         return Tag::create($request->validated());
     }
 
-    public function get()
+    public function update(StoreTagRequest $request, Tag $tag)
     {
-        return Tag::OrderBy('id', 'desc')->paginate(20);
+        $validated = $request->validated();
+        $tag->title = $validated['title'];
+        $tag->save();
+        return $tag;
     }
 
-    public function delete(Request $request)
+    public function index(Request $request)
     {
-        $id = $request['id'];
-        Tag::find($id)->delete();
+        if ($request['_limit']) {
+            return Tag::OrderBy('id', 'desc')->paginate($request['_limit']);
+        }
+
+        return ['data' => Tag::OrderBy('id', 'desc')->get()];
     }
 
-    public function showProducts($id)
+    // public function get()
+    // {
+    //     return Tag::OrderBy('id', 'desc')->paginate(20);
+    // }
+
+    public function destroy(Tag $tag)
+    {
+        $tag->delete();
+    }
+
+    public function show($id)
     {
         $tag = Tag::where('id', $id)->first();
         $products = $tag->products()->with('authors')->get();

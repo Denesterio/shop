@@ -37,7 +37,7 @@
       </base-select-group-component>
 
       <base-button-component
-        @click.native.prevent="createNewSubcategory"
+        @click.native.prevent="submitSubcategory"
         :disabled="processing"
         bType="create"
         v-t="'label.create'"
@@ -124,7 +124,7 @@ export default {
       this.isEditingMode = true;
     },
 
-    async createNewSubcategory() {
+    async submitSubcategory() {
       const params = {
         ...this.subcategory,
         slug: this.isEditingMode ? this.editedSlug : this.subcategorySlug,
@@ -133,15 +133,43 @@ export default {
       const isError = await this.validate(subcategorySchema, params);
       if (isError) return;
 
+      const fData = new FormData();
+      for (const param in params) {
+        fData.append(param, params[param]);
+      }
+
+      if (this.isCreatingMode) {
+        this.createNewSubcategory(fData);
+      } else {
+        this.editSubcategory(fData);
+      }
+    },
+
+    createNewSubcategory(data) {
       this.processing = true;
-      new RequestBuilder("subcategory")
-        .create(params)
+      new RequestBuilder("subcategories")
+        .create(data)
         .then(({ data }) => {
           this.subcategories = [data, ...this.subcategories];
           this.clearForm();
         })
         .catch((error) => {
           this.handleServerError(error, "добавить раздел");
+        })
+        .finally(() => {
+          this.processing = false;
+        });
+    },
+
+    editSubcategory(data) {
+      this.processing = true;
+      new RequestBuilder("subcategory")
+        .edit(this.entityForEdit.id, data)
+        .then(({ data }) => {
+          this.$emit("update-entity", data);
+        })
+        .catch((error) => {
+          this.handleServerError(error, "обновить раздел");
         })
         .finally(() => {
           this.processing = false;
