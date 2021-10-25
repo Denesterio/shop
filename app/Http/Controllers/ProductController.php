@@ -92,7 +92,7 @@ class ProductController extends Controller
         }
 
         $pictures = '';
-        if ($request['images'] && gettype($request['images'][0]) === 'string') {
+        if (count($request['images']) > 0 && gettype($request['images'][0]) === 'string') {
             $pictures = $request['images'];
         } else {
             foreach ($request['images'] as $file) {
@@ -133,8 +133,8 @@ class ProductController extends Controller
         $product->delete();
     }
 
-    public function getReviews($productId)
-    {
-        return Product::find($productId)->reviews()->with('user')->get();
-    }
+    // public function getReviews($productId)
+    // {
+    //     return Product::find($productId)->reviews()->with('user')->get();
+    // }
 }

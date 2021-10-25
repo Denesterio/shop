@@ -78,12 +78,12 @@ export default {
   methods: {
     login() {
       this.processing = true;
-      const params = {
-        email: this.email,
-        password: this.password,
-      };
+      const formData = new FormData();
+      formData.append("email", this.email);
+      formData.append("password", this.password);
+
       this.$store
-        .dispatch("login", params)
+        .dispatch("login", formData)
         .then(() => {
           this.$router.push(this.$route.query.redirect || "/");
         })

@@ -32,15 +32,22 @@ export default {
   components: { BasePagination, EntityListItem },
   props: {
     enType: {
+      // передача типа сущности для запроса из компонента
       type: String,
       required: false,
       default: "",
     },
 
     entities: {
+      // передача сущностей снаружи
       type: Array,
       required: false,
       default: () => [],
+    },
+
+    editedEntity: {
+      type: Object,
+      required: false,
     },
   },
 
@@ -119,6 +126,19 @@ export default {
 
     entities() {
       this.currentEntities = this.entities;
+    },
+
+    editedEntity(newValue) {
+      if (newValue) {
+        const editedEntityIndex = this.currentEntities.findIndex(
+          (entity) => entity.id === newValue.id
+        );
+        this.currentEntities = [
+          ...this.currentEntities.slice(0, editedEntityIndex),
+          newValue,
+          ...this.currentEntities.slice(editedEntityIndex + 1),
+        ];
+      }
     },
   },
 };

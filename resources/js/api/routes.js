@@ -36,15 +36,25 @@ export default {
   // authorProducts: id =>
   //   [BASE_URL, API_PREFIX, 'authors', id, 'products'].join('/'),
 
-  orders: () => [BASE_URL, API_PREFIX, 'order', 'get'].join('/'),
-  orderProducts: id =>
-    [BASE_URL, API_PREFIX, 'order', id, 'products'].join('/'),
-  cartProducts: () => [BASE_URL, API_PREFIX, 'order', 'cart'].join('/'),
+  reviews: (prefix, productId) =>
+    [...buildBase(prefix), 'products', productId, 'reviews'].join('/'),
+
+  ratings: (prefix, productId) =>
+    [...buildBase(prefix), 'products', productId, 'ratings'].join('/'),
+
+  orders: prefix => [...buildBase(prefix), 'orders'].join('/'),
+  addProduct: prefix =>
+    [...buildBase(prefix), 'orders', 'addProduct'].join('/'),
+  deleteProduct: prefix =>
+    [...buildBase(prefix), 'orders', 'deleteProduct'].join('/'),
+  orderProducts: (prefix, id) =>
+    [...buildBase(prefix), 'orders', id, 'products'].join('/'),
+  cartProducts: prefix => [...buildBase(prefix), 'orders', 'cart'].join('/'),
+  orderConfirmation: prefix =>
+    [...buildBase(prefix), 'orders', 'confirm'].join('/'),
 
   user: () => [BASE_URL, API_PREFIX, 'auth', 'getUser'].join('/'),
-  rating: productId => [BASE_URL, API_PREFIX, 'ratings', productId].join('/'),
-  productReviews: productId =>
-    [BASE_URL, API_PREFIX, 'products', productId, 'reviews'].join('/'),
-
-  orderConfirmation: () => [BASE_URL, API_PREFIX, 'order', 'confirm'].join('/')
+  login: prefix => [...buildBase(prefix), 'login'].join('/'),
+  logout: prefix => [...buildBase(prefix), 'logout'].join('/'),
+  register: prefix => [...buildBase(prefix), 'register'].join('/')
 };

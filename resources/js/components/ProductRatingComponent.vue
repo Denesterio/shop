@@ -61,7 +61,7 @@ export default {
   },
 
   created() {
-    new RequestBuilder("rating").get(this.productId).then((data) => {
+    new RequestBuilder("ratings").get(this.productId).then((data) => {
       this.rating = data.rating.toFixed(2);
       this.votes = data.votes;
       this.isRated = data.isRated;

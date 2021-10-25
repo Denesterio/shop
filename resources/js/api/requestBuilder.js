@@ -30,9 +30,17 @@ export default class RequestBuilder {
     ].includes(this.item);
   }
 
+  #needAuthPrefix() {
+    return ['register', 'logout', 'login'].includes(this.item);
+  }
+
   #getPrefix() {
-    if (this.method !== 'GET' && this.#needAdminPrefix) {
+    if (this.method !== 'GET' && this.#needAdminPrefix()) {
       return 'admin';
+    }
+
+    if (this.#needAuthPrefix()) {
+      return 'auth';
     }
 
     return '';
@@ -52,9 +60,9 @@ export default class RequestBuilder {
     return this.client.get(url).then(response => response.data);
   }
 
-  create(data) {
+  create(data, parentId = null) {
     this.method = 'POST';
-    const url = this.#getUrl();
+    const url = this.#getUrl(parentId);
     const config = {
       headers: { 'Content-Type': 'multipart/form-data' },
       withCredentials: true

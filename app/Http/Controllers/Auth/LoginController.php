@@ -60,6 +60,7 @@ class LoginController extends Controller
                 ]
             ]
         ];
+
         return response($error, 422);
     }
 

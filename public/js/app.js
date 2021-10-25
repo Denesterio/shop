@@ -2283,7 +2283,7 @@ __webpack_require__.r(__webpack_exports__);
     confirm: function confirm() {
       var _this = this;
 
-      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("orderConfirmation").create().then(function () {
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("orderConfirmation").get().then(function () {
         Vue.swal.fire({
           title: "Готово!",
           text: "Заказ успешно оформлен!",
@@ -2321,7 +2321,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _api_auth_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../api/auth.js */ "./resources/js/api/auth.js");
+/* harmony import */ var _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../api/requestBuilder.js */ "./resources/js/api/requestBuilder.js");
 /* harmony import */ var _BaseTooltipComponent_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BaseTooltipComponent.vue */ "./resources/js/components/BaseTooltipComponent.vue");
 //
 //
@@ -2516,7 +2516,7 @@ __webpack_require__.r(__webpack_exports__);
     logout: function logout() {
       var _this = this;
 
-      (0,_api_auth_js__WEBPACK_IMPORTED_MODULE_0__.authLogout)().then(function () {
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__.default("logout").get().then(function () {
         _this.$store.dispatch("logout");
 
         if (_this.$route.name !== "welcome") {
@@ -3116,7 +3116,7 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this = this;
 
-    new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__.default("rating").get(this.productId).then(function (data) {
+    new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__.default("ratings").get(this.productId).then(function (data) {
       _this.rating = data.rating.toFixed(2);
       _this.votes = data.votes;
       _this.isRated = data.isRated;
@@ -3236,11 +3236,10 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       if (this.reviewBody.length < 10) return;
-      var params = {
-        product_id: this.productId,
-        review: this.reviewBody
-      };
-      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__.default("review").create(params).then(function (_ref) {
+      var formData = new FormData();
+      formData.append("product_id", this.productId);
+      formData.append("review", this.reviewBody);
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__.default("reviews").create(formData, this.productId).then(function (_ref) {
         var data = _ref.data;
 
         _this.$emit("add-review", data);
@@ -3339,7 +3338,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   mounted: function mounted() {
     var _this = this;
 
-    new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__.default("productReviews").get(this.productId).then(function (data) {
+    new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__.default("reviews").get(this.productId).then(function (data) {
       _this.reviews = data;
     });
   },
@@ -3557,11 +3556,10 @@ __webpack_require__.r(__webpack_exports__);
       if (event.type === "click" && event.x === 0) return;
       if (event.type === "submit" && this.rating === 0) return;
       var rating = event.type === "submit" ? this.rating : event.target.value;
-      var params = {
-        product_id: this.productId,
-        rating: rating
-      };
-      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__.default("rating").create(params).then(function () {
+      var formData = new FormData();
+      formData.append("product_id", this.productId);
+      formData.append("rating", rating);
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__.default("ratings").create(formData, this.productId).then(function () {
         _this.$emit("closeVoting", Number.parseInt(rating));
       });
     }
@@ -3856,6 +3854,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 
 
 
@@ -3872,7 +3872,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       // name of entity in single
       isModalOpen: false,
       currentEditFormComponent: null,
-      entityForEdit: ""
+      entityForEdit: "",
+      editedEntity: null
     };
   },
   computed: {
@@ -3899,6 +3900,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
       this.isModalOpen = true;
       this.entityForEdit = entityForEdit;
+    },
+    updateEntities: function updateEntities(data) {
+      this.editedEntity = data;
+      this.isModalOpen = false;
+      this.entityForEdit = null;
     }
   }
 });
@@ -4598,6 +4604,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _BasePagination_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../BasePagination.vue */ "./resources/js/components/BasePagination.vue");
 /* harmony import */ var _EntityListItem_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./EntityListItem.vue */ "./resources/js/components/admin/EntityListItem.vue");
 /* harmony import */ var _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../api/requestBuilder.js */ "./resources/js/api/requestBuilder.js");
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 //
 //
 //
@@ -4634,16 +4652,22 @@ __webpack_require__.r(__webpack_exports__);
   },
   props: {
     enType: {
+      // передача типа сущности для запроса из компонента
       type: String,
       required: false,
       "default": ""
     },
     entities: {
+      // передача сущностей снаружи
       type: Array,
       required: false,
       "default": function _default() {
         return [];
       }
+    },
+    editedEntity: {
+      type: Object,
+      required: false
     }
   },
   data: function data() {
@@ -4719,6 +4743,14 @@ __webpack_require__.r(__webpack_exports__);
     },
     entities: function entities() {
       this.currentEntities = this.entities;
+    },
+    editedEntity: function editedEntity(newValue) {
+      if (newValue) {
+        var editedEntityIndex = this.currentEntities.findIndex(function (entity) {
+          return entity.id === newValue.id;
+        });
+        this.currentEntities = [].concat(_toConsumableArray(this.currentEntities.slice(0, editedEntityIndex)), [newValue], _toConsumableArray(this.currentEntities.slice(editedEntityIndex + 1)));
+      }
     }
   }
 });
@@ -5936,11 +5968,10 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       this.processing = true;
-      var params = {
-        email: this.email,
-        password: this.password
-      };
-      this.$store.dispatch("login", params).then(function () {
+      var formData = new FormData();
+      formData.append("email", this.email);
+      formData.append("password", this.password);
+      this.$store.dispatch("login", formData).then(function () {
         _this.$router.push(_this.$route.query.redirect || "/");
       })["catch"](function (error) {
         _this.errors = error.response.data.errors;
@@ -5966,7 +5997,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _api_auth_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../api/auth.js */ "./resources/js/api/auth.js");
+/* harmony import */ var _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../api/requestBuilder.js */ "./resources/js/api/requestBuilder.js");
 /* harmony import */ var _validate_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../validate.js */ "./resources/js/validate.js");
 /* harmony import */ var _services_createError_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../services/createError.js */ "./resources/js/services/createError.js");
 
@@ -6153,7 +6184,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
-        var params;
+        var params, formData, key;
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -6182,7 +6213,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 10:
                 _this.processing = true;
-                (0,_api_auth_js__WEBPACK_IMPORTED_MODULE_1__.authRegister)(params).then(function (_ref) {
+                formData = new FormData();
+
+                for (key in params) {
+                  formData.append(key, params[key]);
+                }
+
+                new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_1__.default("register").create(formData).then(function (_ref) {
                   var data = _ref.data;
 
                   _this.$store.dispatch("setUser", data);
@@ -6204,7 +6241,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   _this.processing = false;
                 });
 
-              case 12:
+              case 14:
               case "end":
                 return _context.stop();
             }
@@ -6825,7 +6862,7 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     var _this = this;
 
-    new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__.default("ordersProducts").get(this.orderId).then(function (data) {
+    new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__.default("orderProducts").get(this.orderId).then(function (data) {
       data.forEach(function (product) {
         if (_this.isConfirmed) {
           product.price = product.pivot.price;
@@ -7081,6 +7118,7 @@ __webpack_require__.r(__webpack_exports__);
     new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__.default("menu").get().then(function (data) {
       _this.categories = data.categories;
       _this.subcategories = data.subcategories;
+      sessionStorage.setItem("menu", JSON.stringify(data));
     })["catch"](function (err) {
       _this.error = err.response.data.message;
     })["finally"](function () {
@@ -7284,39 +7322,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/api/auth.js":
-/*!**********************************!*\
-  !*** ./resources/js/api/auth.js ***!
-  \**********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "authLogin": () => (/* binding */ authLogin),
-/* harmony export */   "authRegister": () => (/* binding */ authRegister),
-/* harmony export */   "authLogout": () => (/* binding */ authLogout)
-/* harmony export */ });
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
-
-
-var authLogin = function authLogin(params) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().post("/api/auth/login", params);
-};
-
-var authLogout = function authLogout() {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().post("/api/auth/logout");
-};
-
-var authRegister = function authRegister(params) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().post("/api/auth/register", params);
-};
-
-
-
-/***/ }),
-
 /***/ "./resources/js/api/edit.js":
 /*!**********************************!*\
   !*** ./resources/js/api/edit.js ***!
@@ -7382,6 +7387,8 @@ function _classPrivateMethodGet(receiver, privateSet, fn) { if (!privateSet.has(
 
 var _needAdminPrefix = /*#__PURE__*/new WeakSet();
 
+var _needAuthPrefix = /*#__PURE__*/new WeakSet();
+
 var _getPrefix = /*#__PURE__*/new WeakSet();
 
 var _getUrl = /*#__PURE__*/new WeakSet();
@@ -7395,6 +7402,8 @@ var RequestBuilder = /*#__PURE__*/function () {
     _getUrl.add(this);
 
     _getPrefix.add(this);
+
+    _needAuthPrefix.add(this);
 
     _needAdminPrefix.add(this);
 
@@ -7419,9 +7428,10 @@ var RequestBuilder = /*#__PURE__*/function () {
   }, {
     key: "create",
     value: function create(data) {
+      var parentId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
       this.method = 'POST';
 
-      var url = _classPrivateMethodGet(this, _getUrl, _getUrl2).call(this);
+      var url = _classPrivateMethodGet(this, _getUrl, _getUrl2).call(this, parentId);
 
       var config = {
         headers: {
@@ -7482,9 +7492,17 @@ function _needAdminPrefix2() {
   return ['categories', 'subcategories', 'tags', 'authors', 'covers', 'products', 'category', 'subcategory', 'tag', 'author', 'cover', 'product'].includes(this.item);
 }
 
+function _needAuthPrefix2() {
+  return ['register', 'logout', 'login'].includes(this.item);
+}
+
 function _getPrefix2() {
-  if (this.method !== 'GET' && _classPrivateMethodGet(this, _needAdminPrefix, _needAdminPrefix2)) {
+  if (this.method !== 'GET' && _classPrivateMethodGet(this, _needAdminPrefix, _needAdminPrefix2).call(this)) {
     return 'admin';
+  }
+
+  if (_classPrivateMethodGet(this, _needAuthPrefix, _needAuthPrefix2).call(this)) {
+    return 'auth';
   }
 
   return '';
@@ -7587,26 +7605,41 @@ var buildBase = function buildBase(prefix) {
   // tagsProduct: id => [BASE_URL, API_PREFIX, 'tags', id, 'products'].join('/'),
   // authorProducts: id =>
   //   [BASE_URL, API_PREFIX, 'authors', id, 'products'].join('/'),
-  orders: function orders() {
-    return [BASE_URL, API_PREFIX, 'order', 'get'].join('/');
+  reviews: function reviews(prefix, productId) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['products', productId, 'reviews']).join('/');
   },
-  orderProducts: function orderProducts(id) {
-    return [BASE_URL, API_PREFIX, 'order', id, 'products'].join('/');
+  ratings: function ratings(prefix, productId) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['products', productId, 'ratings']).join('/');
   },
-  cartProducts: function cartProducts() {
-    return [BASE_URL, API_PREFIX, 'order', 'cart'].join('/');
+  orders: function orders(prefix) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['orders']).join('/');
+  },
+  addProduct: function addProduct(prefix) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['orders', 'addProduct']).join('/');
+  },
+  deleteProduct: function deleteProduct(prefix) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['orders', 'deleteProduct']).join('/');
+  },
+  orderProducts: function orderProducts(prefix, id) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['orders', id, 'products']).join('/');
+  },
+  cartProducts: function cartProducts(prefix) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['orders', 'cart']).join('/');
+  },
+  orderConfirmation: function orderConfirmation(prefix) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['orders', 'confirm']).join('/');
   },
   user: function user() {
     return [BASE_URL, API_PREFIX, 'auth', 'getUser'].join('/');
   },
-  rating: function rating(productId) {
-    return [BASE_URL, API_PREFIX, 'ratings', productId].join('/');
+  login: function login(prefix) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['login']).join('/');
   },
-  productReviews: function productReviews(productId) {
-    return [BASE_URL, API_PREFIX, 'products', productId, 'reviews'].join('/');
+  logout: function logout(prefix) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['logout']).join('/');
   },
-  orderConfirmation: function orderConfirmation() {
-    return [BASE_URL, API_PREFIX, 'order', 'confirm'].join('/');
+  register: function register(prefix) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['register']).join('/');
   }
 });
 
@@ -7985,8 +8018,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../api/requestBuilder.js */ "./resources/js/api/requestBuilder.js");
-/* harmony import */ var _api_auth_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../api/auth.js */ "./resources/js/api/auth.js");
-
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   state: {
@@ -8023,13 +8054,12 @@ __webpack_require__.r(__webpack_exports__);
     },
     setUser: function setUser(_ref2, data) {
       var commit = _ref2.commit;
-      console.dir(data);
       commit('setUser', data);
     },
     login: function login(_ref3, params) {
       var commit = _ref3.commit,
           dispatch = _ref3.dispatch;
-      return (0,_api_auth_js__WEBPACK_IMPORTED_MODULE_1__.authLogin)(params).then(function (response) {
+      return new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__.default('login').create(params).then(function (response) {
         return new Promise(function (resolve) {
           dispatch('getCartProducts');
           commit('setUser', response.data);
@@ -8055,8 +8085,20 @@ __webpack_require__.r(__webpack_exports__);
     },
     changeCartProductQuantity: function changeCartProductQuantity(_ref6, params) {
       var commit = _ref6.commit;
-      return new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__.default('ordersProducts').edit(params).then(function (data) {
-        commit('setCartProducts', data);
+      var action = params.quantityChange === 'increase' ? 'addProduct' : 'deleteProduct';
+      var formData = new FormData();
+      formData.append('product_id', params.productId);
+      return new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_0__.default(action).edit(null, formData).then(function (response) {
+        return new Promise(function (resolve) {
+          response.data.forEach(function (product) {
+            var _product$pivot3, _product$pivot4;
+
+            product.quantity = (_product$pivot3 = product.pivot) === null || _product$pivot3 === void 0 ? void 0 : _product$pivot3.quantity;
+            product.order_id = (_product$pivot4 = product.pivot) === null || _product$pivot4 === void 0 ? void 0 : _product$pivot4.order_id;
+          });
+          commit('setCartProducts', response.data);
+          resolve();
+        });
       });
     },
     confirmOrder: function confirmOrder(_ref7) {
@@ -71314,7 +71356,7 @@ var render = function() {
                           key: author.id,
                           attrs: {
                             to: {
-                              name: "authorProducts",
+                              name: "author.products",
                               params: { id: author.id }
                             }
                           }
@@ -71338,7 +71380,7 @@ var render = function() {
                         key: tag.id,
                         staticClass: "badge bg-primary text-light mr-1",
                         attrs: {
-                          to: { name: "tagProducts", params: { id: tag.id } }
+                          to: { name: "tag.products", params: { id: tag.id } }
                         }
                       },
                       [_vm._v(_vm._s(tag.title))]
@@ -71856,7 +71898,7 @@ var render = function() {
                   expression: "'message.reviewHelpBlock'"
                 }
               ],
-              staticClass: "form-text",
+              staticClass: "small text-secondary",
               attrs: { id: "reviewHelpBlock" }
             }),
             _vm._v(" "),
@@ -72467,7 +72509,7 @@ var render = function() {
       _c("keep-alive", [_c(_vm.activeForm, { tag: "component" })], 1),
       _vm._v(" "),
       _c("entity-list-component", {
-        attrs: { enType: _vm.activeList },
+        attrs: { enType: _vm.activeList, editedEntity: _vm.editedEntity },
         on: { "show-edit-form": _vm.showEntityEditForm }
       }),
       _vm._v(" "),
@@ -72518,7 +72560,8 @@ var render = function() {
         [
           _c(_vm.currentEditFormComponent, {
             tag: "component",
-            attrs: { formMode: "editing", entityForEdit: _vm.entityForEdit }
+            attrs: { formMode: "editing", entityForEdit: _vm.entityForEdit },
+            on: { "update-entity": _vm.updateEntities }
           })
         ],
         1

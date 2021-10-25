@@ -20,7 +20,7 @@
             <router-link
               v-for="author in product.authors"
               :key="author.id"
-              :to="{ name: 'authorProducts', params: { id: author.id } }"
+              :to="{ name: 'author.products', params: { id: author.id } }"
               >{{ author.title }}</router-link
             >
           </p>
@@ -32,7 +32,7 @@
           <router-link
             v-for="tag in product.tags"
             :key="tag.id"
-            :to="{ name: 'tagProducts', params: { id: tag.id } }"
+            :to="{ name: 'tag.products', params: { id: tag.id } }"
             class="badge bg-primary text-light mr-1"
             >{{ tag.title }}</router-link
           >

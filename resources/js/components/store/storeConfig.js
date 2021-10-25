@@ -1,5 +1,4 @@
 import RequestBuilder from '../../api/requestBuilder.js';
-import { authLogin } from '../../api/auth.js';
 
 export default {
   state: {
@@ -33,12 +32,11 @@ export default {
     },
 
     setUser({ commit }, data) {
-      console.dir(data);
       commit('setUser', data);
     },
 
     login({ commit, dispatch }, params) {
-      return authLogin(params).then(response => {
+      return new RequestBuilder('login').create(params).then(response => {
         return new Promise(resolve => {
           dispatch('getCartProducts');
           commit('setUser', response.data);
@@ -62,8 +60,19 @@ export default {
     },
 
     changeCartProductQuantity({ commit }, params) {
-      return new RequestBuilder('ordersProducts').edit(params).then(data => {
-        commit('setCartProducts', data);
+      const action =
+        params.quantityChange === 'increase' ? 'addProduct' : 'deleteProduct';
+      const formData = new FormData();
+      formData.append('product_id', params.productId);
+      return new RequestBuilder(action).edit(null, formData).then(response => {
+        return new Promise(resolve => {
+          response.data.forEach(product => {
+            product.quantity = product.pivot?.quantity;
+            product.order_id = product.pivot?.order_id;
+          });
+          commit('setCartProducts', response.data);
+          resolve();
+        });
       });
     },
 

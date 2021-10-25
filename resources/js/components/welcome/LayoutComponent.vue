@@ -44,6 +44,7 @@ export default {
       .then((data) => {
         this.categories = data.categories;
         this.subcategories = data.subcategories;
+        sessionStorage.setItem("menu", JSON.stringify(data));
       })
       .catch((err) => {
         this.error = err.response.data.message;

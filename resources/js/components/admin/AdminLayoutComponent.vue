@@ -17,6 +17,7 @@
     <entity-list-component
       @show-edit-form="showEntityEditForm"
       :enType="activeList"
+      :editedEntity="editedEntity"
     />
     <b-modal
       v-model="isModalOpen"
@@ -30,6 +31,7 @@
         :is="currentEditFormComponent"
         formMode="editing"
         :entityForEdit="entityForEdit"
+        @update-entity="updateEntities"
       />
       <template #modal-footer="{ cancel }">
         <b-button variant="secondary" @click="cancel()" v-t="'label.cancel'" />
@@ -51,6 +53,7 @@ export default {
       isModalOpen: false,
       currentEditFormComponent: null,
       entityForEdit: "",
+      editedEntity: null,
     };
   },
 
@@ -77,6 +80,12 @@ export default {
       );
       this.isModalOpen = true;
       this.entityForEdit = entityForEdit;
+    },
+
+    updateEntities(data) {
+      this.editedEntity = data;
+      this.isModalOpen = false;
+      this.entityForEdit = null;
     },
   },
 };

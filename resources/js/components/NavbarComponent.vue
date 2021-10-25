@@ -157,7 +157,7 @@
 </template>
 
 <script>
-import { authLogout } from "../api/auth.js";
+import RequestBuilder from "../api/requestBuilder.js";
 import BaseTooltipComponent from "./BaseTooltipComponent.vue";
 export default {
   props: {
@@ -190,7 +190,7 @@ export default {
 
   methods: {
     logout() {
-      authLogout().then(() => {
+      new RequestBuilder("logout").get().then(() => {
         this.$store.dispatch("logout");
         if (this.$route.name !== "welcome") {
           this.$router.push({ name: "welcome" });

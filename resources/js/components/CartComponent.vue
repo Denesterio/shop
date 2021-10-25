@@ -93,7 +93,7 @@ export default {
   methods: {
     confirm() {
       new RequestBuilder("orderConfirmation")
-        .create()
+        .get()
         .then(() => {
           Vue.swal.fire({
             title: "Готово!",

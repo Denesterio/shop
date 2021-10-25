@@ -13,7 +13,7 @@
       </div>
       <div
         id="reviewHelpBlock"
-        class="form-text"
+        class="small text-secondary"
         v-t="'message.reviewHelpBlock'"
       ></div>
       <button type="submit" class="btn btn-primary mt-3">Отправить</button>
@@ -41,12 +41,12 @@ export default {
   methods: {
     addReview() {
       if (this.reviewBody.length < 10) return;
-      const params = {
-        product_id: this.productId,
-        review: this.reviewBody,
-      };
-      new RequestBuilder("review")
-        .create(params)
+      const formData = new FormData();
+      formData.append("product_id", this.productId);
+      formData.append("review", this.reviewBody);
+
+      new RequestBuilder("reviews")
+        .create(formData, this.productId)
         .then(({ data }) => {
           this.$emit("add-review", data);
         })

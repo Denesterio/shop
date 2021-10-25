@@ -23,7 +23,7 @@ class OrderController extends Controller
             ]);
         }
 
-        $product = Product::find($request['productId']);
+        $product = Product::find($request['product_id']);
 
         if ($order->products->contains($product)) {
             $orderProduct = $order->products()->where('product_id', $product->id)->first();
@@ -52,7 +52,7 @@ class OrderController extends Controller
             ]);
         }
 
-        $product = Product::find($request['productId']);
+        $product = Product::find($request['product_id']);
 
         $orderProduct = $order->products()->where('product_id', $product->id)->first();
         if ($orderProduct->pivot->quantity == 1) {
@@ -92,7 +92,7 @@ class OrderController extends Controller
         //     $data->products = $orderProducts;
         //     $data->sum = $sum;
 
-        //     Mail::to('mrdnsong@gmail.com')->send(new ConfirmOrderMailer($data));
+        //     Mail::to('email')->send(new ConfirmOrderMailer($data));
         // } catch (Exception $e) {
         // }
 
@@ -106,7 +106,7 @@ class OrderController extends Controller
         return $order->products;
     }
 
-    public function get()
+    public function index()
     {
         $user = Auth::user();
         return $user->orders;

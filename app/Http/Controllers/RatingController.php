@@ -16,7 +16,7 @@ function generateId()
 
 class RatingController extends Controller
 {
-    public function create(Request $request)
+    public function store(Request $request)
     {
         $userId = $this->getUserId($request);
         if (!$userId) {
@@ -47,7 +47,7 @@ class RatingController extends Controller
         return $request->cookie('idKey');
     }
 
-    public function get(Request $request, $id)
+    public function index(Request $request, $id)
     {
         $userId = $this->getUserId($request);
         $ratings = Rating::where('product_id', $id)->get();

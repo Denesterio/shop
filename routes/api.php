@@ -9,9 +9,9 @@ use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\CoverController;
+use App\Http\Controllers\ProductReviewController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RatingController;
-use App\Http\Controllers\ReviewController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
     Route::post('/login', [LoginController::class, 'login']);
-    Route::post('/logout', [LoginController::class, 'logout']);
+    Route::get('/logout', [LoginController::class, 'logout']);
     Route::post('/register', [RegisterController::class, 'register']);
 
     Route::middleware('auth:sanctum')->get('/getUser', function (Request $request) {
@@ -41,24 +41,17 @@ Route::prefix('categories')->group(function () {
 });
 Route::apiResource('categories', CategoryController::class)->only(['index', 'show']);
 
+Route::apiResource('products.reviews', ProductReviewController::class)->only(['index', 'store']);
 Route::apiResource('products', ProductController::class)->only(['index', 'show']);
 Route::prefix('products')->group(function () {
-    Route::get('/{productId}/reviews', [ProductController::class, 'getReviews']);
+    Route::get('/{productId}/ratings', [RatingController::class, 'index']);
+    Route::post('/{productId}/ratings', [RatingController::class, 'store']);
 });
 
 Route::apiResource('subcategories', SubcategoryController::class)->only(['index', 'show']);
 Route::apiResource('authors', AuthorController::class)->only(['index', 'show']);
 Route::apiResource('tags', TagController::class)->only(['index', 'show']);
 Route::apiResource('covers', CoverController::class)->only(['index']);
-
-Route::prefix('ratings')->group(function () {
-    Route::get('/{productId}', [RatingController::class, 'get']);
-    Route::post('/create', [RatingController::class, 'create']);
-});
-
-Route::prefix('reviews')->group(function () {
-    Route::post('/create', [ReviewController::class, 'create']);
-});
 
 Route::prefix('admin')->middleware('admin')->group(function () {
     Route::apiResource('categories', CategoryController::class)->only(['store', 'update', 'destroy']);
@@ -72,10 +65,10 @@ Route::prefix('admin')->middleware('admin')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/user/edit', [UserController::class, 'edit'])->name('user.edit');
 
-    Route::prefix('order')->group(function () {
-        Route::get('get', [OrderController::class, 'get']);
-        Route::post('addProduct', [OrderController::class, 'addProduct']);
-        Route::post('deleteProduct', [OrderController::class, 'deleteProduct']);
+    Route::prefix('orders')->group(function () {
+        Route::get('/', [OrderController::class, 'index']);
+        Route::put('addProduct', [OrderController::class, 'addProduct']);
+        Route::put('deleteProduct', [OrderController::class, 'deleteProduct']);
         Route::get('confirm', [OrderController::class, 'confirm']);
         Route::get('{orderId}/products', [OrderController::class, 'products']);
         Route::get('/cart', [OrderController::class, 'showCart'])->name('cart');

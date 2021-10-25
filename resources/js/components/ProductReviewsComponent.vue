@@ -56,7 +56,7 @@ export default {
   },
 
   mounted() {
-    new RequestBuilder("productReviews").get(this.productId).then((data) => {
+    new RequestBuilder("reviews").get(this.productId).then((data) => {
       this.reviews = data;
     });
   },

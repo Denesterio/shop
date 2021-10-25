@@ -141,7 +141,7 @@
 </template>
 
 <script>
-import { authRegister } from "../../api/auth.js";
+import RequestBuilder from "../../api/requestBuilder.js";
 import { registrationSchema, getErrors } from "../../validate.js";
 import CreateError from "../../services/createError.js";
 export default {
@@ -198,7 +198,13 @@ export default {
       }
 
       this.processing = true;
-      authRegister(params)
+      const formData = new FormData();
+      for (const key in params) {
+        formData.append(key, params[key]);
+      }
+
+      new RequestBuilder("register")
+        .create(formData)
         .then(({ data }) => {
           this.$store.dispatch("setUser", data);
           this.$router.push("/");

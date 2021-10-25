@@ -86,13 +86,15 @@ export default {
       if (event.type === "click" && event.x === 0) return;
       if (event.type === "submit" && this.rating === 0) return;
       const rating = event.type === "submit" ? this.rating : event.target.value;
-      const params = {
-        product_id: this.productId,
-        rating,
-      };
-      new RequestBuilder("rating").create(params).then(() => {
-        this.$emit("closeVoting", Number.parseInt(rating));
-      });
+      const formData = new FormData();
+      formData.append("product_id", this.productId);
+      formData.append("rating", rating);
+
+      new RequestBuilder("ratings")
+        .create(formData, this.productId)
+        .then(() => {
+          this.$emit("closeVoting", Number.parseInt(rating));
+        });
     },
   },
 };

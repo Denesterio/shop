@@ -69,7 +69,7 @@ export default {
     },
   },
   mounted() {
-    new RequestBuilder("ordersProducts")
+    new RequestBuilder("orderProducts")
       .get(this.orderId)
       .then((data) => {
         data.forEach((product) => {
