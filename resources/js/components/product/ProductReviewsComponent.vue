@@ -39,7 +39,7 @@
 <script>
 import ProductReviewComponent from "./ProductReviewComponent.vue";
 import ProductReviewFormComponent from "./ProductReviewFormComponent.vue";
-import RequestBuilder from "../api/requestBuilder.js";
+import RequestBuilder from "../../api/requestBuilder.js";
 export default {
   components: { ProductReviewComponent, ProductReviewFormComponent },
   props: {

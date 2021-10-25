@@ -1,4 +1,4 @@
-import RequestBuilder from '../../api/requestBuilder.js';
+import RequestBuilder from '../api/requestBuilder.js';
 
 export default {
   state: {

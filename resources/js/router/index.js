@@ -5,20 +5,20 @@ import store from '../store';
 Vue.use(VueRouter);
 
 // auth pages
-import LoginComponent from '../auth/LoginComponent.vue';
-import RegisterComponent from '../auth/RegisterComponent.vue';
+import LoginComponent from '../components/auth/LoginComponent.vue';
+import RegisterComponent from '../components/auth/RegisterComponent.vue';
 // main layout
-import LayoutComponent from '../welcome/LayoutComponent.vue';
-import WelcomeCategoryListComponent from '../welcome/WelcomeCategoryListComponent.vue';
-import ProductListComponent from '../ProductListComponent.vue';
+import LayoutComponent from '../components/welcome/LayoutComponent.vue';
+import WelcomeCategoryListComponent from '../components/welcome/WelcomeCategoryListComponent.vue';
+import ProductListComponent from '../components/product/ProductListComponent.vue';
 // functional
-import CartComponent from '../CartComponent.vue';
-import ProfileComponent from '../profile/ProfileComponent.vue';
-import ProductPageComponent from '../ProductPageComponent.vue';
+import CartComponent from '../components/CartComponent.vue';
+import ProfileComponent from '../components/profile/ProfileComponent.vue';
+import ProductPageComponent from '../components/product/ProductPageComponent.vue';
 // admin page
-import AdminLayoutComponent from '../admin/AdminLayoutComponent.vue';
+import AdminLayoutComponent from '../components/admin/AdminLayoutComponent.vue';
 // 404
-import PageNotFoundComponent from '../PageNotFoundComponent.vue';
+import PageNotFoundComponent from '../components/PageNotFoundComponent.vue';
 
 const routes = [
   {

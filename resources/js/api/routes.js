@@ -28,13 +28,6 @@ export default {
 
   products: prefix => [...buildBase(prefix), 'products'].join('/'),
   product: (prefix, id) => [...buildBase(prefix), 'products', id].join('/'),
-  // categoryProducts: id =>
-  //   [BASE_URL, API_PREFIX, 'categories', id, 'products'].join('/'),
-  // subcategoryProducts: id =>
-  //   [BASE_URL, API_PREFIX, 'subcategories', id, 'products'].join('/'),
-  // tagsProduct: id => [BASE_URL, API_PREFIX, 'tags', id, 'products'].join('/'),
-  // authorProducts: id =>
-  //   [BASE_URL, API_PREFIX, 'authors', id, 'products'].join('/'),
 
   reviews: (prefix, productId) =>
     [...buildBase(prefix), 'products', productId, 'reviews'].join('/'),

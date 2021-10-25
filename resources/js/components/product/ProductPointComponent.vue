@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import AddtoCartButtonComponent from "./AddtoCartButtonComponent.vue";
+import AddtoCartButtonComponent from "../AddtoCartButtonComponent.vue";
 export default {
   props: {
     product: {

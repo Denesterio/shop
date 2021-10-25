@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import BaseTooltipComponent from "./BaseTooltipComponent.vue";
+import BaseTooltipComponent from "../BaseTooltipComponent.vue";
 export default {
   props: {
     product: {

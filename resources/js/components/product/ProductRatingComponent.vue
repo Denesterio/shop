@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import RequestBuilder from "../api/requestBuilder.js";
+import RequestBuilder from "../../api/requestBuilder.js";
 import ProductVotingComponent from "./ProductVotingComponent.vue";
 export default {
   components: { ProductVotingComponent },

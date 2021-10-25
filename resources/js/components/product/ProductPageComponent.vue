@@ -75,10 +75,10 @@
 </template>
 
 <script>
-import RequestBuilder from "../api/requestBuilder.js";
-import AddtoCartButtonComponent from "./AddtoCartButtonComponent.vue";
+import RequestBuilder from "../../api/requestBuilder.js";
+import AddtoCartButtonComponent from "../AddtoCartButtonComponent.vue";
 import ProductPicturiesComponent from "./ProductPicturiesComponent.vue";
-import BaseBreadcrumbComponent from "./BaseBreadcrumbComponent.vue";
+import BaseBreadcrumbComponent from "../BaseBreadcrumbComponent.vue";
 import ProductRatingComponent from "./ProductRatingComponent.vue";
 import ProductReviewsComponent from "./ProductReviewsComponent.vue";
 export default {

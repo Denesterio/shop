@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import AddtoCartButtonComponent from "./AddtoCartButtonComponent.vue";
+import AddtoCartButtonComponent from "../AddtoCartButtonComponent.vue";
 import ProductTitleComponent from "./ProductTitleComponent.vue";
 export default {
   props: {

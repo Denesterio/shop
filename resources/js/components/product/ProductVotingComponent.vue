@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import RequestBuilder from "../api/requestBuilder.js";
+import RequestBuilder from "../../api/requestBuilder.js";
 export default {
   props: {
     productId: {

@@ -43,7 +43,7 @@
 import VueSlickCarousel from "vue-slick-carousel";
 // import "vue-slick-carousel/dist/vue-slick-carousel.css";
 // import "vue-slick-carousel/dist/vue-slick-carousel-theme.css";
-import ProductTitleComponent from "../ProductTitleComponent.vue";
+import ProductTitleComponent from "../product/ProductTitleComponent.vue";
 import RequestBuilder from "../../api/requestBuilder.js";
 
 export default {

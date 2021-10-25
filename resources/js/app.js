@@ -67,8 +67,8 @@ directives.forEach(directive => {
 });
 Vue.directive('b-toggle', VBToggle);
 
-import router from './components/router';
-import store from './components/store';
+import router from './router';
+import store from './store';
 import i18n from './lang';
 import Vue from 'vue';
 

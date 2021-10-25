@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import DateFormatter from "../services/dateFormatter.js";
+import DateFormatter from "../../services/dateFormatter.js";
 export default {
   props: {
     review: {
