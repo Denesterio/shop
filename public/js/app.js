@@ -7322,42 +7322,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/api/edit.js":
-/*!**********************************!*\
-  !*** ./resources/js/api/edit.js ***!
-  \**********************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "editOrdersProducts": () => (/* binding */ editOrdersProducts),
-/* harmony export */   "editUser": () => (/* binding */ editUser)
-/* harmony export */ });
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
-
-
-var editOrdersProducts = function editOrdersProducts(params) {
-  var method = params.quantityChange === 'increase' ? 'addProduct' : 'deleteProduct';
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().post("/api/order/".concat(method), params).then(function (_ref) {
-    var data = _ref.data;
-    data.forEach(function (product) {
-      product.quantity = product.pivot.quantity;
-      product.order_id = product.pivot.order_id;
-    });
-    return data;
-  });
-};
-
-var editUser = function editUser(params) {
-  return axios__WEBPACK_IMPORTED_MODULE_0___default().post('/api/user/edit', params);
-};
-
-
-
-/***/ }),
-
 /***/ "./resources/js/api/requestBuilder.js":
 /*!********************************************!*\
   !*** ./resources/js/api/requestBuilder.js ***!
@@ -7369,10 +7333,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ RequestBuilder)
 /* harmony export */ });
-/* harmony import */ var _edit_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./edit.js */ "./resources/js/api/edit.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _routes_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./routes.js */ "./resources/js/api/routes.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _routes_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./routes.js */ "./resources/js/api/routes.js");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -7380,7 +7343,6 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 function _classPrivateMethodGet(receiver, privateSet, fn) { if (!privateSet.has(receiver)) { throw new TypeError("attempted to get private field on non-instance"); } return fn; }
-
 
 
 
@@ -7411,7 +7373,7 @@ var RequestBuilder = /*#__PURE__*/function () {
     // при передаче id в единственном числе, без id - во множественном
     // по логике laravel apiResource
     this.item = item;
-    this.client = (axios__WEBPACK_IMPORTED_MODULE_1___default());
+    this.client = (axios__WEBPACK_IMPORTED_MODULE_0___default());
     this.method = 'GET';
     this.countPerPage = countPerPage;
   }
@@ -7511,11 +7473,12 @@ function _getPrefix2() {
 function _getUrl2(id) {
   var prefix = _classPrivateMethodGet(this, _getPrefix, _getPrefix2).call(this);
 
-  var url = new URL(_routes_js__WEBPACK_IMPORTED_MODULE_2__.default[this.item](prefix, id));
+  var url = new URL(_routes_js__WEBPACK_IMPORTED_MODULE_1__.default[this.item](prefix, id));
 
   if (this.countPerPage) {
     url.searchParams.append('_limit', this.countPerPage);
-  }
+  } // const url = routes[this.item](prefix, id);
+
 
   return url;
 }

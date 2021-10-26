@@ -1,4 +1,3 @@
-import * as editors from './edit.js';
 import axios from 'axios';
 import routes from './routes.js';
 
@@ -52,6 +51,7 @@ export default class RequestBuilder {
     if (this.countPerPage) {
       url.searchParams.append('_limit', this.countPerPage);
     }
+    // const url = routes[this.item](prefix, id);
     return url;
   }
 
