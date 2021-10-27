@@ -19,27 +19,16 @@ class ProductController extends Controller
         // DB::listen(function ($query) {
         //     var_dump($query->sql, $query->bindings);
         // });
-        if ($request['_limit']) {
-            if ($request['_type'] === 'title') {
-                $query = $request['_query'];
-                $field = $request['_type'];
-                return Product::where($field, 'like', '%' . $query . '%')->with('authors', 'tags')->paginate($request['_limit']);
-            } else if ($request['_type'] === 'author') {
-                $query = $request['_query'];
-                $authors = Author::where('title', 'like', '%' . $query . '%')->get();
-                $products = collect();
-                foreach ($authors as $author) {
-                    $products->push($author->products);
-                }
-                return $products->flatten();
-            }
+        if ($request->has('_limit')) {
+            $total = Product::count();
             $limit = (int) $request['_limit'];
             $skipped = ((int) $request['_page'] - 1) * $limit;
-            return Product::with('authors', 'tags')
+            $data =  Product::with('authors', 'tags')
                 ->OrderBy('id', 'desc')
                 ->skip($skipped)
                 ->take($limit)
                 ->get();
+            return compact('data', 'total');
         }
 
         return Product::with('authors', 'tags')->OrderBy('id', 'desc')->get();

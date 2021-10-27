@@ -23,17 +23,18 @@ class TagController extends Controller
 
     public function index(Request $request)
     {
-        if ($request['_limit']) {
-            return Tag::OrderBy('id', 'desc')->paginate($request['_limit']);
+        if ($request->has('_limit')) {
+            $total = Tag::count();
+            $skipped = ($request['_page'] - 1) * $request['_limit'];
+            $data = Tag::OrderBy('id', 'desc')
+                ->skip($skipped)
+                ->take($request['_limit'])
+                ->get();
+            return compact('data', 'total');
         }
 
         return ['data' => Tag::OrderBy('id', 'desc')->get()];
     }
-
-    // public function get()
-    // {
-    //     return Tag::OrderBy('id', 'desc')->paginate(20);
-    // }
 
     public function destroy(Tag $tag)
     {
@@ -45,7 +46,7 @@ class TagController extends Controller
         $total = $tag->products->count();
         $limit = (int) $request['_limit'];
         $skipped = ((int) $request['_page'] - 1) * $limit;
-        $products = $tag
+        $data = $tag
             ->products()
             ->with('authors')
             ->latest()
@@ -53,6 +54,6 @@ class TagController extends Controller
             ->take($limit)
             ->get();;
 
-        return compact('products', 'total');
+        return compact('data', 'total');
     }
 }

@@ -2119,6 +2119,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     onPage: {
@@ -2131,7 +2134,8 @@ __webpack_require__.r(__webpack_exports__);
     },
     current: {
       type: Number,
-      required: true
+      required: false,
+      "default": 1
     }
   },
   computed: {
@@ -3692,6 +3696,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _BasePagination_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../BasePagination.vue */ "./resources/js/components/BasePagination.vue");
 /* harmony import */ var _EntityListItem_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./EntityListItem.vue */ "./resources/js/components/admin/EntityListItem.vue");
 /* harmony import */ var _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../api/requestBuilder.js */ "./resources/js/api/requestBuilder.js");
+/* harmony import */ var _mixins_paginationSettings_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../mixins/paginationSettings.js */ "./resources/js/mixins/paginationSettings.js");
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -3730,6 +3735,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+
 
 
 
@@ -3738,6 +3746,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     BasePagination: _BasePagination_vue__WEBPACK_IMPORTED_MODULE_0__.default,
     EntityListItem: _EntityListItem_vue__WEBPACK_IMPORTED_MODULE_1__.default
   },
+  // data: countOnPage, currentPage, nextPage, totalPages
+  // method fillDataFromResponse(response.data, field)
+  // computed: numberOnPage
+  mixins: [_mixins_paginationSettings_js__WEBPACK_IMPORTED_MODULE_3__.default],
   props: {
     enType: {
       // передача типа сущности для запроса из компонента
@@ -3761,55 +3773,34 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   data: function data() {
     return {
       currentEntities: this.entities,
-      paginationSettings: {
-        links: []
-      },
       processing: false,
       error: ""
     };
   },
-  paginationSettingsKeys: ["current_page", "next_page_url", "prev_page_url", "first_page_url", "total"],
   methods: {
-    fillDataFromResponse: function fillDataFromResponse(resData) {
-      var _this = this;
-
-      this.currentEntities = resData.data;
-      this.paginationSettings = {
-        links: resData.links.slice(1, resData.links.length - 1)
-      };
-      this.$options.paginationSettingsKeys.forEach(function (key) {
-        return _this.paginationSettings[key] = resData[key];
-      });
-    },
     // используется в watch, type сущности передается во множественном числе,
     // полученном из enType через i18n
-    getEntities: function getEntities(type) {
-      var _this2 = this;
+    getEntities: function getEntities(nextPage) {
+      var _this = this;
 
       this.processing = true;
-      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__.default(type).perPage(20).get().then(function (data) {
-        return _this2.fillDataFromResponse(data);
+      this.nextPage = nextPage;
+      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__.default(this.$t("plurals.".concat(this.enType))).withQueryParams({
+        page: nextPage || 1,
+        limit: this.numberOnPage
+      }).get().then(function (data) {
+        return _this.fillDataFromResponse(data, "currentEntities");
       })["catch"](function (error) {
-        return _this2.error = error.response.data.message;
+        return _this.error = error.response.data.message;
       })["finally"](function () {
-        return _this2.processing = false;
-      });
-    },
-    // используются сслыки из пагинации laravel
-    getEntitiesByUrl: function getEntitiesByUrl(url) {
-      var _this3 = this;
-
-      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__.default().makeRequest(url).then(function (res) {
-        return _this3.fillDataFromResponse(res.data);
-      })["catch"](function (error) {
-        return _this3.error = error.response.data.message;
+        return _this.processing = false;
       });
     },
     remove: function remove(id) {
-      var _this4 = this;
+      var _this2 = this;
 
       new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__.default(this.enType)["delete"](id).then(function () {
-        return _this4.currentEntities = _this4.currentEntities.filter(function (ent) {
+        return _this2.currentEntities = _this2.currentEntities.filter(function (ent) {
           return ent.id !== id;
         });
       });
@@ -3824,10 +3815,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   watch: {
     enType: function enType(newVal) {
       if (newVal.length > 0) {
-        this.getEntities(this.$t("plurals.".concat(this.enType)));
+        this.getEntities();
       } else {
         this.currentEntities = [];
       }
+
+      this.currentPage = 1;
+      this.nextPage = 1;
     },
     entities: function entities() {
       this.currentEntities = this.entities;
@@ -5526,16 +5520,14 @@ var makeRequest = function makeRequest(to, vm) {
     ProductsViewSettings: _ProductsViewSettings_vue__WEBPACK_IMPORTED_MODULE_2__.default,
     BasePagination: _BasePagination_vue__WEBPACK_IMPORTED_MODULE_3__.default
   },
-  // mixins: [paginationSettings], // data field paginationSettings, method fillDataFromResponse(response.data)
+  // data: countOnPage, currentPage, nextPage, totalPages
+  // method fillDataFromResponse(response.data, field)
+  mixins: [_mixins_paginationSettings_js__WEBPACK_IMPORTED_MODULE_5__.default],
   data: function data() {
     return {
       selectedView: "Card",
       searchQuery: "",
       searchType: "title",
-      countOnPage: "24",
-      currentPage: 1,
-      nextPage: null,
-      totalPages: null,
       products: [],
       authors: {},
       loading: true,
@@ -5554,7 +5546,7 @@ var makeRequest = function makeRequest(to, vm) {
     var _this = this;
 
     makeRequest(to).then(function (data) {
-      _this.products = data.products;
+      _this.products = data.data;
       _this.totalPages = data.total;
     })["finally"](function () {
       return _this.loading = false;
@@ -5564,7 +5556,7 @@ var makeRequest = function makeRequest(to, vm) {
   beforeRouteEnter: function beforeRouteEnter(to, _from, next) {
     makeRequest(to).then(function (data) {
       return next(function (vm) {
-        vm.products = data.products;
+        vm.products = data.data;
         vm.totalPages = data.total;
         vm.loading = false;
       });
@@ -5595,9 +5587,7 @@ var makeRequest = function makeRequest(to, vm) {
       this.loading = true;
       this.nextPage = nextPage;
       makeRequest(this.$route, this).then(function (data) {
-        _this3.products = data.products;
-        _this3.totalPages = data.total;
-        _this3.currentPage = nextPage;
+        _this3.fillDataFromResponse(data, "products");
       })["catch"](function (error) {
         return _this3.error = error.response.data.message;
       })["finally"](function () {
@@ -5610,6 +5600,7 @@ var makeRequest = function makeRequest(to, vm) {
       var _this4 = this;
 
       this.loading = true;
+      console.dir(this.countOnPage, this.nextPage);
       makeRequest(this.$route, this).then(function (data) {
         return _this4.fillDataFromResponse(data, "products");
       })["finally"](function () {
@@ -7369,7 +7360,8 @@ __webpack_require__.r(__webpack_exports__);
     builder.withQueryParams({
       limit: 10,
       page: 1
-    }).get().then(function (data) {
+    }).get().then(function (_ref) {
+      var data = _ref.data;
       _this.newProducts = data;
     })["catch"](function (err) {
       _this.error = err.response.data.message;
@@ -8397,27 +8389,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 // работает в паре с BasePagination, в который передаются
-// :settings="paginationSettings"
+// current, total, onPage
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      paginationSettings: {
-        links: [],
-        countOnPage: this.countOnPage
-      }
+      countOnPage: '24',
+      currentPage: 1,
+      nextPage: 1,
+      totalPages: null
     };
   },
-  paginationSettingsKeys: ['current_page', 'next_page_url', 'prev_page_url', 'first_page_url', 'total'],
+  computed: {
+    numberOnPage: function numberOnPage() {
+      return parseInt(this.countOnPage);
+    }
+  },
   methods: {
     // response.data, field in data <String>
     fillDataFromResponse: function fillDataFromResponse(resData, fieldFilledByRequest) {
-      this[fieldFilledByRequest] = resData; // this.paginationSettings.links = resData.links.slice(
-      //   1,
-      //   resData.links.length - 1
-      // );
-      // this.$options.paginationSettingsKeys.forEach(
-      //   key => (this.paginationSettings[key] = resData[key])
-      // );
+      this[fieldFilledByRequest] = resData.data;
+      this.totalPages = resData.total;
+      this.currentPage = this.nextPage;
     }
   }
 });
@@ -70946,83 +70938,101 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("nav", { attrs: { "aria-label": "Page navigation example" } }, [
-    _c(
-      "ul",
-      { staticClass: "pagination" },
-      [
-        _c(
-          "li",
-          { staticClass: "page-item", class: { disabled: _vm.current === 1 } },
-          [
-            _c(
-              "a",
-              {
-                staticClass: "page-link",
-                attrs: { href: "", "aria-label": "First" },
-                on: {
-                  click: function($event) {
-                    return _vm.changePage(1, $event)
-                  }
-                }
-              },
-              [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("««")])]
-            )
-          ]
-        ),
-        _vm._v(" "),
-        _vm._l(_vm.countOfPages, function(pageNumber) {
-          return _c(
+  return _c(
+    "nav",
+    {
+      staticClass: "d-flex justify-content-center",
+      attrs: { "aria-label": "Навигация по страницам" }
+    },
+    [
+      _c(
+        "ul",
+        { staticClass: "pagination" },
+        [
+          _c(
             "li",
             {
-              key: pageNumber,
               staticClass: "page-item",
-              class: { active: pageNumber === _vm.current }
+              class: { disabled: _vm.current === 1 }
             },
             [
               _c(
                 "a",
                 {
                   staticClass: "page-link",
-                  attrs: { href: "" },
+                  attrs: { href: "", "aria-label": "First" },
                   on: {
                     click: function($event) {
-                      return _vm.changePage(pageNumber, $event)
+                      return _vm.changePage(1, $event)
                     }
                   }
                 },
-                [_vm._v(_vm._s(pageNumber))]
+                [
+                  _c("span", { attrs: { "aria-hidden": "true" } }, [
+                    _vm._v("««")
+                  ])
+                ]
+              )
+            ]
+          ),
+          _vm._v(" "),
+          _vm._l(_vm.countOfPages, function(pageNumber) {
+            return _c(
+              "li",
+              {
+                key: pageNumber,
+                staticClass: "page-item",
+                class: { active: pageNumber === _vm.current }
+              },
+              [
+                _c(
+                  "a",
+                  {
+                    staticClass: "page-link",
+                    attrs: { href: "" },
+                    on: {
+                      click: function($event) {
+                        return _vm.changePage(pageNumber, $event)
+                      }
+                    }
+                  },
+                  [_vm._v(_vm._s(pageNumber))]
+                )
+              ]
+            )
+          }),
+          _vm._v(" "),
+          _c(
+            "li",
+            {
+              staticClass: "page-item",
+              class: { disabled: _vm.current === _vm.countOfPages }
+            },
+            [
+              _c(
+                "a",
+                {
+                  staticClass: "page-link",
+                  attrs: { href: "", "aria-label": "last" },
+                  on: {
+                    click: function($event) {
+                      return _vm.changePage(_vm.countOfPages, $event)
+                    }
+                  }
+                },
+                [
+                  _c("span", { attrs: { "aria-hidden": "true" } }, [
+                    _vm._v("»»")
+                  ])
+                ]
               )
             ]
           )
-        }),
-        _vm._v(" "),
-        _c(
-          "li",
-          {
-            staticClass: "page-item",
-            class: { disabled: _vm.current === _vm.countOfPages }
-          },
-          [
-            _c(
-              "a",
-              {
-                staticClass: "page-link",
-                attrs: { href: "", "aria-label": "last" },
-                on: {
-                  click: function($event) {
-                    return _vm.changePage(_vm.countOfPages, $event)
-                  }
-                }
-              },
-              [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("»»")])]
-            )
-          ]
-        )
-      ],
-      2
-    )
-  ])
+        ],
+        2
+      )
+    ]
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -72590,9 +72600,13 @@ var render = function() {
               ),
               _vm._v(" "),
               _c("BasePagination", {
-                staticClass: "my-3 mx-auto",
-                attrs: { settings: _vm.paginationSettings },
-                on: { "change-page": _vm.getEntitiesByUrl }
+                staticClass: "my-3",
+                attrs: {
+                  current: _vm.currentPage,
+                  total: _vm.totalPages,
+                  onPage: _vm.countOnPage
+                },
+                on: { "change-page": _vm.getEntities }
               })
             ],
             1

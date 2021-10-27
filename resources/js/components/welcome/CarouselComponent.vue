@@ -106,7 +106,7 @@ export default {
     builder
       .withQueryParams({ limit: 10, page: 1 })
       .get()
-      .then((data) => {
+      .then(({ data }) => {
         this.newProducts = data;
       })
       .catch((err) => {

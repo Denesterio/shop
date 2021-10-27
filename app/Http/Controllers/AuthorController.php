@@ -23,17 +23,18 @@ class AuthorController extends Controller
 
     public function index(Request $request)
     {
-        if ($request['_limit']) {
-            return Author::OrderBy('id', 'desc')->paginate($request['_limit']);
+        if ($request->has('_limit')) {
+            $total = Author::count();
+            $skipped = ((int) $request['_page'] - 1) * (int) $request['_limit'];
+            $data = Author::OrderBy('id', 'desc')
+                ->skip($skipped)
+                ->take($request['_limit'])
+                ->get();
+            return compact('data', 'total');
         }
 
         return ['data' => Author::OrderBy('id', 'desc')->get()];
     }
-
-    // public function get()
-    // {
-    //     return Author::OrderBy('id', 'desc')->paginate(20);
-    // }
 
     public function destroy(Author $author)
     {
@@ -46,7 +47,7 @@ class AuthorController extends Controller
 
         $limit = (int) $request['_limit'];
         $skipped = ((int) $request['_page'] - 1) * $limit;
-        $products = $author
+        $data = $author
             ->products()
             ->with('authors')
             ->latest()
@@ -54,6 +55,6 @@ class AuthorController extends Controller
             ->take($limit)
             ->get();
 
-        return compact('products', 'total');
+        return compact('data', 'total');
     }
 }

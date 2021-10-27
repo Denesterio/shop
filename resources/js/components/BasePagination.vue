@@ -1,5 +1,8 @@
 <template>
-  <nav aria-label="Page navigation example">
+  <nav
+    class="d-flex justify-content-center"
+    aria-label="Навигация по страницам"
+  >
     <ul class="pagination">
       <li :class="{ disabled: current === 1 }" class="page-item">
         <a
@@ -48,7 +51,8 @@ export default {
     },
     current: {
       type: Number,
-      required: true,
+      required: false,
+      default: 1,
     },
   },
 

@@ -16,9 +16,11 @@
         </EntityListItem>
       </ul>
       <BasePagination
-        @change-page="getEntitiesByUrl"
-        :settings="paginationSettings"
-        class="my-3 mx-auto"
+        @change-page="getEntities"
+        :current="currentPage"
+        :total="totalPages"
+        :onPage="countOnPage"
+        class="my-3"
       />
     </div>
   </div>
@@ -28,8 +30,13 @@
 import BasePagination from "../BasePagination.vue";
 import EntityListItem from "./EntityListItem.vue";
 import RequestBuilder from "../../api/requestBuilder.js";
+import paginationSettings from "../../mixins/paginationSettings.js";
 export default {
   components: { BasePagination, EntityListItem },
+  // data: countOnPage, currentPage, nextPage, totalPages
+  // method fillDataFromResponse(response.data, field)
+  // computed: numberOnPage
+  mixins: [paginationSettings],
   props: {
     enType: {
       // передача типа сущности для запроса из компонента
@@ -54,49 +61,23 @@ export default {
   data() {
     return {
       currentEntities: this.entities,
-      paginationSettings: { links: [] },
       processing: false,
       error: "",
     };
   },
 
-  paginationSettingsKeys: [
-    "current_page",
-    "next_page_url",
-    "prev_page_url",
-    "first_page_url",
-    "total",
-  ],
-
   methods: {
-    fillDataFromResponse(resData) {
-      this.currentEntities = resData.data;
-      this.paginationSettings = {
-        links: resData.links.slice(1, resData.links.length - 1),
-      };
-      this.$options.paginationSettingsKeys.forEach(
-        (key) => (this.paginationSettings[key] = resData[key])
-      );
-    },
-
     // используется в watch, type сущности передается во множественном числе,
     // полученном из enType через i18n
-    getEntities(type) {
+    getEntities(nextPage) {
       this.processing = true;
-      new RequestBuilder(type)
-        .perPage(20)
+      this.nextPage = nextPage;
+      new RequestBuilder(this.$t(`plurals.${this.enType}`))
+        .withQueryParams({ page: nextPage || 1, limit: this.numberOnPage })
         .get()
-        .then((data) => this.fillDataFromResponse(data))
+        .then((data) => this.fillDataFromResponse(data, "currentEntities"))
         .catch((error) => (this.error = error.response.data.message))
         .finally(() => (this.processing = false));
-    },
-
-    // используются сслыки из пагинации laravel
-    getEntitiesByUrl(url) {
-      new RequestBuilder()
-        .makeRequest(url)
-        .then((res) => this.fillDataFromResponse(res.data))
-        .catch((error) => (this.error = error.response.data.message));
     },
 
     remove(id) {
@@ -119,10 +100,12 @@ export default {
   watch: {
     enType(newVal) {
       if (newVal.length > 0) {
-        this.getEntities(this.$t(`plurals.${this.enType}`));
+        this.getEntities();
       } else {
         this.currentEntities = [];
       }
+      this.currentPage = 1;
+      this.nextPage = 1;
     },
 
     entities() {

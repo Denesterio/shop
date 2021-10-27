@@ -1,31 +1,27 @@
 // работает в паре с BasePagination, в который передаются
-// :settings="paginationSettings"
+// current, total, onPage
 export default {
   data() {
     return {
-      paginationSettings: { links: [], countOnPage: this.countOnPage }
+      countOnPage: '24',
+      currentPage: 1,
+      nextPage: 1,
+      totalPages: null
     };
   },
 
-  paginationSettingsKeys: [
-    'current_page',
-    'next_page_url',
-    'prev_page_url',
-    'first_page_url',
-    'total'
-  ],
+  computed: {
+    numberOnPage() {
+      return parseInt(this.countOnPage);
+    }
+  },
 
   methods: {
     // response.data, field in data <String>
     fillDataFromResponse(resData, fieldFilledByRequest) {
-      this[fieldFilledByRequest] = resData;
-      // this.paginationSettings.links = resData.links.slice(
-      //   1,
-      //   resData.links.length - 1
-      // );
-      // this.$options.paginationSettingsKeys.forEach(
-      //   key => (this.paginationSettings[key] = resData[key])
-      // );
+      this[fieldFilledByRequest] = resData.data;
+      this.totalPages = resData.total;
+      this.currentPage = this.nextPage;
     }
   }
 };

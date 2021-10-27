@@ -62,17 +62,14 @@ export default {
     ProductsViewSettings,
     BasePagination,
   },
-  // mixins: [paginationSettings], // data field paginationSettings, method fillDataFromResponse(response.data)
+  // data: countOnPage, currentPage, nextPage, totalPages
+  // method fillDataFromResponse(response.data, field)
+  mixins: [paginationSettings],
   data() {
     return {
       selectedView: "Card",
       searchQuery: "",
       searchType: "title",
-
-      countOnPage: "24",
-      currentPage: 1,
-      nextPage: null,
-      totalPages: null,
 
       products: [],
       authors: {},
@@ -93,7 +90,7 @@ export default {
   beforeRouteUpdate(to, _from, next) {
     makeRequest(to)
       .then((data) => {
-        this.products = data.products;
+        this.products = data.data;
         this.totalPages = data.total;
       })
       .finally(() => (this.loading = false));
@@ -104,7 +101,7 @@ export default {
     makeRequest(to)
       .then((data) =>
         next((vm) => {
-          vm.products = data.products;
+          vm.products = data.data;
           vm.totalPages = data.total;
           vm.loading = false;
         })
@@ -134,9 +131,7 @@ export default {
       this.nextPage = nextPage;
       makeRequest(this.$route, this)
         .then((data) => {
-          this.products = data.products;
-          this.totalPages = data.total;
-          this.currentPage = nextPage;
+          this.fillDataFromResponse(data, "products");
         })
         .catch((error) => (this.error = error.response.data.message))
         .finally(() => (this.loading = false));
@@ -146,6 +141,7 @@ export default {
   watch: {
     countOnPage(newValue, oldValue) {
       this.loading = true;
+      console.dir(this.countOnPage, this.nextPage);
       makeRequest(this.$route, this)
         .then((data) => this.fillDataFromResponse(data, "products"))
         .finally(() => (this.loading = false));
