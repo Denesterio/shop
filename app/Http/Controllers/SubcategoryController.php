@@ -42,12 +42,19 @@ class SubcategoryController extends Controller
         $subcategory->delete();
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $products = Product::with('authors')
-            ->where('subcategory_slug', '=', $id)
+        $subcategory = Subcategory::where('slug', '=', $id)->first();
+        $total = Product::where('subcategory_slug', '=', $id)->count();
+        $limit = (int) $request['_limit'];
+        $skipped = ((int) $request['_page'] - 1) * $limit;
+        $products = Product::where('subcategory_slug', '=', $id)
+            ->with('authors')
+            ->latest()
+            ->skip($skipped)
+            ->take($limit)
             ->get();
 
-        return $products;
+        return compact('products', 'total');
     }
 }

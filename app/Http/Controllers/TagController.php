@@ -40,11 +40,19 @@ class TagController extends Controller
         $tag->delete();
     }
 
-    public function show($id)
+    public function show(Request $request, Tag $tag)
     {
-        $tag = Tag::where('id', $id)->first();
-        $products = $tag->products()->with('authors')->get();
+        $total = $tag->products->count();
+        $limit = (int) $request['_limit'];
+        $skipped = ((int) $request['_page'] - 1) * $limit;
+        $products = $tag
+            ->products()
+            ->with('authors')
+            ->latest()
+            ->skip($skipped)
+            ->take($limit)
+            ->get();;
 
-        return $products;
+        return compact('products', 'total');
     }
 }

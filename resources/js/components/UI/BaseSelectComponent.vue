@@ -1,22 +1,14 @@
 <template>
-  <label :for="field"
-    ><slot></slot>
-    <select
-      :value="value"
-      :id="field"
-      @change="updateValue"
-      class="form-control"
+  <select :value="value" :id="field" @change="updateValue" class="form-control">
+    <option
+      v-for="option in options"
+      :value="option.value"
+      :key="option.value"
+      :selected="option === value"
     >
-      <option
-        v-for="option in options"
-        :value="option.value"
-        :key="option"
-        :selected="option === value"
-      >
-        {{ option.text || option.value }}
-      </option>
-    </select>
-  </label>
+      {{ option.text || option.value }}
+    </option>
+  </select>
 </template>
 
 <script>
@@ -33,7 +25,7 @@ export default {
     },
     field: {
       type: String,
-      required: true,
+      required: false,
     },
   },
 

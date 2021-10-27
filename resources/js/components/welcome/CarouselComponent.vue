@@ -104,9 +104,9 @@ export default {
   created() {
     const builder = new RequestBuilder("products");
     builder
-      .perPage(10)
+      .withQueryParams({ limit: 10, page: 1 })
       .get()
-      .then(({ data }) => {
+      .then((data) => {
         this.newProducts = data;
       })
       .catch((err) => {

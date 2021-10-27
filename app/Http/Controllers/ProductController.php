@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\AuthorsProduct;
 use App\Models\TagsProduct;
+use App\Models\Author;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Services\FileUploader;
@@ -19,7 +20,26 @@ class ProductController extends Controller
         //     var_dump($query->sql, $query->bindings);
         // });
         if ($request['_limit']) {
-            return Product::with('authors', 'tags')->OrderBy('id', 'desc')->paginate($request['_limit']);
+            if ($request['_type'] === 'title') {
+                $query = $request['_query'];
+                $field = $request['_type'];
+                return Product::where($field, 'like', '%' . $query . '%')->with('authors', 'tags')->paginate($request['_limit']);
+            } else if ($request['_type'] === 'author') {
+                $query = $request['_query'];
+                $authors = Author::where('title', 'like', '%' . $query . '%')->get();
+                $products = collect();
+                foreach ($authors as $author) {
+                    $products->push($author->products);
+                }
+                return $products->flatten();
+            }
+            $limit = (int) $request['_limit'];
+            $skipped = ((int) $request['_page'] - 1) * $limit;
+            return Product::with('authors', 'tags')
+                ->OrderBy('id', 'desc')
+                ->skip($skipped)
+                ->take($limit)
+                ->get();
         }
 
         return Product::with('authors', 'tags')->OrderBy('id', 'desc')->get();
@@ -132,9 +152,4 @@ class ProductController extends Controller
         AuthorsProduct::where('product_id', $product->id)->delete();
         $product->delete();
     }
-
-    // public function getReviews($productId)
-    // {
-    //     return Product::find($productId)->reviews()->with('user')->get();
-    // }
 }

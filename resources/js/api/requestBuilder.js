@@ -2,14 +2,14 @@ import axios from 'axios';
 import routes from './routes.js';
 
 export default class RequestBuilder {
-  constructor(item, countPerPage = null) {
+  constructor(item, params = {}) {
     // принимает аргументом item объект(ы)-сущности, с которыми предстоит работать
     // при передаче id в единственном числе, без id - во множественном
     // по логике laravel apiResource
     this.item = item;
     this.client = axios;
     this.method = 'GET';
-    this.countPerPage = countPerPage;
+    this.queryParams = params;
   }
 
   #needAdminPrefix() {
@@ -45,13 +45,16 @@ export default class RequestBuilder {
     return '';
   }
 
+  #addQueryParams(url) {
+    for (const param in this.queryParams) {
+      url.searchParams.append(`_${param}`, this.queryParams[param]);
+    }
+  }
+
   #getUrl(id) {
     const prefix = this.#getPrefix();
     const url = new URL(routes[this.item](prefix, id));
-    if (this.countPerPage) {
-      url.searchParams.append('_limit', this.countPerPage);
-    }
-    // const url = routes[this.item](prefix, id);
+    this.#addQueryParams(url);
     return url;
   }
 
@@ -95,11 +98,17 @@ export default class RequestBuilder {
     return this.client.post(url, data, config);
   }
 
-  makeRequest(url, method = 'get') {
+  makeRequest(link, method = 'get') {
+    const url = new URL(link);
+    this.#addQueryParams(url);
     return this.client[method](url);
   }
 
   perPage(count) {
-    return new RequestBuilder(this.item, count);
+    return new RequestBuilder(this.item, { limit: count });
+  }
+
+  withQueryParams(params) {
+    return new RequestBuilder(this.item, { ...params });
   }
 }

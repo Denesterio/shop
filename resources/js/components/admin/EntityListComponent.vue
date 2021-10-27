@@ -65,6 +65,7 @@ export default {
     "next_page_url",
     "prev_page_url",
     "first_page_url",
+    "total",
   ],
 
   methods: {

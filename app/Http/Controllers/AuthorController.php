@@ -40,11 +40,20 @@ class AuthorController extends Controller
         $author->delete();
     }
 
-    public function show($id)
+    public function show(Request $request, Author $author)
     {
-        $author = Author::where('id', $id)->first();
-        $products = $author->products()->with('authors')->get();
+        $total = $author->products->count();
 
-        return $products;
+        $limit = (int) $request['_limit'];
+        $skipped = ((int) $request['_page'] - 1) * $limit;
+        $products = $author
+            ->products()
+            ->with('authors')
+            ->latest()
+            ->skip($skipped)
+            ->take($limit)
+            ->get();
+
+        return compact('products', 'total');
     }
 }

@@ -47,8 +47,17 @@ class CategoryController extends Controller
         $category->delete();
     }
 
-    public function show($id)
+    public function show(Request $request, Category $category)
     {
-        return Category::find($id)->products()->with('authors')->get();
+        $total = $category->products->count();
+        $limit = (int) $request['_limit'];
+        $skipped = ((int) $request['_page'] - 1) * $limit;
+        return ['total' => $total, 'products' => $category
+            ->products()
+            ->with('authors')
+            ->latest()
+            ->skip($skipped)
+            ->take($limit)
+            ->get()];
     }
 }

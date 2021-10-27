@@ -1,14 +1,13 @@
 <template>
-  <label
-    ><slot></slot
-    ><input
-      :for="field"
-      @input="updateValue"
-      :value="value"
-      :id="field"
-      :type="type"
-      :placeholder="placeholder" /><slot></slot
-  ></label>
+  <input
+    :for="field"
+    @input="updateValue"
+    :value="value"
+    :id="field"
+    :type="type"
+    :placeholder="placeholder"
+    class="form-control"
+  />
 </template>
 
 <script>
@@ -32,7 +31,6 @@ export default {
     field: {
       type: String,
       required: false,
-      default: "",
     },
   },
 
