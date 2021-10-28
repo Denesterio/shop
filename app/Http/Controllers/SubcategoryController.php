@@ -30,12 +30,12 @@ class SubcategoryController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->has('_limit')) {
+        if ($request->has('limit')) {
             $total = Subcategory::count();
-            $skipped = ($request['_page'] - 1) * $request['_limit'];
+            $skipped = ($request['page'] - 1) * $request['limit'];
             $data = Subcategory::OrderBy('id', 'desc')
                 ->skip($skipped)
-                ->take($request['_limit'])
+                ->take($request['limit'])
                 ->get();
             return compact('data', 'total');
         }
@@ -52,8 +52,8 @@ class SubcategoryController extends Controller
     {
         $subcategory = Subcategory::where('slug', '=', $id)->first();
         $total = Product::where('subcategory_slug', '=', $id)->count();
-        $limit = (int) $request['_limit'];
-        $skipped = ((int) $request['_page'] - 1) * $limit;
+        $limit = (int) $request['limit'];
+        $skipped = ((int) $request['page'] - 1) * $limit;
         $data = Product::where('subcategory_slug', '=', $id)
             ->with('authors')
             ->latest()

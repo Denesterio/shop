@@ -19,10 +19,10 @@ class ProductController extends Controller
         // DB::listen(function ($query) {
         //     var_dump($query->sql, $query->bindings);
         // });
-        if ($request->has('_limit')) {
+        if ($request->has('limit')) {
             $total = Product::count();
-            $limit = (int) $request['_limit'];
-            $skipped = ((int) $request['_page'] - 1) * $limit;
+            $limit = (int) $request['limit'];
+            $skipped = ((int) $request['page'] - 1) * $limit;
             $data =  Product::with('authors', 'tags')
                 ->OrderBy('id', 'desc')
                 ->skip($skipped)

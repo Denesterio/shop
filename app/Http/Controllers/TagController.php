@@ -23,12 +23,12 @@ class TagController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->has('_limit')) {
+        if ($request->has('limit')) {
             $total = Tag::count();
-            $skipped = ($request['_page'] - 1) * $request['_limit'];
+            $skipped = ($request['page'] - 1) * $request['limit'];
             $data = Tag::OrderBy('id', 'desc')
                 ->skip($skipped)
-                ->take($request['_limit'])
+                ->take($request['limit'])
                 ->get();
             return compact('data', 'total');
         }
@@ -44,8 +44,8 @@ class TagController extends Controller
     public function show(Request $request, Tag $tag)
     {
         $total = $tag->products->count();
-        $limit = (int) $request['_limit'];
-        $skipped = ((int) $request['_page'] - 1) * $limit;
+        $limit = (int) $request['limit'];
+        $skipped = ((int) $request['page'] - 1) * $limit;
         $data = $tag
             ->products()
             ->with('authors')

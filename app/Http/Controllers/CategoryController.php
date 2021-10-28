@@ -35,12 +35,12 @@ class CategoryController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->has('_limit')) {
+        if ($request->has('limit')) {
             $total = Category::count();
-            $skipped = ($request['_page'] - 1) * $request['_limit'];
+            $skipped = ($request['page'] - 1) * $request['limit'];
             $data = Category::OrderBy('id', 'desc')
                 ->skip($skipped)
-                ->take($request['_limit'])
+                ->take($request['limit'])
                 ->get();
             return compact('data', 'total');
         }
@@ -56,8 +56,8 @@ class CategoryController extends Controller
     public function show(Request $request, Category $category)
     {
         $total = $category->products->count();
-        $limit = (int) $request['_limit'];
-        $skipped = ((int) $request['_page'] - 1) * $limit;
+        $limit = (int) $request['limit'];
+        $skipped = ((int) $request['page'] - 1) * $limit;
         return ['total' => $total, 'data' => $category
             ->products()
             ->with('authors')

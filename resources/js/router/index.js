@@ -49,6 +49,11 @@ const routes = [
         path: '/tags/:id',
         name: 'tag.products',
         component: ProductListComponent
+      },
+      {
+        path: '/search',
+        name: 'search.products',
+        component: ProductListComponent
       }
     ]
   },

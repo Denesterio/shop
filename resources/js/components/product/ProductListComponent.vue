@@ -3,9 +3,6 @@
     <products-view-settings
       :selectedView.sync="selectedView"
       :countOnPage.sync="countOnPage"
-      :searchQuery.sync="searchQuery"
-      :searchType.sync="searchType"
-      @search-products="fetchSearchedProducts"
     />
     <div v-if="products.length">
       <ul class="row justify-content-evently">
@@ -43,6 +40,16 @@ const makeRequest = (to, vm) => {
   const id = to.params.id;
   const splitterIndex = to.name.indexOf(".");
   const name = to.name.substring(0, splitterIndex);
+
+  if (name === "search") {
+    const params = {
+      limit: 24,
+      page: vm?.nextPage || 1,
+      query: to.query.query,
+    };
+    return new RequestBuilder(name).withQueryParams(params).get();
+  }
+
   if (vm) {
     const params = {
       limit: parseInt(vm.$data.countOnPage, 10),
@@ -50,6 +57,7 @@ const makeRequest = (to, vm) => {
     };
     return new RequestBuilder(name).withQueryParams(params).get(id);
   }
+
   return new RequestBuilder(name)
     .withQueryParams({ limit: 24, page: 1 })
     .get(id);
@@ -68,8 +76,6 @@ export default {
   data() {
     return {
       selectedView: "Card",
-      searchQuery: "",
-      searchType: "title",
 
       products: [],
       authors: {},
@@ -112,20 +118,6 @@ export default {
   },
 
   methods: {
-    fetchSearchedProducts() {
-      this.loading = true;
-      const params = {
-        limit: parseInt(this.countOnPage, 10),
-        query: this.searchQuery,
-        type: this.searchType,
-      };
-      new RequestBuilder("products")
-        .withQueryParams(params)
-        .get()
-        .then(({ data }) => (this.products = data))
-        .finally(() => (this.loading = false));
-    },
-
     changePage(nextPage) {
       this.loading = true;
       this.nextPage = nextPage;
@@ -139,9 +131,8 @@ export default {
   },
 
   watch: {
-    countOnPage(newValue, oldValue) {
+    countOnPage() {
       this.loading = true;
-      console.dir(this.countOnPage, this.nextPage);
       makeRequest(this.$route, this)
         .then((data) => this.fillDataFromResponse(data, "products"))
         .finally(() => (this.loading = false));

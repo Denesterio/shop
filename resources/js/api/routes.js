@@ -49,5 +49,7 @@ export default {
   user: () => [BASE_URL, API_PREFIX, 'auth', 'getUser'].join('/'),
   login: prefix => [...buildBase(prefix), 'login'].join('/'),
   logout: prefix => [...buildBase(prefix), 'logout'].join('/'),
-  register: prefix => [...buildBase(prefix), 'register'].join('/')
+  register: prefix => [...buildBase(prefix), 'register'].join('/'),
+
+  search: prefix => [...buildBase(prefix), 'search'].join('/')
 };

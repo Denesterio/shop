@@ -31,34 +31,6 @@
         >Количество на странице:</base-select-component
       >
     </div>
-    <div class="col-12 row p-3 align-items-end justify-content-evently">
-      <div class="col-md-7">
-        <label class="input-label" for="searchQuery">Поиск:</label>
-        <base-input-component
-          @input.native="updateSearchQuery"
-          v-bind:value="searchQuery"
-          class="form-control-sm"
-          field="searchQuery"
-          >Поиск:</base-input-component
-        >
-      </div>
-      <div class="col-md-3">
-        <label class="products-view-label" for="searchType">Искать по:</label>
-        <base-select-component
-          :options="searchOptions"
-          v-bind:value="searchType"
-          field="searchType"
-          @change.native="updateSearchType"
-          class="form-control-sm"
-        />
-      </div>
-      <base-button-component
-        @click.native="searchProducts"
-        bSize="sm"
-        class="col-md-2"
-        >Найти</base-button-component
-      >
-    </div>
   </section>
 </template>
 
@@ -73,14 +45,6 @@ export default {
       type: String,
       required: true,
     },
-    searchQuery: {
-      type: String,
-      required: true,
-    },
-    searchType: {
-      type: String,
-      required: true,
-    },
   },
 
   data() {
@@ -90,10 +54,6 @@ export default {
         { text: "Списком", value: "Point" },
       ],
       countOnPageOptions: [{ value: "12" }, { value: "24" }, { value: "36" }],
-      searchOptions: [
-        { value: "author", text: "По автору" },
-        { value: "title", text: "По названию" },
-      ],
     };
   },
 
@@ -104,18 +64,6 @@ export default {
 
     updateCountOnPage(e) {
       this.$emit("update:countOnPage", e.target.value);
-    },
-
-    updateSearchQuery(e) {
-      this.$emit("update:searchQuery", e.target.value);
-    },
-
-    updateSearchType(e) {
-      this.$emit("update:searchType", e.target.value);
-    },
-
-    searchProducts() {
-      this.$emit("search-products");
     },
   },
 };

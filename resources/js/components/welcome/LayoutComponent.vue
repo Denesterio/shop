@@ -9,6 +9,7 @@
           :categories="categories"
           :subcategories="subcategories"
         ></left-menu-component>
+        <search-form-component />
       </aside>
       <main class="col-lg-9 col-md-7 col-sm-12">
         <svg-loading-component v-if="loading" />
@@ -23,11 +24,13 @@
 <script>
 import CarouselComponent from "./CarouselComponent.vue";
 import LeftMenuComponent from "./LeftMenuComponent.vue";
+import SearchFormComponent from "./SearchFormComponent.vue";
 import RequestBuilder from "../../api/requestBuilder.js";
 export default {
   components: {
     CarouselComponent,
     LeftMenuComponent,
+    SearchFormComponent,
   },
   data() {
     return {

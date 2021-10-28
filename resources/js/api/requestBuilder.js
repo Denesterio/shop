@@ -47,7 +47,7 @@ export default class RequestBuilder {
 
   #addQueryParams(url) {
     for (const param in this.queryParams) {
-      url.searchParams.append(`_${param}`, this.queryParams[param]);
+      url.searchParams.append(param, this.queryParams[param]);
     }
   }
 

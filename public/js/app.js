@@ -5484,9 +5484,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 
 
 
@@ -5499,12 +5496,21 @@ var makeRequest = function makeRequest(to, vm) {
   var splitterIndex = to.name.indexOf(".");
   var name = to.name.substring(0, splitterIndex);
 
-  if (vm) {
+  if (name === "search") {
     var params = {
+      limit: 24,
+      page: (vm === null || vm === void 0 ? void 0 : vm.nextPage) || 1,
+      query: to.query.query
+    };
+    return new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_4__.default(name).withQueryParams(params).get();
+  }
+
+  if (vm) {
+    var _params = {
       limit: parseInt(vm.$data.countOnPage, 10),
       page: vm.$data.nextPage
     };
-    return new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_4__.default(name).withQueryParams(params).get(id);
+    return new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_4__.default(name).withQueryParams(_params).get(id);
   }
 
   return new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_4__.default(name).withQueryParams({
@@ -5526,8 +5532,6 @@ var makeRequest = function makeRequest(to, vm) {
   data: function data() {
     return {
       selectedView: "Card",
-      searchQuery: "",
-      searchType: "title",
       products: [],
       authors: {},
       loading: true,
@@ -5565,46 +5569,29 @@ var makeRequest = function makeRequest(to, vm) {
     });
   },
   methods: {
-    fetchSearchedProducts: function fetchSearchedProducts() {
-      var _this2 = this;
-
-      this.loading = true;
-      var params = {
-        limit: parseInt(this.countOnPage, 10),
-        query: this.searchQuery,
-        type: this.searchType
-      };
-      new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_4__.default("products").withQueryParams(params).get().then(function (_ref) {
-        var data = _ref.data;
-        return _this2.products = data;
-      })["finally"](function () {
-        return _this2.loading = false;
-      });
-    },
     changePage: function changePage(nextPage) {
-      var _this3 = this;
+      var _this2 = this;
 
       this.loading = true;
       this.nextPage = nextPage;
       makeRequest(this.$route, this).then(function (data) {
-        _this3.fillDataFromResponse(data, "products");
+        _this2.fillDataFromResponse(data, "products");
       })["catch"](function (error) {
-        return _this3.error = error.response.data.message;
+        return _this2.error = error.response.data.message;
       })["finally"](function () {
-        return _this3.loading = false;
+        return _this2.loading = false;
       });
     }
   },
   watch: {
-    countOnPage: function countOnPage(newValue, oldValue) {
-      var _this4 = this;
+    countOnPage: function countOnPage() {
+      var _this3 = this;
 
       this.loading = true;
-      console.dir(this.countOnPage, this.nextPage);
       makeRequest(this.$route, this).then(function (data) {
-        return _this4.fillDataFromResponse(data, "products");
+        return _this3.fillDataFromResponse(data, "products");
       })["finally"](function () {
-        return _this4.loading = false;
+        return _this3.loading = false;
       });
     }
   }
@@ -6499,34 +6486,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     selectedView: {
@@ -6534,14 +6493,6 @@ __webpack_require__.r(__webpack_exports__);
       required: true
     },
     countOnPage: {
-      type: String,
-      required: true
-    },
-    searchQuery: {
-      type: String,
-      required: true
-    },
-    searchType: {
       type: String,
       required: true
     }
@@ -6561,13 +6512,6 @@ __webpack_require__.r(__webpack_exports__);
         value: "24"
       }, {
         value: "36"
-      }],
-      searchOptions: [{
-        value: "author",
-        text: "По автору"
-      }, {
-        value: "title",
-        text: "По названию"
       }]
     };
   },
@@ -6577,15 +6521,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     updateCountOnPage: function updateCountOnPage(e) {
       this.$emit("update:countOnPage", e.target.value);
-    },
-    updateSearchQuery: function updateSearchQuery(e) {
-      this.$emit("update:searchQuery", e.target.value);
-    },
-    updateSearchType: function updateSearchType(e) {
-      this.$emit("update:searchType", e.target.value);
-    },
-    searchProducts: function searchProducts() {
-      this.$emit("search-products");
     }
   }
 });
@@ -7386,7 +7321,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _CarouselComponent_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CarouselComponent.vue */ "./resources/js/components/welcome/CarouselComponent.vue");
 /* harmony import */ var _LeftMenuComponent_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LeftMenuComponent.vue */ "./resources/js/components/welcome/LeftMenuComponent.vue");
-/* harmony import */ var _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../api/requestBuilder.js */ "./resources/js/api/requestBuilder.js");
+/* harmony import */ var _SearchFormComponent_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./SearchFormComponent.vue */ "./resources/js/components/welcome/SearchFormComponent.vue");
+/* harmony import */ var _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../api/requestBuilder.js */ "./resources/js/api/requestBuilder.js");
 //
 //
 //
@@ -7409,13 +7345,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+
 
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
     CarouselComponent: _CarouselComponent_vue__WEBPACK_IMPORTED_MODULE_0__.default,
-    LeftMenuComponent: _LeftMenuComponent_vue__WEBPACK_IMPORTED_MODULE_1__.default
+    LeftMenuComponent: _LeftMenuComponent_vue__WEBPACK_IMPORTED_MODULE_1__.default,
+    SearchFormComponent: _SearchFormComponent_vue__WEBPACK_IMPORTED_MODULE_2__.default
   },
   data: function data() {
     return {
@@ -7428,7 +7367,7 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     var _this = this;
 
-    new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_2__.default("menu").get().then(function (data) {
+    new _api_requestBuilder_js__WEBPACK_IMPORTED_MODULE_3__.default("menu").get().then(function (data) {
       _this.categories = data.categories;
       _this.subcategories = data.subcategories;
       sessionStorage.setItem("menu", JSON.stringify(data));
@@ -7554,6 +7493,75 @@ __webpack_require__.r(__webpack_exports__);
     },
     isActive: function isActive(slug) {
       return this.currentPageId === slug;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/welcome/SearchFormComponent.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/welcome/SearchFormComponent.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    return {
+      searchQuery: "",
+      searchType: "title",
+      loading: false,
+      searchOptions: [{
+        value: "author",
+        text: "По автору"
+      }, {
+        value: "title",
+        text: "По названию"
+      }]
+    };
+  },
+  methods: {
+    fetchSearchedProducts: function fetchSearchedProducts() {
+      this.loading = true;
+      var params = {
+        query: this.searchQuery
+      };
+      this.$router.push({
+        name: "search.products",
+        query: params
+      });
     }
   }
 });
@@ -7806,7 +7814,7 @@ function _getPrefix2() {
 
 function _addQueryParams2(url) {
   for (var param in this.queryParams) {
-    url.searchParams.append("_".concat(param), this.queryParams[param]);
+    url.searchParams.append(param, this.queryParams[param]);
   }
 }
 
@@ -7933,6 +7941,9 @@ var buildBase = function buildBase(prefix) {
   },
   register: function register(prefix) {
     return [].concat(_toConsumableArray(buildBase(prefix)), ['register']).join('/');
+  },
+  search: function search(prefix) {
+    return [].concat(_toConsumableArray(buildBase(prefix)), ['search']).join('/');
   }
 });
 
@@ -8570,6 +8581,10 @@ var routes = [{
   }, {
     path: '/tags/:id',
     name: 'tag.products',
+    component: _components_product_ProductListComponent_vue__WEBPACK_IMPORTED_MODULE_7__.default
+  }, {
+    path: '/search',
+    name: 'search.products',
     component: _components_product_ProductListComponent_vue__WEBPACK_IMPORTED_MODULE_7__.default
   }]
 }, {
@@ -68659,6 +68674,45 @@ component.options.__file = "resources/js/components/welcome/LeftMenuComponent.vu
 
 /***/ }),
 
+/***/ "./resources/js/components/welcome/SearchFormComponent.vue":
+/*!*****************************************************************!*\
+  !*** ./resources/js/components/welcome/SearchFormComponent.vue ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _SearchFormComponent_vue_vue_type_template_id_65522889___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SearchFormComponent.vue?vue&type=template&id=65522889& */ "./resources/js/components/welcome/SearchFormComponent.vue?vue&type=template&id=65522889&");
+/* harmony import */ var _SearchFormComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SearchFormComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/welcome/SearchFormComponent.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__.default)(
+  _SearchFormComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
+  _SearchFormComponent_vue_vue_type_template_id_65522889___WEBPACK_IMPORTED_MODULE_0__.render,
+  _SearchFormComponent_vue_vue_type_template_id_65522889___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/welcome/SearchFormComponent.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/welcome/WelcomeCategoryCardComponent.vue":
 /*!**************************************************************************!*\
   !*** ./resources/js/components/welcome/WelcomeCategoryCardComponent.vue ***!
@@ -69440,6 +69494,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LeftMenuComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./LeftMenuComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/welcome/LeftMenuComponent.vue?vue&type=script&lang=js&");
  /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_LeftMenuComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+
+/***/ }),
+
+/***/ "./resources/js/components/welcome/SearchFormComponent.vue?vue&type=script&lang=js&":
+/*!******************************************************************************************!*\
+  !*** ./resources/js/components/welcome/SearchFormComponent.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_SearchFormComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./SearchFormComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/welcome/SearchFormComponent.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_SearchFormComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
 
 /***/ }),
 
@@ -70253,6 +70323,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LeftMenuComponent_vue_vue_type_template_id_37ea4b4f_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_LeftMenuComponent_vue_vue_type_template_id_37ea4b4f_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./LeftMenuComponent.vue?vue&type=template&id=37ea4b4f&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/welcome/LeftMenuComponent.vue?vue&type=template&id=37ea4b4f&scoped=true&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/welcome/SearchFormComponent.vue?vue&type=template&id=65522889&":
+/*!************************************************************************************************!*\
+  !*** ./resources/js/components/welcome/SearchFormComponent.vue?vue&type=template&id=65522889& ***!
+  \************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SearchFormComponent_vue_vue_type_template_id_65522889___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SearchFormComponent_vue_vue_type_template_id_65522889___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SearchFormComponent_vue_vue_type_template_id_65522889___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./SearchFormComponent.vue?vue&type=template&id=65522889& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/welcome/SearchFormComponent.vue?vue&type=template&id=65522889&");
 
 
 /***/ }),
@@ -74161,12 +74248,7 @@ var render = function() {
     "div",
     [
       _c("products-view-settings", {
-        attrs: {
-          selectedView: _vm.selectedView,
-          countOnPage: _vm.countOnPage,
-          searchQuery: _vm.searchQuery,
-          searchType: _vm.searchType
-        },
+        attrs: { selectedView: _vm.selectedView, countOnPage: _vm.countOnPage },
         on: {
           "update:selectedView": function($event) {
             _vm.selectedView = $event
@@ -74179,20 +74261,7 @@ var render = function() {
           },
           "update:count-on-page": function($event) {
             _vm.countOnPage = $event
-          },
-          "update:searchQuery": function($event) {
-            _vm.searchQuery = $event
-          },
-          "update:search-query": function($event) {
-            _vm.searchQuery = $event
-          },
-          "update:searchType": function($event) {
-            _vm.searchType = $event
-          },
-          "update:search-type": function($event) {
-            _vm.searchType = $event
-          },
-          "search-products": _vm.fetchSearchedProducts
+          }
         }
       }),
       _vm._v(" "),
@@ -75316,84 +75385,6 @@ var render = function() {
         )
       ],
       1
-    ),
-    _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "col-12 row p-3 align-items-end justify-content-evently" },
-      [
-        _c(
-          "div",
-          { staticClass: "col-md-7" },
-          [
-            _c(
-              "label",
-              { staticClass: "input-label", attrs: { for: "searchQuery" } },
-              [_vm._v("Поиск:")]
-            ),
-            _vm._v(" "),
-            _c(
-              "base-input-component",
-              {
-                staticClass: "form-control-sm",
-                attrs: { value: _vm.searchQuery, field: "searchQuery" },
-                nativeOn: {
-                  input: function($event) {
-                    return _vm.updateSearchQuery.apply(null, arguments)
-                  }
-                }
-              },
-              [_vm._v("Поиск:")]
-            )
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "col-md-3" },
-          [
-            _c(
-              "label",
-              {
-                staticClass: "products-view-label",
-                attrs: { for: "searchType" }
-              },
-              [_vm._v("Искать по:")]
-            ),
-            _vm._v(" "),
-            _c("base-select-component", {
-              staticClass: "form-control-sm",
-              attrs: {
-                options: _vm.searchOptions,
-                value: _vm.searchType,
-                field: "searchType"
-              },
-              nativeOn: {
-                change: function($event) {
-                  return _vm.updateSearchType.apply(null, arguments)
-                }
-              }
-            })
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "base-button-component",
-          {
-            staticClass: "col-md-2",
-            attrs: { bSize: "sm" },
-            nativeOn: {
-              click: function($event) {
-                return _vm.searchProducts.apply(null, arguments)
-              }
-            }
-          },
-          [_vm._v("Найти")]
-        )
-      ],
-      1
     )
   ])
 }
@@ -76405,7 +76396,9 @@ var render = function() {
                     categories: _vm.categories,
                     subcategories: _vm.subcategories
                   }
-                })
+                }),
+            _vm._v(" "),
+            _c("search-form-component")
           ],
           1
         ),
@@ -76583,6 +76576,97 @@ var render = function() {
         1
       )
     }),
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/welcome/SearchFormComponent.vue?vue&type=template&id=65522889&":
+/*!***************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/welcome/SearchFormComponent.vue?vue&type=template&id=65522889& ***!
+  \***************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { staticClass: "d-flex p-2 flex-column card justify-content-center" },
+    [
+      _c(
+        "div",
+        {},
+        [
+          _c(
+            "label",
+            { staticClass: "input-label", attrs: { for: "searchQuery" } },
+            [_vm._v("Поиск:")]
+          ),
+          _vm._v(" "),
+          _c(
+            "base-input-component",
+            {
+              staticClass: "form-control-sm",
+              attrs: { field: "searchQuery" },
+              model: {
+                value: _vm.searchQuery,
+                callback: function($$v) {
+                  _vm.searchQuery = $$v
+                },
+                expression: "searchQuery"
+              }
+            },
+            [_vm._v("Поиск:")]
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "mt-3" },
+        [
+          _c("base-select-component", {
+            staticClass: "form-control-sm",
+            attrs: { options: _vm.searchOptions, field: "searchType" },
+            model: {
+              value: _vm.searchType,
+              callback: function($$v) {
+                _vm.searchType = $$v
+              },
+              expression: "searchType"
+            }
+          })
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "base-button-component",
+        {
+          staticClass: "mt-3 ml-auto col-xl-6 btn-info",
+          nativeOn: {
+            click: function($event) {
+              return _vm.fetchSearchedProducts.apply(null, arguments)
+            }
+          }
+        },
+        [_vm._v("Найти")]
+      )
+    ],
     1
   )
 }

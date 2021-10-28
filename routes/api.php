@@ -12,6 +12,7 @@ use App\Http\Controllers\CoverController;
 use App\Http\Controllers\ProductReviewController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RatingController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -74,5 +75,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/cart', [OrderController::class, 'showCart'])->name('cart');
     });
 });
+
+Route::get('/search', [SearchController::class, 'search'])->name('search');
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
