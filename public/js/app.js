@@ -5430,7 +5430,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     picturePath: function picturePath() {
-      return this.product.picture ? "/storage/img/" + this.product.picture : "/img/cap.png";
+      return this.product.picture ? "/storage/img/" + this.product.picture : "/img/cap.svg";
     }
   }
 });
@@ -5790,7 +5790,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     picturePath: function picturePath() {
-      return this.images[this.activeImageIndex] ? "/storage/img/" + this.images[this.activeImageIndex] : "/img/cap.png";
+      return this.images[this.activeImageIndex] ? "/storage/img/" + this.images[this.activeImageIndex] : "/img/cap.svg";
     }
   },
   methods: {
@@ -5904,7 +5904,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     picturePath: function picturePath() {
-      return this.product.picture ? "/storage/img/" + this.product.picture : "/img/cap.png";
+      return this.product.picture ? "/storage/img/" + this.product.picture : "/img/cap.svg";
     }
   }
 });
@@ -23128,7 +23128,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.product-card[data-v-03029329] {\n  display: grid;\n  grid-template-rows: auto 1fr auto;\n  max-width: 205px;\n  min-width: 190px;\n}\n.card-image[data-v-03029329] {\n  max-width: 200px;\n  aspect-ratio: auto;\n}\n.modal-image[data-v-03029329] {\n  width: 25%;\n  float: left;\n  margin-right: 20px;\n}\n.product-price[data-v-03029329] {\n  font-weight: bold;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.product-card[data-v-03029329] {\n  display: grid;\n  grid-template-rows: auto 1fr auto;\n  max-width: 205px;\n  min-width: 190px;\n}\n.image-box[data-v-03029329] {\n  height: 200px;\n  max-width: 200px;\n}\n.card-image[data-v-03029329] {\n  max-width: 100px;\n  aspect-ratio: auto;\n}\n.modal-image[data-v-03029329] {\n  width: 25%;\n  float: left;\n  margin-right: 20px;\n}\n.product-price[data-v-03029329] {\n  font-weight: bold;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -74182,12 +74182,19 @@ var render = function() {
     "li",
     { staticClass: "card m-1 p-2 col-lg-3 col-sm-6 product-card" },
     [
-      _c("div", [
-        _c("img", {
-          staticClass: "card-img-top card-image",
-          attrs: { src: _vm.picturePath, alt: _vm.product.title }
-        })
-      ]),
+      _c(
+        "div",
+        {
+          staticClass:
+            "image-box d-flex justify-content-center align-items-center"
+        },
+        [
+          _c("img", {
+            staticClass: "card-img-top card-image",
+            attrs: { src: _vm.picturePath, alt: _vm.product.title }
+          })
+        ]
+      ),
       _vm._v(" "),
       _c("product-title-component", {
         staticClass: "card-body p-2",
@@ -76331,7 +76338,7 @@ var render = function() {
                         attrs: {
                           src: product.picture
                             ? "/storage/img/" + product.picture
-                            : "/img/cap.png",
+                            : "/img/cap.svg",
                           alt: product.title
                         }
                       }),

@@ -15,10 +15,10 @@ class CoverSeeder extends Seeder
     public function run()
     {
         DB::table('covers')->insert([
-            'title' => 'hard',
+            'title' => 'Твердая',
         ]);
         DB::table('covers')->insert([
-            'title' => 'soft',
+            'title' => 'Мягкая',
         ]);
     }
 }

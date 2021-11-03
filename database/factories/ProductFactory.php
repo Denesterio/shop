@@ -19,11 +19,11 @@ class ProductFactory extends Factory
     {
         return $this->afterCreating(function (Product $product) {
             DB::table('authors_products')->insert([
-                'author_id' => rand(1, 10),
+                'author_id' => rand(1, 20),
                 'product_id' => $product->id,
             ]);
             DB::table('tags_products')->insert([
-                'tag_id' => rand(1, 3),
+                'tag_id' => rand(1, 20),
                 'product_id' => $product->id,
             ]);
         });
@@ -38,11 +38,11 @@ class ProductFactory extends Factory
     {
         return [
             'title' => $this->faker->sentence(rand(1, 6)),
-            'subcategory_slug' => $this->faker->randomElement(array('first', 'second', 'firstOfComics', 'secondOfComics')),
+            'subcategory_slug' => $this->faker->randomElement(array('web', 'architecture', 'marvel', 'dccomics', 'dlyadetei', 'manga', 'europe')),
             'picture' => '',
             'pictures' => json_encode([]),
-            'description' => $this->faker->text(400),
-            'price' => $this->faker->numberBetween(200, 2000),
+            'description' => $this->faker->text(600),
+            'price' => $this->faker->numberBetween(500, 2000),
             'pages' => $this->faker->numberBetween(150, 550),
             'year' => $this->faker->numberBetween(1990, 2020),
             'cover_id' => $this->faker->numberBetween(1, 2),

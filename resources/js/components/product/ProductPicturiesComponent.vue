@@ -51,7 +51,7 @@ export default {
     picturePath() {
       return this.images[this.activeImageIndex]
         ? "/storage/img/" + this.images[this.activeImageIndex]
-        : "/img/cap.png";
+        : "/img/cap.svg";
     },
   },
 

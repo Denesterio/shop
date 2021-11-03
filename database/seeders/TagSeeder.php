@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use App\Models\Tag;
 
 class TagSeeder extends Seeder
 {
@@ -14,14 +14,8 @@ class TagSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('tags')->insert([
-            'title' => 'tag1',
-        ]);
-        DB::table('tags')->insert([
-            'title' => 'tag2',
-        ]);
-        DB::table('tags')->insert([
-            'title' => 'tag3',
-        ]);
+        Tag::factory()
+            ->count(20)
+            ->create();
     }
 }

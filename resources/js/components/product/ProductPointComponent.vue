@@ -92,7 +92,7 @@ export default {
     picturePath() {
       return this.product.picture
         ? "/storage/img/" + this.product.picture
-        : "/img/cap.png";
+        : "/img/cap.svg";
     },
   },
 };

@@ -81,3 +81,7 @@
   margin: 1rem 0;
 }
 
+.card-image {
+  max-width: 100px;
+  aspect-ratio: auto;
+}

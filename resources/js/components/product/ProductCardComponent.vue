@@ -1,6 +1,6 @@
 <template>
   <li class="card m-1 p-2 col-lg-3 col-sm-6 product-card">
-    <div>
+    <div class="image-box d-flex justify-content-center align-items-center">
       <img
         :src="picturePath"
         class="card-img-top card-image"
@@ -51,7 +51,7 @@ export default {
     picturePath() {
       return this.product.picture
         ? "/storage/img/" + this.product.picture
-        : "/img/cap.png";
+        : "/img/cap.svg";
     },
   },
 };
@@ -64,8 +64,12 @@ export default {
   max-width: 205px;
   min-width: 190px;
 }
-.card-image {
+.image-box {
+  height: 200px;
   max-width: 200px;
+}
+.card-image {
+  max-width: 100px;
   aspect-ratio: auto;
 }
 .modal-image {

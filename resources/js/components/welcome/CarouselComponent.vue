@@ -18,7 +18,7 @@
             :src="
               product.picture
                 ? '/storage/img/' + product.picture
-                : '/img/cap.png'
+                : '/img/cap.svg'
             "
             :alt="product.title"
             class="card-img-top image"

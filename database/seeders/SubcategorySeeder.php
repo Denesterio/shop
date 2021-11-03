@@ -15,24 +15,39 @@ class SubcategorySeeder extends Seeder
     public function run()
     {
         DB::table('subcategories')->insert([
-            'title' => 'first',
+            'title' => 'Веб',
             'category_id' => 1,
-            'slug' => 'first',
+            'slug' => 'web',
         ]);
         DB::table('subcategories')->insert([
-            'title' => 'second',
+            'title' => 'Архитектура',
             'category_id' => 1,
-            'slug' => 'second',
+            'slug' => 'architecture',
         ]);
         DB::table('subcategories')->insert([
-            'title' => 'firstOfComics',
+            'title' => 'Марвел',
             'category_id' => 2,
-            'slug' => 'firstOfComics',
+            'slug' => 'marvel',
         ]);
         DB::table('subcategories')->insert([
-            'title' => 'secondOfComics',
+            'title' => 'DC Comics',
             'category_id' => 2,
-            'slug' => 'secondOfComics',
+            'slug' => 'dccomics',
+        ]);
+        DB::table('subcategories')->insert([
+            'title' => 'Для детей',
+            'category_id' => 3,
+            'slug' => 'dlyadetei',
+        ]);
+        DB::table('subcategories')->insert([
+            'title' => 'Манга',
+            'category_id' => 4,
+            'slug' => 'manga',
+        ]);
+        DB::table('subcategories')->insert([
+            'title' => 'Европейские комиксы',
+            'category_id' => 4,
+            'slug' => 'europe',
         ]);
     }
 }
