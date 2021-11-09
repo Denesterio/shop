@@ -3,7 +3,7 @@
 export default {
   data() {
     return {
-      countOnPage: '24',
+      countOnPage: '12',
       currentPage: 1,
       nextPage: 1,
       totalPages: null

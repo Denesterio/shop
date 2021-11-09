@@ -2,11 +2,13 @@
   <div class="container mt-4">
     <svg-loading-component v-if="loading" />
     <template v-else>
+      <!-- breadcrumb -->
       <base-breadcrumb-component
         class=""
         :slug="product.subcategory_slug"
         :title="product.title"
       />
+      <!-- main content, picture -->
       <div class="row">
         <section class="d-flex col-lg-5 col-md-4 justify-content-center">
           <product-picturies-component
@@ -14,44 +16,30 @@
             :title="product.title"
           />
         </section>
-
+        <!-- authors -->
         <section class="container col-lg-7 col-md-8">
           <p class="header_authors font-italic">
-            <router-link
-              v-for="author in product.authors"
-              :key="author.id"
-              :to="{ name: 'author.products', params: { id: author.id } }"
-              >{{ author.title }}</router-link
-            >
+            <authors-link :authors="product.authors" />
           </p>
-
+          <!-- title -->
           <h2>{{ product.title }}</h2>
-
+          <!-- rating -->
           <product-rating-component :productId="product.id" />
-
+          <!-- tags links -->
           <router-link
             v-for="tag in product.tags"
             :key="tag.id"
-            :to="{ name: 'tag.products', params: { id: tag.id } }"
+            :to="{ name: 'tag.show', params: { id: tag.id } }"
             class="badge bg-primary text-light mr-1"
             >{{ tag.title }}</router-link
           >
 
           <div class="row mt-2">
+            <!-- table properties -->
             <div class="col-md-7">
-              <table class="table table-borderless">
-                <tbody>
-                  <tr
-                    v-for="(prop, index) of secondaryProperties"
-                    :key="index"
-                    class="border-bottom"
-                  >
-                    <td>{{ $t(`keys.${prop}`) }}</td>
-                    <td>{{ product[prop] }}</td>
-                  </tr>
-                </tbody>
-              </table>
+              <product-properties-table :product="product" />
             </div>
+            <!-- price block -->
             <div
               id="priceBadge"
               class="col-md-5 text-center p-4 d-flex flex-column mt-3"
@@ -81,6 +69,8 @@ import ProductPicturiesComponent from "./ProductPicturiesComponent.vue";
 import BaseBreadcrumbComponent from "../BaseBreadcrumbComponent.vue";
 import ProductRatingComponent from "./ProductRatingComponent.vue";
 import ProductReviewsComponent from "./ProductReviewsComponent.vue";
+import AuthorsLink from "./AuthorsLink.vue";
+import ProductPropertiesTable from "./ProductPropertiesTable.vue";
 export default {
   components: {
     AddtoCartButtonComponent,
@@ -88,6 +78,8 @@ export default {
     BaseBreadcrumbComponent,
     ProductRatingComponent,
     ProductReviewsComponent,
+    AuthorsLink,
+    ProductPropertiesTable,
   },
   data() {
     return {
@@ -99,16 +91,9 @@ export default {
     new RequestBuilder("product")
       .get(this.$route.params.id)
       .then((data) => {
-        data.cover = data.cover.title;
         this.product = data;
       })
       .finally(() => (this.loading = false));
-  },
-
-  computed: {
-    secondaryProperties() {
-      return ["year", "pages", "cover"];
-    },
   },
 };
 </script>
@@ -147,5 +132,6 @@ h2 {
 
 #productDescription {
   font-size: 0.9rem;
+  white-space: pre-wrap;
 }
 </style>

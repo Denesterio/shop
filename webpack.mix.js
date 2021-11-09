@@ -1,4 +1,4 @@
-const mix = require("laravel-mix");
+const mix = require('laravel-mix');
 
 /*
  |--------------------------------------------------------------------------
@@ -10,8 +10,12 @@ const mix = require("laravel-mix");
  | file for the application as well as bundling up all the JS files.
  |
  */
+mix.babelConfig({
+  plugins: ['@babel/plugin-syntax-dynamic-import']
+});
 
-mix.js("resources/js/app.js", "public/js")
-    .vue()
-    .css("resources/css/app.css", "public/css/style.css")
-    .sass("resources/sass/app.scss", "public/css");
+mix
+  .js('resources/js/app.js', 'public/js')
+  .vue()
+  .css('resources/css/app.css', 'public/css/style.css')
+  .sass('resources/sass/app.scss', 'public/css');

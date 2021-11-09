@@ -3,14 +3,14 @@
     <p class="point font-weight-bold mb-1 mt-3">
       <router-link
         class="text-reset"
-        :to="{ name: 'productPage', params: { id: product.id } }"
+        :to="{ name: 'product.show', params: { id: product.id } }"
         >{{ product.title }}</router-link
       >
       |
-      <span
-        class="font-italic font-weight-light"
-        v-html="formattedAuthorsHtml.join(' / ')"
-      ></span>
+      <authors-link
+        link-class="font-italic font-weight-light text-reset"
+        :authors="product.authors"
+      />
       |&nbsp;<span class="text-secondary">{{ product.price }}&nbsp;руб. </span>
     </p>
     <addto-cart-button-component
@@ -27,17 +27,32 @@
         </button>
       </template>
     </addto-cart-button-component>
+
+    <!-- modal window -->
     <b-modal
       v-model="isModalOpen"
       centered
       id="modal-lg"
       size="lg"
-      :title="product.title"
+      :title="`${product.title} (${product.authors
+        .map((a) => a.title)
+        .join(', ')})`"
       hide-backdrop
       content-class="shadow"
     >
-      <img :src="picturePath" :alt="product.title" class="modal-image" />
-      {{ product.description }}
+      <!-- modal-body -->
+      <product-rating-component :productId="product.id" />
+
+      <div class="row mb-3">
+        <div class="col-6 d-flex justify-content-center align-items-center">
+          <img :src="picturePath" :alt="product.title" class="modal-image" />
+        </div>
+        <div class="col-6"><product-properties-table :product="product" /></div>
+      </div>
+      <div class="mt-3 p-2 base-description">
+        {{ product.description }}
+      </div>
+      <!-- modal-footer -->
       <template v-slot:modal-footer>
         <addto-cart-button-component
           :title="product.title"
@@ -59,6 +74,9 @@
 
 <script>
 import AddtoCartButtonComponent from "../AddtoCartButtonComponent.vue";
+import AuthorsLink from "./AuthorsLink.vue";
+import ProductRatingComponent from "./ProductRatingComponent.vue";
+import ProductPropertiesTable from "./ProductPropertiesTable.vue";
 export default {
   props: {
     product: {
@@ -72,7 +90,12 @@ export default {
     },
   },
 
-  components: { AddtoCartButtonComponent },
+  components: {
+    AddtoCartButtonComponent,
+    AuthorsLink,
+    ProductRatingComponent,
+    ProductPropertiesTable,
+  },
 
   data() {
     return {
@@ -102,12 +125,10 @@ export default {
   font-size: 1.1rem;
   line-height: 1.5;
 }
-.modal-image {
-  width: 25%;
-  float: left;
-  margin-right: 20px;
-}
 .product-price {
   font-size: 1.4rem;
+}
+.modal-image {
+  width: 50%;
 }
 </style>

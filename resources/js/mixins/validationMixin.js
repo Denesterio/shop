@@ -14,6 +14,10 @@ export default {
         ?.getMessage();
     },
 
+    isValid(field) {
+      return this.errors.findIndex(error => error.getField() === field) >= 0;
+    },
+
     async validate(schema, obj) {
       this.errors = [];
       try {
@@ -27,14 +31,22 @@ export default {
     },
 
     handleServerError(error, message) {
-      try {
-        this.errors = getErrors(error);
-      } catch (err) {
+      if (error?.response?.data?.status === 403) {
         Vue.swal.fire({
           icon: 'error',
           title: 'Ошибка',
-          text: this.$t('error.сreateError', { msg: message })
+          text: error.response.data.message
         });
+      } else {
+        try {
+          this.errors = getErrors(error);
+        } catch (err) {
+          Vue.swal.fire({
+            icon: 'error',
+            title: 'Ошибка',
+            text: this.$t('error.сreateError', { msg: message })
+          });
+        }
       }
     }
   }

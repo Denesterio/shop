@@ -28,8 +28,7 @@
         field="countOnPage"
         @change.native="updateCountOnPage"
         class="form-control-sm"
-        >Количество на странице:</base-select-component
-      >
+      />
     </div>
   </section>
 </template>

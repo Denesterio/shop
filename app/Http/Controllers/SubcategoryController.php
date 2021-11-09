@@ -55,7 +55,7 @@ class SubcategoryController extends Controller
         $limit = (int) $request['limit'];
         $skipped = ((int) $request['page'] - 1) * $limit;
         $data = Product::where('subcategory_slug', '=', $id)
-            ->with('authors')
+            ->with('authors', 'cover')
             ->latest()
             ->skip($skipped)
             ->take($limit)

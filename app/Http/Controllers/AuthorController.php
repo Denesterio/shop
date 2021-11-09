@@ -49,7 +49,7 @@ class AuthorController extends Controller
         $skipped = ((int) $request['page'] - 1) * $limit;
         $data = $author
             ->products()
-            ->with('authors')
+            ->with('authors', 'cover')
             ->latest()
             ->skip($skipped)
             ->take($limit)

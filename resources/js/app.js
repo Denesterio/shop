@@ -8,6 +8,9 @@ Vue.use(VueSweetalert2);
 import 'vue-slick-carousel/dist/vue-slick-carousel.css';
 import 'vue-slick-carousel/dist/vue-slick-carousel-theme.css';
 
+import CKEditor from 'ckeditor4-vue';
+Vue.use(CKEditor);
+
 import UI from './components/UI';
 
 UI.forEach(component => {

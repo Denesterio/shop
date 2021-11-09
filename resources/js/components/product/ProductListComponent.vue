@@ -43,9 +43,10 @@ const makeRequest = (to, vm) => {
 
   if (name === "search") {
     const params = {
-      limit: 24,
+      limit: 12,
       page: vm?.nextPage || 1,
       query: to.query.query,
+      type: to.query.type,
     };
     return new RequestBuilder(name).withQueryParams(params).get();
   }
@@ -59,7 +60,7 @@ const makeRequest = (to, vm) => {
   }
 
   return new RequestBuilder(name)
-    .withQueryParams({ limit: 24, page: 1 })
+    .withQueryParams({ limit: 12, page: 1 })
     .get(id);
 };
 
@@ -75,7 +76,7 @@ export default {
   mixins: [paginationSettings],
   data() {
     return {
-      selectedView: "Card",
+      selectedView: "",
 
       products: [],
       authors: {},
@@ -96,7 +97,7 @@ export default {
   beforeRouteUpdate(to, _from, next) {
     makeRequest(to)
       .then((data) => {
-        this.products = data.data;
+        this.products = data.data || [];
         this.totalPages = data.total;
       })
       .finally(() => (this.loading = false));
@@ -107,7 +108,7 @@ export default {
     makeRequest(to)
       .then((data) =>
         next((vm) => {
-          vm.products = data.data;
+          vm.products = data.data || [];
           vm.totalPages = data.total;
           vm.loading = false;
         })
@@ -115,6 +116,15 @@ export default {
       .catch((err) => {
         alert(err);
       });
+  },
+
+  mounted() {
+    const view = sessionStorage.getItem("selectedView");
+    if (view) {
+      this.selectedView = view;
+    } else {
+      this.selectedView = "Card";
+    }
   },
 
   methods: {
@@ -136,6 +146,10 @@ export default {
       makeRequest(this.$route, this)
         .then((data) => this.fillDataFromResponse(data, "products"))
         .finally(() => (this.loading = false));
+    },
+
+    selectedView(newValue) {
+      sessionStorage.setItem("selectedView", newValue);
     },
   },
 };

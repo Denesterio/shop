@@ -4,6 +4,8 @@
 /public/storage
 /vendor
 .env
+.env_local
+.env_server
 .env.backup
 .phpunit.result.cache
 docker-compose.override.yml

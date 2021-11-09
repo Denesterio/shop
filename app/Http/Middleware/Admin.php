@@ -20,7 +20,7 @@ class Admin
     {
         $user = Auth::user();
         if (!$user || !$user->admin) {
-            return redirect('/');
+            return response()->json(['status' => 403, 'message' => 'Действие доступно только для администраторов'], 403);
         }
 
         return $next($request);

@@ -15,7 +15,7 @@ yup.setLocale({
     positive: i18n.t('error.positive')
   },
   array: {
-    min: i18n.t('error.minAuthor')
+    min: i18n.t('error.minElem')
   }
 });
 

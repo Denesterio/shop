@@ -9,7 +9,7 @@
       <b-card-header header-tag="header" class="p-1" role="tab">
         <b-button block v-b-toggle="`accordion` + category.id" variant="info">
           <router-link
-            :to="{ name: 'category.products', params: { id: category.id } }"
+            :to="{ name: 'category.show', params: { id: category.id } }"
             >{{ category.title }}</router-link
           >
         </b-button>
@@ -37,7 +37,7 @@
               )"
               :key="subcategory.id"
               :to="{
-                name: 'subcategory.products',
+                name: 'subcategory.show',
                 params: { id: subcategory.slug },
               }"
             >
@@ -48,7 +48,7 @@
             <router-link
               class="list-group-item list-group-item-action"
               :class="{ active: isOpen(category.id) }"
-              :to="{ name: 'category.products', params: { id: category.id } }"
+              :to="{ name: 'category.show', params: { id: category.id } }"
             >
               {{ category.title }}
             </router-link>
@@ -77,10 +77,10 @@ export default {
       return this.$route.params.id;
     },
     isCategoryPage() {
-      return this.$route.name === "category.products";
+      return this.$route.name === "category.show";
     },
     isSubcategoryPage() {
-      return this.$route.name === "subcategory.products";
+      return this.$route.name === "subcategory.show";
     },
   },
 

@@ -12,7 +12,7 @@ export default class RequestBuilder {
     this.queryParams = params;
   }
 
-  #needAdminPrefix() {
+  #needAdminPrefix(item) {
     return [
       'categories',
       'subcategories',
@@ -26,19 +26,19 @@ export default class RequestBuilder {
       'author',
       'cover',
       'product'
-    ].includes(this.item);
+    ].includes(item);
   }
 
-  #needAuthPrefix() {
-    return ['register', 'logout', 'login'].includes(this.item);
+  #needAuthPrefix(item) {
+    return ['register', 'logout', 'login'].includes(item);
   }
 
-  #getPrefix() {
-    if (this.method !== 'GET' && this.#needAdminPrefix()) {
+  #getPrefix(item) {
+    if (this.method !== 'GET' && this.#needAdminPrefix(item)) {
       return 'admin';
     }
 
-    if (this.#needAuthPrefix()) {
+    if (this.#needAuthPrefix(item)) {
       return 'auth';
     }
 
@@ -52,15 +52,30 @@ export default class RequestBuilder {
   }
 
   #getUrl(id) {
-    const prefix = this.#getPrefix();
+    const prefix = this.#getPrefix(this.item);
     const url = new URL(routes[this.item](prefix, id));
     this.#addQueryParams(url);
     return url;
   }
 
+  #getUrls() {
+    return this.item.map(i => {
+      const prefix = this.#getPrefix(i);
+      return new URL(routes[i](prefix));
+    });
+  }
+
   get(id) {
     const url = this.#getUrl(id);
     return this.client.get(url).then(response => response.data);
+  }
+
+  getAll() {
+    const urls = this.#getUrls();
+    const promises = urls.map(url =>
+      this.client.get(url).then(response => response.data)
+    );
+    return Promise.all(promises);
   }
 
   create(data, parentId = null) {

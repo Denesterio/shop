@@ -3,7 +3,14 @@
     <svg-loading-component v-if="processing" />
     <template v-else>
       <div class="input-group">
-        <span class="input-group-text">Текст отзыва</span>
+        <label class="input-group-text">Текст отзыва</label>
+        <!-- <ckeditor
+          v-model="reviewBody"
+          :config="editorConfig"
+          class="w-100"
+          aria-describedby="reviewHelpBlock"
+          aria-label="Текст отзыва"
+        ></ckeditor> -->
         <textarea
           v-model="reviewBody"
           class="form-control"
@@ -35,6 +42,23 @@ export default {
     return {
       reviewBody: "",
       processing: false,
+      editorConfig: {
+        toolbarGroups: [
+          { name: "document", groups: ["document"] },
+          { name: "clipboard", groups: ["clipboard", "undo"] },
+          { name: "editing", groups: ["find", "selection"] },
+          { name: "basicstyles", groups: ["basicstyles", "cleanup"] },
+          { name: "font", groups: ["size"] },
+          {
+            name: "paragraph",
+            groups: ["list", "blocks", "align", "bidi"],
+          },
+          { name: "colors" },
+          { name: "links" },
+          { name: "tools" },
+        ],
+        removeButtons: "Cut,Copy,Paste,Anchor",
+      },
     };
   },
 

@@ -4,7 +4,7 @@
       <b>{{ review.user.name }}:</b>
     </p>
     <p class="date-container">{{ createdDate }}</p>
-    <p>{{ review.body }}</p>
+    <p class="review-body">{{ review.body }}</p>
   </li>
 </template>
 
@@ -30,5 +30,8 @@ export default {
 <style scoped>
 .date-container {
   font-size: 0.8rem;
+}
+.review-body {
+  white-space: pre-wrap;
 }
 </style>

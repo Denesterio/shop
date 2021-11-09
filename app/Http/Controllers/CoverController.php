@@ -23,12 +23,12 @@ class CoverController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->has('_limit')) {
+        if ($request->has('limit')) {
             $total = Cover::count();
-            $skipped = ($request['_page'] - 1) * $request['_limit'];
+            $skipped = ($request['page'] - 1) * $request['limit'];
             $data = Cover::OrderBy('id', 'desc')
                 ->skip($skipped)
-                ->take($request['_limit'])
+                ->take($request['limit'])
                 ->get();
             return compact('data', 'total');
         }

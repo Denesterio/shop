@@ -60,7 +60,7 @@ class CategoryController extends Controller
         $skipped = ((int) $request['page'] - 1) * $limit;
         return ['total' => $total, 'data' => $category
             ->products()
-            ->with('authors')
+            ->with('authors', 'cover')
             ->latest()
             ->skip($skipped)
             ->take($limit)

@@ -30,13 +30,11 @@
       ></base-button-component>
     </div>
     <b-collapse :id="`collapse-details-${entity.id}`">
-      <b-card class="card mt-1">
-        <ul>
-          <li v-for="(value, property) in entity" :key="property">
-            <b>{{ $t(`keys.${property}`) }}:</b> {{ formatValue(value) }}
-          </li>
-        </ul>
-      </b-card>
+      <ul class="description-list">
+        <li v-for="(value, property) in entity" :key="property">
+          <b>{{ $t(`keys.${property}`) }}:</b> {{ formatValue(value) }}
+        </li>
+      </ul>
     </b-collapse>
   </li>
 </template>
@@ -82,3 +80,14 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.description-list {
+  margin: 0;
+  list-style: none;
+  white-space: pre-line;
+  word-break: break-word;
+  padding: 1rem;
+  font-size: 0.9rem;
+}
+</style>

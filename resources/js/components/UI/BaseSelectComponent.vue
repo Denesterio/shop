@@ -5,6 +5,7 @@
       :value="option.value"
       :key="option.value"
       :selected="option === value"
+      :disabled="option.disabled"
     >
       {{ option.text || option.value }}
     </option>

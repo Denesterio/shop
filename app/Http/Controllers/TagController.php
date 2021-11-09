@@ -48,7 +48,7 @@ class TagController extends Controller
         $skipped = ((int) $request['page'] - 1) * $limit;
         $data = $tag
             ->products()
-            ->with('authors')
+            ->with('authors', 'cover')
             ->latest()
             ->skip($skipped)
             ->take($limit)

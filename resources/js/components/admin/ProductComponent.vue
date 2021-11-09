@@ -43,7 +43,7 @@
         <b-button
           v-b-toggle="'collapse-tags'"
           class="m-1 btn-primary"
-          :class="{ 'is-invalid': false }"
+          :class="{ 'is-invalid': isValid('tags') }"
           >Выбрать тэги</b-button
         >
         <b-collapse id="collapse-tags" class="mt-3">
@@ -63,7 +63,7 @@
             </b-form-checkbox-group>
           </b-form-group>
         </b-collapse>
-        <p class="invalid-feedback">{{}}</p>
+        <p class="invalid-feedback">{{ getErrorMessage("tags") }}</p>
       </div>
 
       <!-- price, pages, year inputs row -->
@@ -224,7 +224,7 @@ import { productSchema } from "../../validate.js";
 export default {
   name: "product-component",
   components: { AuthorInputComponent, EntityListComponent, UploadIcon },
-  mixins: [validationMixin], // data: errors: [], methods: getErrorMessage(field), async validate, validateServerErrors
+  mixins: [validationMixin], // data: errors: [], methods: isValid(field), getErrorMessage(field), async validate, validateServerErrors
   props: {
     formMode: {
       type: String,
@@ -289,26 +289,17 @@ export default {
   },
 
   created() {
-    const promises = [
-      new RequestBuilder("categories")
-        .get()
-        .then(({ data }) => (this.categories = data)),
-      new RequestBuilder("subcategories")
-        .get()
-        .then(({ data }) => (this.subcategories = data)),
-      new RequestBuilder("tags")
-        .get()
-        .then(
-          ({ data }) =>
-            (this.tags = data.sort(({ title: a }, { title: b }) =>
-              a < b ? -1 : 1
-            ))
-        ),
-      new RequestBuilder("covers")
-        .get()
-        .then(({ data }) => (this.covers = data)),
-    ];
-    Promise.all(promises).finally(() => (this.loading = false));
+    new RequestBuilder(["categories", "subcategories", "tags", "covers"])
+      .getAll()
+      .then((data) => {
+        this.categories = data[0].data;
+        this.subcategories = data[1].data;
+        this.tags = data[2].data.sort(({ title: a }, { title: b }) =>
+          a < b ? -1 : 1
+        );
+        this.covers = data[3].data;
+      })
+      .finally(() => (this.loading = false));
   },
 
   methods: {

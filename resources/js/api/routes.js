@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = `http://localhost:8000`;
 const API_PREFIX = 'api';
 
 const buildBase = prefix => {
@@ -51,5 +51,6 @@ export default {
   logout: prefix => [...buildBase(prefix), 'logout'].join('/'),
   register: prefix => [...buildBase(prefix), 'register'].join('/'),
 
-  search: prefix => [...buildBase(prefix), 'search'].join('/')
+  search: (prefix, id) =>
+    [...buildBase(prefix), 'search'].join('/') + (id ? `/${id}` : '')
 };

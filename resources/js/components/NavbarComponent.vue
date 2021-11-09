@@ -63,6 +63,13 @@
 
         <!-- Right Side Of Navbar -->
         <ul class="right navbar-nav ml-auto">
+          <li>
+            <router-link
+              :to="{ name: 'admin' }"
+              class="nav-link text-center"
+              v-t="'label.productAdd'"
+            ></router-link>
+          </li>
           <template v-if="user">
             <li class="nav-item p-1">
               <router-link class="nav-link p-0" :to="{ name: 'cart' }"
@@ -117,12 +124,6 @@
                 class="dropdown-menu dropdown-menu-right"
                 aria-labelledby="navbarDropdown"
               >
-                <router-link
-                  v-if="isUserAdmin"
-                  :to="{ name: 'admin' }"
-                  class="dropdown-item nav-link text-center"
-                  v-t="'label.productAdd'"
-                ></router-link>
                 <router-link
                   :to="{ name: 'profile' }"
                   class="dropdown-item nav-link text-center"

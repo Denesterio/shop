@@ -3,7 +3,11 @@
     <div class="image-box d-flex justify-content-center align-items-center">
       <img
         :src="picturePath"
-        class="card-img-top card-image"
+        class="card-img-top"
+        :class="{
+          'card-imgage': product.picture.length > 0,
+          'card-cap': product.picture.length === 0,
+        }"
         :alt="product.title"
       />
     </div>
@@ -65,17 +69,17 @@ export default {
   min-width: 190px;
 }
 .image-box {
-  height: 200px;
+  height: fit-content;
+  min-height: 200px;
   max-width: 200px;
 }
-.card-image {
-  max-width: 100px;
-  aspect-ratio: auto;
+.card-cap {
+  width: 50%;
+  height: auto;
 }
-.modal-image {
-  width: 25%;
-  float: left;
-  margin-right: 20px;
+.card-image {
+  height: auto;
+  width: 90%;
 }
 .product-price {
   font-weight: bold;

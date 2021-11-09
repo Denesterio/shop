@@ -77,5 +77,6 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/search', [SearchController::class, 'search'])->name('search');
+Route::get('/search/preview', [SearchController::class, 'preview'])->name('search.preview');
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

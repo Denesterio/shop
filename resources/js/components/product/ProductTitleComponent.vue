@@ -7,7 +7,7 @@
     >
       <router-link
         class="text-reset"
-        :to="{ name: 'productPage', params: { id: product.id } }"
+        :to="{ name: 'product.show', params: { id: product.id } }"
         >{{ formattedTitle }}</router-link
       >
     </h5>

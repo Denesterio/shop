@@ -5,18 +5,22 @@ import store from '../store';
 Vue.use(VueRouter);
 
 // auth pages
-import LoginComponent from '../components/auth/LoginComponent.vue';
-import RegisterComponent from '../components/auth/RegisterComponent.vue';
+const LoginComponent = () => import('../components/auth/LoginComponent.vue');
+const RegisterComponent = () =>
+  import('../components/auth/RegisterComponent.vue');
 // main layout
 import LayoutComponent from '../components/welcome/LayoutComponent.vue';
 import WelcomeCategoryListComponent from '../components/welcome/WelcomeCategoryListComponent.vue';
 import ProductListComponent from '../components/product/ProductListComponent.vue';
 // functional
-import CartComponent from '../components/CartComponent.vue';
-import ProfileComponent from '../components/profile/ProfileComponent.vue';
-import ProductPageComponent from '../components/product/ProductPageComponent.vue';
+const CartComponent = () => import('../components/CartComponent.vue');
+const ProfileComponent = () =>
+  import('../components/profile/ProfileComponent.vue');
+const ProductPageComponent = () =>
+  import('../components/product/ProductPageComponent.vue');
 // admin page
-import AdminLayoutComponent from '../components/admin/AdminLayoutComponent.vue';
+const AdminLayoutComponent = () =>
+  import('../components/admin/AdminLayoutComponent.vue');
 // 404
 import PageNotFoundComponent from '../components/PageNotFoundComponent.vue';
 
@@ -32,22 +36,22 @@ const routes = [
       },
       {
         path: '/categories/:id',
-        name: 'category.products',
+        name: 'category.show',
         component: ProductListComponent
       },
       {
         path: '/subcategories/:id',
-        name: 'subcategory.products',
+        name: 'subcategory.show',
         component: ProductListComponent
       },
       {
         path: '/authors/:id',
-        name: 'author.products',
+        name: 'author.show',
         component: ProductListComponent
       },
       {
         path: '/tags/:id',
-        name: 'tag.products',
+        name: 'tag.show',
         component: ProductListComponent
       },
       {
@@ -60,10 +64,10 @@ const routes = [
   {
     path: '/admin',
     component: AdminLayoutComponent,
-    name: 'admin',
-    meta: {
-      adminOnly: true
-    }
+    name: 'admin'
+    // meta: {
+    //   adminOnly: true
+    // }
   },
   {
     path: '/login',
@@ -93,7 +97,7 @@ const routes = [
   },
   {
     path: '/products/:id',
-    name: 'productPage',
+    name: 'product.show',
     component: ProductPageComponent
   },
   {

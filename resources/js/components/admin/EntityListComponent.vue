@@ -2,8 +2,8 @@
   <div class="container-xl mt-4">
     <h4 v-if="enType.length" v-t="`link.${enType}`" v-upfirst></h4>
     <svg-loading-component v-if="processing" />
-    <span v-else-if="error">{{ error }}</span>
-    <div v-else-if="currentEntities.length">
+    <span v-else-if="error" class="text-danger">{{ error }}</span>
+    <div v-if="currentEntities.length">
       <ul class="list-group mt-4">
         <EntityListItem
           v-for="entity in currentEntities"
@@ -16,6 +16,7 @@
         </EntityListItem>
       </ul>
       <BasePagination
+        v-if="totalPages"
         @change-page="getEntities"
         :current="currentPage"
         :total="totalPages"
@@ -88,7 +89,8 @@ export default {
             (this.currentEntities = this.currentEntities.filter(
               (ent) => ent.id !== id
             ))
-        );
+        )
+        .catch((err) => (this.error = err.response.data.message));
     },
 
     showEditForm(id) {
@@ -106,13 +108,17 @@ export default {
       }
       this.currentPage = 1;
       this.nextPage = 1;
+      this.error = "";
     },
 
     entities() {
       this.currentEntities = this.entities;
+      this.error = "";
     },
 
     editedEntity(newValue) {
+      this.error = "";
+
       if (newValue) {
         const editedEntityIndex = this.currentEntities.findIndex(
           (entity) => entity.id === newValue.id
