@@ -31,7 +31,6 @@
       id="review-form"
       class="my-3"
       :productId="productId"
-      @add-review="addReview"
     />
   </section>
 </template>
@@ -53,6 +52,18 @@ export default {
     return {
       reviews: [],
     };
+  },
+
+  created() {
+    window.Echo.channel(`product-${this.productId}-review`).listen('.product.review', (data) => {
+      console.dir(data);
+      data.review.user = data.user;
+      this.addReview(data.review);
+    });
+  },
+
+  beforeDestroy() {
+    window.Echo.leaveChannel(`product-${this.productId}-review`);
   },
 
   mounted() {
