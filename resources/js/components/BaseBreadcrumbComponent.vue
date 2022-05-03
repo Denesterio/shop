@@ -3,6 +3,8 @@
 </template>
 
 <script>
+import requestBuilder from '../api/requestBuilder.js';
+import SessionStorageService from '../services/sessionStorageService.js';
 export default {
   props: {
     slug: {
@@ -15,30 +17,36 @@ export default {
     },
   },
 
-  computed: {
-    items() {
-      const menu = JSON.parse(sessionStorage.getItem("menu"));
-      const subcat = menu.subcategories.find((s) => s.slug === this.slug);
-      const cat = menu.categories.find((c) => c.id === subcat.category_id);
-      return [
-        {
-          text: "Главная",
-          href: "/",
-        },
-        {
-          text: cat.title,
-          href: `/categories/${cat.id}`,
-        },
-        {
-          text: subcat.title,
-          href: `/subcategories/${this.slug}`,
-        },
-        {
-          text: this.title,
-          active: true,
-        },
-      ];
-    },
+  data() {
+    return {
+      items: [],
+    };
+  },
+
+  created() {
+    new SessionStorageService(requestBuilder).asyncGet('menu')
+      .then(result => {
+        const subcat = result.subcategories.find((s) => s.slug === this.slug);
+        const cat = result.categories.find((c) => c.id === subcat.category_id);
+        this.items = [
+          {
+            text: "Главная",
+            href: "/",
+          },
+          {
+            text: cat.title,
+            href: `/categories/${cat.id}`,
+          },
+          {
+            text: subcat.title,
+            href: `/subcategories/${this.slug}`,
+          },
+          {
+            text: this.title,
+            active: true,
+          },
+        ]
+      });
   },
 };
 </script>

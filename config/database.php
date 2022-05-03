@@ -51,7 +51,7 @@ return [
             'database' => env('DB_DATABASE', 'shop'),
             'username' => env('DB_USERNAME', 'root'),
             'password' => env('DB_PASSWORD', ''),
-            'unix_socket' => env('DB_SOCKET', '/opt/lampp/var/mysql/mysql.sock'),
+            'unix_socket' => env('DB_SOCKET', '/var/run/mysqld/mysqld.sock'),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_general_ci',
             'prefix' => '',

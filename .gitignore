@@ -2,6 +2,7 @@
 /public/hot
 /storage/*.key
 /public/storage
+/public/js
 /vendor
 .env
 .env_local
@@ -15,3 +16,4 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+composer.phar
